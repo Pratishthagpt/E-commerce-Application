@@ -1,6 +1,7 @@
 package dev.pratishtha.project.productService.services;
 
 import dev.pratishtha.project.productService.dtos.GenericProductDTO;
+import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.FakeStoreProductClient;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.dtos.FakeStoreProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,15 @@ public class ProductFakeStoreServiceImpl implements ProductService{
         }
 
         return genericProductList;
+    }
+
+    @Override
+    public GenericProductDTO getProductsById(String id) throws IdNotFoundException {
+
+        GenericProductDTO genericProductDTO =
+                convertFakeStoreProductDTOToGenericProductDTO(fakeStoreProductClient.getProductById(id));
+
+        return genericProductDTO;
     }
 
     private GenericProductDTO convertFakeStoreProductDTOToGenericProductDTO (FakeStoreProductDTO fakeStoreProductDTO) {

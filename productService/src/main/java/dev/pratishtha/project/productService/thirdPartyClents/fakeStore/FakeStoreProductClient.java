@@ -1,6 +1,6 @@
 package dev.pratishtha.project.productService.thirdPartyClents.fakeStore;
 
-import dev.pratishtha.project.productService.dtos.GenericProductDTO;
+import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.dtos.FakeStoreProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +22,7 @@ public class FakeStoreProductClient {
 
     private String productUrl;
     private String productRequestUrl;
+    private RestTemplate restTemplate;
 
     @Autowired
     public FakeStoreProductClient(RestTemplateBuilder restTemplateBuilder,
@@ -30,14 +31,16 @@ public class FakeStoreProductClient {
         this.restTemplateBuilder = restTemplateBuilder;
         this.productUrl = fakeStoreBaseUrl + fakeStoreProductUrl + "/{id}";
         this.productRequestUrl = fakeStoreBaseUrl + fakeStoreProductUrl;
+
+//        creating the object of rest template
+        this.restTemplate = restTemplateBuilder.build();
     }
 
+//  For Get all products
 
     public List<FakeStoreProductDTO> getAllProductsFromFakeStore() {
-//        build rest template object using restTemplateBuilder
-        RestTemplate restTemplate = restTemplateBuilder.build();
 
-//        getting response entity as response from third part api while hitting its url
+//        getting response entity wrapping around object as response from third part api while hitting its url
         ResponseEntity<FakeStoreProductDTO[]> responseEntity =
                 restTemplate.getForEntity(productRequestUrl, FakeStoreProductDTO[].class);
 
@@ -52,5 +55,26 @@ public class FakeStoreProductClient {
         }
 
         return fakeStoreProductsList;
+    }
+
+//    For Get a single product
+
+    public FakeStoreProductDTO getProductById(String id) throws IdNotFoundException {
+
+//        product request url
+        String productPath = productRequestUrl + "/" + id;
+
+//        getting response entity wrapping around object as response from third part api while hitting its url and also takes id as parameter
+        ResponseEntity<FakeStoreProductDTO> responseEntity =
+                restTemplate.getForEntity(productPath, FakeStoreProductDTO.class, id);
+
+        FakeStoreProductDTO fakeStoreProductDTO = responseEntity.getBody();
+
+        if (fakeStoreProductDTO == null) {
+            throw new IdNotFoundException("Product with id - " + id + " not found.");
+        }
+
+        return fakeStoreProductDTO;
+
     }
 }
