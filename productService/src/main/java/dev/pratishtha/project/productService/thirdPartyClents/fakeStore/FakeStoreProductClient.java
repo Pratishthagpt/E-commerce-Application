@@ -77,4 +77,23 @@ public class FakeStoreProductClient {
         return fakeStoreProductDTO;
 
     }
+
+    public List<FakeStoreProductDTO> getAllProductsWithLimitFromFakeStore(int limit) {
+
+        String productUrlWithLimit = productRequestUrl + "?limit=" + limit;
+
+        ResponseEntity<FakeStoreProductDTO[]> responseEntity = restTemplate.getForEntity(
+                productUrlWithLimit, FakeStoreProductDTO[].class);
+
+//        because response entity contains status code, headers, body, so we extract body from response entity
+        FakeStoreProductDTO[] fakeStoreProductResponse = responseEntity.getBody();
+
+//        converting array to list
+        List<FakeStoreProductDTO> fakeStoreProductsList = new ArrayList<>();
+
+        for (FakeStoreProductDTO product : fakeStoreProductResponse) {
+            fakeStoreProductsList.add(product);
+        }
+        return fakeStoreProductsList;
+    }
 }

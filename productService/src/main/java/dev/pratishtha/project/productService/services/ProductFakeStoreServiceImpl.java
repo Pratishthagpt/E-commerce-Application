@@ -44,15 +44,30 @@ public class ProductFakeStoreServiceImpl implements ProductService{
         return genericProductDTO;
     }
 
+    @Override
+    public List<GenericProductDTO> getProductByIdWithLimit(int limit) {
+        List<FakeStoreProductDTO> fakeStoreProductDTOS =
+                fakeStoreProductClient.getAllProductsWithLimitFromFakeStore(limit);
+
+        List<GenericProductDTO> genericProductList = new ArrayList<>();
+
+        for (FakeStoreProductDTO fakeStoreProduct : fakeStoreProductDTOS) {
+            GenericProductDTO genericProductDTO = convertFakeStoreProductDTOToGenericProductDTO(fakeStoreProduct);
+            genericProductList.add(genericProductDTO);
+        }
+
+        return genericProductList;
+    }
+
     private GenericProductDTO convertFakeStoreProductDTOToGenericProductDTO (FakeStoreProductDTO fakeStoreProductDTO) {
         GenericProductDTO genericProductDTO = new GenericProductDTO();
 
         genericProductDTO.setId(fakeStoreProductDTO.getId().toString());
         genericProductDTO.setTitle(fakeStoreProductDTO.getTitle());
         genericProductDTO.setDescription(fakeStoreProductDTO.getDescription());
-        genericProductDTO.setCategory_name(fakeStoreProductDTO.getCategory_name());
+        genericProductDTO.setCategory_name(fakeStoreProductDTO.getCategory());
         genericProductDTO.setImage(fakeStoreProductDTO.getImage());
-        genericProductDTO.setPriceVal(fakeStoreProductDTO.getPriceVal());
+        genericProductDTO.setPriceVal(fakeStoreProductDTO.getPrice());
 
         return genericProductDTO;
     }

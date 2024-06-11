@@ -31,4 +31,11 @@ public class ProductFakeStoreController {
     public GenericProductDTO getProductById (@PathVariable ("id") String id) throws IdNotFoundException {
         return productService.getProductsById(id);
     }
+
+    @GetMapping("/limit/{limit}")
+    public List<GenericProductDTO> getProductByIdWithLimit (@PathVariable ("limit") int limit) throws IdNotFoundException {
+        return productService.getProductByIdWithLimit(limit);
+    }
+
+
 }
