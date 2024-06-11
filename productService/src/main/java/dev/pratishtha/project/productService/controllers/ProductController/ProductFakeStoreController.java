@@ -37,5 +37,8 @@ public class ProductFakeStoreController {
         return productService.getProductByIdWithLimit(limit);
     }
 
-
+    @GetMapping("/sort/{sortType}")
+    public List<GenericProductDTO> getProductByIdWithSort (@PathVariable ("sortType") String sortType) throws IdNotFoundException {
+        return productService.getProductByIdWithSort(sortType);
+    }
 }

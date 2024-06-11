@@ -59,6 +59,21 @@ public class ProductFakeStoreServiceImpl implements ProductService{
         return genericProductList;
     }
 
+    @Override
+    public List<GenericProductDTO> getProductByIdWithSort(String sortType) {
+        List<FakeStoreProductDTO> fakeStoreProductDTOS =
+                fakeStoreProductClient.getAllProductsWithSortingFromFakeStore(sortType);
+
+        List<GenericProductDTO> genericProductList = new ArrayList<>();
+
+        for (FakeStoreProductDTO fakeStoreProduct : fakeStoreProductDTOS) {
+            GenericProductDTO genericProductDTO = convertFakeStoreProductDTOToGenericProductDTO(fakeStoreProduct);
+            genericProductList.add(genericProductDTO);
+        }
+
+        return genericProductList;
+    }
+
     private GenericProductDTO convertFakeStoreProductDTOToGenericProductDTO (FakeStoreProductDTO fakeStoreProductDTO) {
         GenericProductDTO genericProductDTO = new GenericProductDTO();
 

@@ -96,4 +96,28 @@ public class FakeStoreProductClient {
         }
         return fakeStoreProductsList;
     }
+
+    public List<FakeStoreProductDTO> getAllProductsWithSortingFromFakeStore(String sortType) {
+        String sort = "asc";
+
+        if (sortType.equalsIgnoreCase("descending") || sortType.equalsIgnoreCase("desc")) {
+            sort = "desc";
+        }
+
+        String productUrlWithSortType = productRequestUrl + "?sort=" + sort;
+
+        ResponseEntity<FakeStoreProductDTO[]> responseEntity = restTemplate.getForEntity(
+                productUrlWithSortType, FakeStoreProductDTO[].class);
+
+//        because response entity contains status code, headers, body, so we extract body from response entity
+        FakeStoreProductDTO[] fakeStoreProductResponse = responseEntity.getBody();
+
+//        converting array to list
+        List<FakeStoreProductDTO> fakeStoreProductsList = new ArrayList<>();
+
+        for (FakeStoreProductDTO product : fakeStoreProductResponse) {
+            fakeStoreProductsList.add(product);
+        }
+        return fakeStoreProductsList;
+    }
 }
