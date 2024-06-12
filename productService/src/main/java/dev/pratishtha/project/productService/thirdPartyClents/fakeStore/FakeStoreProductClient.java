@@ -216,9 +216,6 @@ public class FakeStoreProductClient {
                 .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
                 .build();
 
-//        product request url
-        String productPath = productRequestUrl + "/" + id;
-
 //        getting response entity wrapping around object as response from third part api while hitting its url and also takes id as parameter
 //        using exchange method here, because patch method returns void
 //        remember that nothing in real will update in the database of fake store API
@@ -233,5 +230,21 @@ public class FakeStoreProductClient {
 
         return updatedFakeStoreProduct;
 
+    }
+
+//    delete the product
+    public FakeStoreProductDTO deleteProductById(String id) {
+
+        ResponseEntity<FakeStoreProductDTO> responseEntity =
+                restTemplate.exchange(productUrl,
+                        HttpMethod.DELETE,
+                        null,
+                        FakeStoreProductDTO.class,
+                        id
+                        );
+
+        FakeStoreProductDTO deletedFakeStoreProduct = responseEntity.getBody();
+
+        return deletedFakeStoreProduct;
     }
 }

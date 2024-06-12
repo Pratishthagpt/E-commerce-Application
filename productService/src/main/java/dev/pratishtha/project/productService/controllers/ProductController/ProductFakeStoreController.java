@@ -64,4 +64,9 @@ public class ProductFakeStoreController {
     public GenericProductDTO updateSubProductById (@PathVariable ("id") String id, @RequestBody GenericProductDTO genericProductRequest) {
         return productService.updateSubProductById(id, genericProductRequest);
     }
+
+    @DeleteMapping("{id}")
+    public GenericProductDTO deleteProductById(@PathVariable ("id") String id) {
+        return productService.deleteProductById(id);
+    }
 }

@@ -141,6 +141,17 @@ public class ProductFakeStoreServiceImpl implements ProductService{
         return updatedGenericProduct;
     }
 
+    @Override
+    public GenericProductDTO deleteProductById(String id) {
+        FakeStoreProductDTO fakeStoreProductDTO =
+                fakeStoreProductClient.deleteProductById(id);
+
+        GenericProductDTO deletedGenericProduct =
+                convertFakeStoreProductDTOToGenericProductDTO(fakeStoreProductDTO);
+
+        return deletedGenericProduct;
+    }
+
     private GenericProductDTO convertFakeStoreProductDTOToGenericProductDTO (FakeStoreProductDTO fakeStoreProductDTO) {
         GenericProductDTO genericProductDTO = new GenericProductDTO();
 

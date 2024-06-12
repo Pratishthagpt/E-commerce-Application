@@ -27,4 +27,6 @@ public interface ProductService {
     GenericProductDTO updateProductById(String id, GenericProductDTO genericProductRequest);
 
     GenericProductDTO updateSubProductById(String id, GenericProductDTO genericProductRequest);
+
+    GenericProductDTO deleteProductById(String id);
 }
