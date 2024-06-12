@@ -59,4 +59,9 @@ public class ProductFakeStoreController {
     public GenericProductDTO updateProductById (@PathVariable ("id") String id, @RequestBody GenericProductDTO genericProductRequest) {
         return productService.updateProductById(id, genericProductRequest);
     }
+
+    @PatchMapping("{id}")
+    public GenericProductDTO updateSubProductById (@PathVariable ("id") String id, @RequestBody GenericProductDTO genericProductRequest) {
+        return productService.updateSubProductById(id, genericProductRequest);
+    }
 }

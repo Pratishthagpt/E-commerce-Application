@@ -125,6 +125,22 @@ public class ProductFakeStoreServiceImpl implements ProductService{
         return genericProductDTO;
     }
 
+    @Override
+    public GenericProductDTO updateSubProductById(String id, GenericProductDTO genericProductRequest) {
+
+        FakeStoreProductDTO fakeStoreProductRequest =
+                convertGenericProductDTOToFakeStoreProductDTO(genericProductRequest);
+
+//        remember that nothing in real will update in the database of fake store API
+        FakeStoreProductDTO fakeStoreProductDTO =
+                fakeStoreProductClient.updateSubProductById(id, fakeStoreProductRequest);
+
+        GenericProductDTO updatedGenericProduct =
+                convertFakeStoreProductDTOToGenericProductDTO(fakeStoreProductDTO);
+
+        return updatedGenericProduct;
+    }
+
     private GenericProductDTO convertFakeStoreProductDTOToGenericProductDTO (FakeStoreProductDTO fakeStoreProductDTO) {
         GenericProductDTO genericProductDTO = new GenericProductDTO();
 

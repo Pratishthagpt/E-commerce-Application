@@ -9,6 +9,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -188,7 +189,7 @@ public class FakeStoreProductClient {
         return fakeStoreProductResponse;
     }
 
-
+//    For updating a product
     public FakeStoreProductDTO updateProductById(String id, FakeStoreProductDTO fakeStoreProductRequest) {
 
 //        product request url
@@ -204,8 +205,33 @@ public class FakeStoreProductClient {
                         FakeStoreProductDTO.class,
                         id);
 
-        FakeStoreProductDTO fakeStoreProductResponse = responseEntity.getBody();
+        FakeStoreProductDTO updatedFakeStoreProduct = responseEntity.getBody();
 
-        return fakeStoreProductResponse;
+        return updatedFakeStoreProduct;
+    }
+
+//    for updating part of product
+    public FakeStoreProductDTO updateSubProductById(String id, FakeStoreProductDTO fakeStoreProductRequest) {
+        RestTemplate restTemplate_1 = restTemplateBuilder
+                .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
+                .build();
+
+//        product request url
+        String productPath = productRequestUrl + "/" + id;
+
+//        getting response entity wrapping around object as response from third part api while hitting its url and also takes id as parameter
+//        using exchange method here, because patch method returns void
+//        remember that nothing in real will update in the database of fake store API
+        ResponseEntity<FakeStoreProductDTO> responseEntity =
+                restTemplate_1.exchange(productUrl,
+                        HttpMethod.PATCH,
+                        new HttpEntity<>(fakeStoreProductRequest),
+                        FakeStoreProductDTO.class,
+                        id);
+
+        FakeStoreProductDTO updatedFakeStoreProduct = responseEntity.getBody();
+
+        return updatedFakeStoreProduct;
+
     }
 }
