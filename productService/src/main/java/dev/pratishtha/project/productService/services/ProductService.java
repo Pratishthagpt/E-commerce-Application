@@ -21,4 +21,6 @@ public interface ProductService {
     List<String> getAllCategories();
 
     List<GenericProductDTO> getAllProductsByCategory(String category) throws CategoryNotFoundException;
+
+    GenericProductDTO createNewProduct(GenericProductDTO genericProductDTO);
 }

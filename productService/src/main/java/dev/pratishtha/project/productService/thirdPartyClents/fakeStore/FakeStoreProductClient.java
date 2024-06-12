@@ -169,4 +169,17 @@ public class FakeStoreProductClient {
         return fakeStoreProductsList;
 
     }
+
+
+//    For creating a new product
+    public FakeStoreProductDTO createNewProductInFakeStore(FakeStoreProductDTO fakeStoreProductRequest) {
+
+        ResponseEntity<FakeStoreProductDTO> responseEntity = restTemplate.postForEntity(
+                productRequestUrl, fakeStoreProductRequest, FakeStoreProductDTO.class
+        );
+
+        FakeStoreProductDTO fakeStoreProductResponse = responseEntity.getBody();
+
+        return fakeStoreProductResponse;
+    }
 }

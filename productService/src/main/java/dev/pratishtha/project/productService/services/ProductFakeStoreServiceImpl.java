@@ -96,6 +96,18 @@ public class ProductFakeStoreServiceImpl implements ProductService{
         return genericProductsList;
     }
 
+    @Override
+    public GenericProductDTO createNewProduct(GenericProductDTO genericProductRequest) {
+        FakeStoreProductDTO fakeStoreProductRequest =
+                convertGenericProductDTOToFakeStoreProductDTO(genericProductRequest);
+
+        FakeStoreProductDTO fakeStoreProductDTO = fakeStoreProductClient.createNewProductInFakeStore(fakeStoreProductRequest);
+
+        GenericProductDTO genericProductDTO = convertFakeStoreProductDTOToGenericProductDTO(fakeStoreProductDTO);
+
+        return genericProductDTO;
+    }
+
     private GenericProductDTO convertFakeStoreProductDTOToGenericProductDTO (FakeStoreProductDTO fakeStoreProductDTO) {
         GenericProductDTO genericProductDTO = new GenericProductDTO();
 
@@ -107,5 +119,18 @@ public class ProductFakeStoreServiceImpl implements ProductService{
         genericProductDTO.setPriceVal(fakeStoreProductDTO.getPrice());
 
         return genericProductDTO;
+    }
+
+    private FakeStoreProductDTO convertGenericProductDTOToFakeStoreProductDTO (GenericProductDTO genericProductDTO) {
+        FakeStoreProductDTO fakeStoreProductDTO = new FakeStoreProductDTO();
+
+        fakeStoreProductDTO.setId(Long.valueOf(genericProductDTO.getId()));
+        fakeStoreProductDTO.setTitle(genericProductDTO.getTitle());
+        fakeStoreProductDTO.setDescription(genericProductDTO.getDescription());
+        fakeStoreProductDTO.setCategory(genericProductDTO.getCategory_name());
+        fakeStoreProductDTO.setImage(genericProductDTO.getImage());
+        fakeStoreProductDTO.setPrice(genericProductDTO.getPriceVal());
+
+        return fakeStoreProductDTO;
     }
 }
