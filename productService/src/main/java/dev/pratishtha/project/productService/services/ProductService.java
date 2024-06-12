@@ -16,4 +16,6 @@ public interface ProductService {
     List<GenericProductDTO> getProductByIdWithLimit(int limit);
 
     List<GenericProductDTO> getProductByIdWithSort(String sortType);
+
+    List<String> getAllCategories();
 }

@@ -41,4 +41,9 @@ public class ProductFakeStoreController {
     public List<GenericProductDTO> getProductByIdWithSort (@PathVariable ("sortType") String sortType) throws IdNotFoundException {
         return productService.getProductByIdWithSort(sortType);
     }
+
+    @GetMapping("/categories")
+    public List<String> getAllCategories () {
+        return productService.getAllCategories();
+    }
 }

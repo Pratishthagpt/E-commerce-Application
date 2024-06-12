@@ -74,6 +74,24 @@ public class ProductFakeStoreServiceImpl implements ProductService{
         return genericProductList;
     }
 
+    @Override
+    public List<String> getAllCategories() {
+//        List<String> fakeStoreCategoryDTOs = fakeStoreProductClient.getAllCategoriesFromFakeStore();
+//
+//        List<GenericCategoryDTO> genericCategoryList = new ArrayList<>();
+//
+//        for (String fakeStoreCategory : fakeStoreCategoryDTOs) {
+//            GenericCategoryDTO genericCategoryDTO = new GenericCategoryDTO();
+//            genericCategoryDTO.setName(fakeStoreCategory);
+//
+//            genericCategoryList.add(genericCategoryDTO);
+//        }
+//
+//        return genericCategoryList;
+
+        return fakeStoreProductClient.getAllCategoriesFromFakeStore();
+    }
+
     private GenericProductDTO convertFakeStoreProductDTOToGenericProductDTO (FakeStoreProductDTO fakeStoreProductDTO) {
         GenericProductDTO genericProductDTO = new GenericProductDTO();
 

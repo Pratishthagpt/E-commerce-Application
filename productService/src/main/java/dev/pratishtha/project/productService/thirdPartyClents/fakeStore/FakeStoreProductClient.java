@@ -22,15 +22,18 @@ public class FakeStoreProductClient {
 
     private String productUrl;
     private String productRequestUrl;
+    private String categoryRequestUrl;
     private RestTemplate restTemplate;
 
     @Autowired
     public FakeStoreProductClient(RestTemplateBuilder restTemplateBuilder,
                                   @Value("${fakestore.api.baseurl}") String fakeStoreBaseUrl,
-                                  @Value("${fakestore.api.product}") String fakeStoreProductUrl) {
+                                  @Value("${fakestore.api.product}") String fakeStoreProductUrl,
+                                  @Value("${fakestore.api.category}") String fakeStoreCategoryUrl) {
         this.restTemplateBuilder = restTemplateBuilder;
         this.productUrl = fakeStoreBaseUrl + fakeStoreProductUrl + "/{id}";
         this.productRequestUrl = fakeStoreBaseUrl + fakeStoreProductUrl;
+        this.categoryRequestUrl = fakeStoreBaseUrl + fakeStoreProductUrl + fakeStoreCategoryUrl;
 
 //        creating the object of rest template
         this.restTemplate = restTemplateBuilder.build();
@@ -78,6 +81,7 @@ public class FakeStoreProductClient {
 
     }
 
+    //    For Get a list of products with limit
     public List<FakeStoreProductDTO> getAllProductsWithLimitFromFakeStore(int limit) {
 
         String productUrlWithLimit = productRequestUrl + "?limit=" + limit;
@@ -97,6 +101,7 @@ public class FakeStoreProductClient {
         return fakeStoreProductsList;
     }
 
+    //    For Get a list of products as per sorting type
     public List<FakeStoreProductDTO> getAllProductsWithSortingFromFakeStore(String sortType) {
         String sort = "asc";
 
@@ -119,5 +124,24 @@ public class FakeStoreProductClient {
             fakeStoreProductsList.add(product);
         }
         return fakeStoreProductsList;
+    }
+
+
+//    For Get a list of categories in product
+    public List<String> getAllCategoriesFromFakeStore() {
+
+        ResponseEntity<String[]> responseEntity =
+                restTemplate.getForEntity(categoryRequestUrl, String[].class);
+
+//        because response entity contains status code, headers, body, so we extract body from response entity
+        String[] fakeStoreCategoryResponse = responseEntity.getBody();
+
+//        converting array to list
+        List<String> fakeStoreCategoryList = new ArrayList<>();
+
+        for (String product : fakeStoreCategoryResponse) {
+            fakeStoreCategoryList.add(product);
+        }
+        return fakeStoreCategoryList;
     }
 }
