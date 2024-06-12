@@ -54,4 +54,9 @@ public class ProductFakeStoreController {
     public GenericProductDTO addNewProduct (@RequestBody GenericProductDTO genericProductDTO) {
         return productService.createNewProduct(genericProductDTO);
     }
+
+    @PutMapping("{id}")
+    public GenericProductDTO updateProductById (@PathVariable ("id") String id, @RequestBody GenericProductDTO genericProductRequest) {
+        return productService.updateProductById(id, genericProductRequest);
+    }
 }

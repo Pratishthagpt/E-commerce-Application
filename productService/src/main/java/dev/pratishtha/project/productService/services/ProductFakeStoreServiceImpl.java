@@ -102,8 +102,25 @@ public class ProductFakeStoreServiceImpl implements ProductService{
                 convertGenericProductDTOToFakeStoreProductDTO(genericProductRequest);
 
         FakeStoreProductDTO fakeStoreProductDTO = fakeStoreProductClient.createNewProductInFakeStore(fakeStoreProductRequest);
+//        Remember that nothing in real will insert into the fakestore database. so if we access the new id we will get a 404 error.
 
         GenericProductDTO genericProductDTO = convertFakeStoreProductDTOToGenericProductDTO(fakeStoreProductDTO);
+
+        return genericProductDTO;
+    }
+
+    @Override
+    public GenericProductDTO updateProductById(String id, GenericProductDTO genericProductRequest) {
+
+        FakeStoreProductDTO fakeStoreProductRequest =
+                convertGenericProductDTOToFakeStoreProductDTO(genericProductRequest);
+
+//        remember that nothing in real will update in the database of fake store API
+        FakeStoreProductDTO fakeStoreProductDTO =
+                fakeStoreProductClient.updateProductById(id, fakeStoreProductRequest);
+
+        GenericProductDTO genericProductDTO =
+                convertFakeStoreProductDTOToGenericProductDTO(fakeStoreProductDTO);
 
         return genericProductDTO;
     }

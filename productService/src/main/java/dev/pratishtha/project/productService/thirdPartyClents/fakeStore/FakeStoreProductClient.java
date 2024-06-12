@@ -6,6 +6,8 @@ import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.dtos.Fak
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -177,6 +179,30 @@ public class FakeStoreProductClient {
         ResponseEntity<FakeStoreProductDTO> responseEntity = restTemplate.postForEntity(
                 productRequestUrl, fakeStoreProductRequest, FakeStoreProductDTO.class
         );
+
+//        Remember that nothing in real will insert into the fakestore database. so if we access the new id we will get a 404 error.
+
+
+        FakeStoreProductDTO fakeStoreProductResponse = responseEntity.getBody();
+
+        return fakeStoreProductResponse;
+    }
+
+
+    public FakeStoreProductDTO updateProductById(String id, FakeStoreProductDTO fakeStoreProductRequest) {
+
+//        product request url
+        String productPath = productRequestUrl + "/" + id;
+
+//        getting response entity wrapping around object as response from third part api while hitting its url and also takes id as parameter
+//        using exchange method here, because put method returns void
+//        remember that nothing in real will update in the database of fake store API
+        ResponseEntity<FakeStoreProductDTO> responseEntity =
+                restTemplate.exchange(productPath,
+                        HttpMethod.PUT,
+                        new HttpEntity<>(fakeStoreProductRequest),
+                        FakeStoreProductDTO.class,
+                        id);
 
         FakeStoreProductDTO fakeStoreProductResponse = responseEntity.getBody();
 
