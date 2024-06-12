@@ -1,6 +1,7 @@
 package dev.pratishtha.project.productService.services;
 
 import dev.pratishtha.project.productService.dtos.GenericProductDTO;
+import dev.pratishtha.project.productService.exceptions.CategoryNotFoundException;
 import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -18,4 +19,6 @@ public interface ProductService {
     List<GenericProductDTO> getProductByIdWithSort(String sortType);
 
     List<String> getAllCategories();
+
+    List<GenericProductDTO> getAllProductsByCategory(String category) throws CategoryNotFoundException;
 }

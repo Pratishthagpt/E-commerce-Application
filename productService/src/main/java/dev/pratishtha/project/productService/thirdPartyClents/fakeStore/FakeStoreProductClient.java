@@ -1,5 +1,6 @@
 package dev.pratishtha.project.productService.thirdPartyClents.fakeStore;
 
+import dev.pratishtha.project.productService.exceptions.CategoryNotFoundException;
 import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.dtos.FakeStoreProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,5 +144,29 @@ public class FakeStoreProductClient {
             fakeStoreCategoryList.add(product);
         }
         return fakeStoreCategoryList;
+    }
+
+
+//    For Get a list of products by category
+    public List<FakeStoreProductDTO> getAllProductsByCategoryFromFakeStore(String category) throws CategoryNotFoundException {
+        String productsByCategoryUrl = productRequestUrl + "/category/" + category;
+
+        ResponseEntity<FakeStoreProductDTO[]> responseEntity = restTemplate.getForEntity(
+                productsByCategoryUrl, FakeStoreProductDTO[].class, category);
+
+        FakeStoreProductDTO[] fakeStoreProductResponse = responseEntity.getBody();
+
+        if (fakeStoreProductResponse.length == 0) {
+            throw new CategoryNotFoundException("Category with name - " + category + " not found.");
+        }
+
+//        converting array to list
+        List<FakeStoreProductDTO> fakeStoreProductsList = new ArrayList<>();
+
+        for (FakeStoreProductDTO product : fakeStoreProductResponse) {
+            fakeStoreProductsList.add(product);
+        }
+        return fakeStoreProductsList;
+
     }
 }

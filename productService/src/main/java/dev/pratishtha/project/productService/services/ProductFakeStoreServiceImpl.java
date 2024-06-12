@@ -1,6 +1,7 @@
 package dev.pratishtha.project.productService.services;
 
 import dev.pratishtha.project.productService.dtos.GenericProductDTO;
+import dev.pratishtha.project.productService.exceptions.CategoryNotFoundException;
 import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.FakeStoreProductClient;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.dtos.FakeStoreProductDTO;
@@ -76,20 +77,23 @@ public class ProductFakeStoreServiceImpl implements ProductService{
 
     @Override
     public List<String> getAllCategories() {
-//        List<String> fakeStoreCategoryDTOs = fakeStoreProductClient.getAllCategoriesFromFakeStore();
-//
-//        List<GenericCategoryDTO> genericCategoryList = new ArrayList<>();
-//
-//        for (String fakeStoreCategory : fakeStoreCategoryDTOs) {
-//            GenericCategoryDTO genericCategoryDTO = new GenericCategoryDTO();
-//            genericCategoryDTO.setName(fakeStoreCategory);
-//
-//            genericCategoryList.add(genericCategoryDTO);
-//        }
-//
-//        return genericCategoryList;
-
         return fakeStoreProductClient.getAllCategoriesFromFakeStore();
+    }
+
+    @Override
+    public List<GenericProductDTO> getAllProductsByCategory(String category) throws CategoryNotFoundException {
+        List<FakeStoreProductDTO> fakeStoreProductDTOS =
+                fakeStoreProductClient.getAllProductsByCategoryFromFakeStore(category);
+
+        List<GenericProductDTO> genericProductsList = new ArrayList<>();
+        for (FakeStoreProductDTO fakeStoreProductDTO : fakeStoreProductDTOS) {
+            GenericProductDTO genericProductDTO =
+                    convertFakeStoreProductDTOToGenericProductDTO(fakeStoreProductDTO);
+
+            genericProductsList.add(genericProductDTO);
+        }
+
+        return genericProductsList;
     }
 
     private GenericProductDTO convertFakeStoreProductDTOToGenericProductDTO (FakeStoreProductDTO fakeStoreProductDTO) {
