@@ -28,5 +28,5 @@ public interface ProductService {
 
     GenericProductDTO updateSubProductById(String id, GenericProductDTO genericProductRequest);
 
-    GenericProductDTO deleteProductById(String id);
+    GenericProductDTO deleteProductById(String id) throws IdNotFoundException;
 }

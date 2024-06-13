@@ -142,9 +142,13 @@ public class ProductFakeStoreServiceImpl implements ProductService{
     }
 
     @Override
-    public GenericProductDTO deleteProductById(String id) {
+    public GenericProductDTO deleteProductById(String id) throws IdNotFoundException {
         FakeStoreProductDTO fakeStoreProductDTO =
                 fakeStoreProductClient.deleteProductById(id);
+
+        if (fakeStoreProductDTO == null) {
+            throw new IdNotFoundException("Product with id - " + id + " not found. So, it cannot be deleted");
+        }
 
         GenericProductDTO deletedGenericProduct =
                 convertFakeStoreProductDTOToGenericProductDTO(fakeStoreProductDTO);

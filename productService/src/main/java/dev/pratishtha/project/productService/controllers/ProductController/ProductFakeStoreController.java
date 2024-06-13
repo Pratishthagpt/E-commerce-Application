@@ -66,7 +66,7 @@ public class ProductFakeStoreController {
     }
 
     @DeleteMapping("{id}")
-    public GenericProductDTO deleteProductById(@PathVariable ("id") String id) {
+    public GenericProductDTO deleteProductById(@PathVariable ("id") String id) throws IdNotFoundException {
         return productService.deleteProductById(id);
     }
 }
