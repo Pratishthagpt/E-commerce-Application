@@ -24,5 +24,8 @@ public class ProductControllerForDatabase {
         return productService.getAllProducts();
     }
 
-
+    @PostMapping
+    public GenericProductDTO addNewProduct (@RequestBody GenericProductDTO genericProductDTO) {
+        return productService.createNewProduct(genericProductDTO);
+    }
 }
