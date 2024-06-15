@@ -5,18 +5,19 @@ import dev.pratishtha.project.productService.exceptions.CategoryNotFoundExceptio
 import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/fakestore/products")
-public class ProductFakeStoreController {
+public class ProductControllerForFakeStore {
 
     private ProductService productService;
 
     @Autowired
-    public ProductFakeStoreController(ProductService productService) {
+    public ProductControllerForFakeStore(@Qualifier("fakeStoreProductServiceImpl") ProductService productService) {
         this.productService = productService;
     }
 

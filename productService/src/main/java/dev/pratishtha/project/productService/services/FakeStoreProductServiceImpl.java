@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ProductFakeStoreServiceImpl implements ProductService{
+public class FakeStoreProductServiceImpl implements ProductService{
 
     private FakeStoreProductClient fakeStoreProductClient;
 
     @Autowired
-    public ProductFakeStoreServiceImpl(FakeStoreProductClient fakeStoreProductClient) {
+    public FakeStoreProductServiceImpl(FakeStoreProductClient fakeStoreProductClient) {
         this.fakeStoreProductClient = fakeStoreProductClient;
     }
 
