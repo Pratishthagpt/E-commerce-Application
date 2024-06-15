@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class DatabaseProductServiceImpl implements ProductService{
@@ -46,7 +47,17 @@ public class DatabaseProductServiceImpl implements ProductService{
 
     @Override
     public GenericProductDTO getProductsById(String id) throws IdNotFoundException {
-        return null;
+        UUID productId = UUID.fromString(id);
+
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            throw new IdNotFoundException("Product with id - " + id + " not found.");
+        }
+        Product product = productOptional.get();
+
+        GenericProductDTO genericProductDTO = convertProductToGenericProductDto(product);
+
+        return genericProductDTO;
     }
 
     @Override

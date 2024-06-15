@@ -1,6 +1,7 @@
 package dev.pratishtha.project.productService.controllers.ProductController;
 
 import dev.pratishtha.project.productService.dtos.GenericProductDTO;
+import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,8 +25,13 @@ public class ProductControllerForDatabase {
         return productService.getAllProducts();
     }
 
-    @PostMapping
+    @PostMapping()
     public GenericProductDTO addNewProduct (@RequestBody GenericProductDTO genericProductDTO) {
         return productService.createNewProduct(genericProductDTO);
+    }
+
+    @GetMapping("{id}")
+    public GenericProductDTO getProductById (@PathVariable ("id") String id) throws IdNotFoundException {
+        return productService.getProductsById(id);
     }
 }
