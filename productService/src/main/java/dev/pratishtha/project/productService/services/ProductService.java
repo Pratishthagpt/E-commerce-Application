@@ -14,9 +14,9 @@ public interface ProductService {
 
     GenericProductDTO getProductsById(String id) throws IdNotFoundException;
 
-    List<GenericProductDTO> getProductByIdWithLimit(int limit);
+    List<GenericProductDTO> getProductsWithLimit(int limit);
 
-    List<GenericProductDTO> getProductByIdWithSort(String sortType);
+    List<GenericProductDTO> getAllProductsWithSort(String sortType);
 
     List<String> getAllCategories();
 

@@ -34,4 +34,9 @@ public class ProductControllerForDatabase {
     public GenericProductDTO getProductById (@PathVariable ("id") String id) throws IdNotFoundException {
         return productService.getProductsById(id);
     }
+
+    @GetMapping("/limit/{limit}")
+    public List<GenericProductDTO> getProductsWithLimit (@PathVariable ("limit") int limit){
+        return productService.getProductsWithLimit(limit);
+    }
 }

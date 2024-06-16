@@ -61,12 +61,20 @@ public class DatabaseProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<GenericProductDTO> getProductByIdWithLimit(int limit) {
-        return List.of();
+    public List<GenericProductDTO> getProductsWithLimit(int limit) {
+        List<Product> products = productRepository.findProductsByLimit(limit);
+
+        List<GenericProductDTO> genericProductDTOS = new ArrayList<>();
+
+        for (Product product : products) {
+            GenericProductDTO genericProduct = convertProductToGenericProductDto(product);
+            genericProductDTOS.add(genericProduct);
+        }
+        return genericProductDTOS;
     }
 
     @Override
-    public List<GenericProductDTO> getProductByIdWithSort(String sortType) {
+    public List<GenericProductDTO> getAllProductsWithSort(String sortType) {
         return List.of();
     }
 

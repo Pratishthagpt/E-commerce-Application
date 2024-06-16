@@ -46,7 +46,7 @@ public class FakeStoreProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<GenericProductDTO> getProductByIdWithLimit(int limit) {
+    public List<GenericProductDTO> getProductsWithLimit(int limit) {
         List<FakeStoreProductDTO> fakeStoreProductDTOS =
                 fakeStoreProductClient.getAllProductsWithLimitFromFakeStore(limit);
 
@@ -61,7 +61,7 @@ public class FakeStoreProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<GenericProductDTO> getProductByIdWithSort(String sortType) {
+    public List<GenericProductDTO> getAllProductsWithSort(String sortType) {
         List<FakeStoreProductDTO> fakeStoreProductDTOS =
                 fakeStoreProductClient.getAllProductsWithSortingFromFakeStore(sortType);
 

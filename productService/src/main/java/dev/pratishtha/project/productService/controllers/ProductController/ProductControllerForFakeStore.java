@@ -32,13 +32,13 @@ public class ProductControllerForFakeStore {
     }
 
     @GetMapping("/limit/{limit}")
-    public List<GenericProductDTO> getProductByIdWithLimit (@PathVariable ("limit") int limit) throws IdNotFoundException {
-        return productService.getProductByIdWithLimit(limit);
+    public List<GenericProductDTO> getProductsWithLimit (@PathVariable ("limit") int limit) {
+        return productService.getProductsWithLimit(limit);
     }
 
     @GetMapping("/sort/{sortType}")
     public List<GenericProductDTO> getProductByIdWithSort (@PathVariable ("sortType") String sortType) throws IdNotFoundException {
-        return productService.getProductByIdWithSort(sortType);
+        return productService.getAllProductsWithSort(sortType);
     }
 
     @GetMapping("/categories")
