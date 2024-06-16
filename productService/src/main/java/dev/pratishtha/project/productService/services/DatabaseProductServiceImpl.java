@@ -74,8 +74,45 @@ public class DatabaseProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<GenericProductDTO> getAllProductsWithSort(String sortType) {
-        return List.of();
+    public List<GenericProductDTO> getAllProductsWithSortById(String sortType) {
+
+        List<Product> products;
+
+        if (sortType.equalsIgnoreCase("Descending") || sortType.equalsIgnoreCase("desc")) {
+            products = productRepository.findAllByOrderByUuidDesc();
+        }
+        else {
+            products = productRepository.findAll();
+        }
+
+        List<GenericProductDTO> genericProductDTOS = new ArrayList<>();
+
+        for (Product product : products) {
+            GenericProductDTO genericProduct = convertProductToGenericProductDto(product);
+            genericProductDTOS.add(genericProduct);
+        }
+        return genericProductDTOS;
+
+    }
+
+    @Override
+    public List<GenericProductDTO> getAllProductsWithSortByTitle(String sortType) {
+        List<Product> products;
+
+        if (sortType.equalsIgnoreCase("Descending") || sortType.equalsIgnoreCase("desc")) {
+            products = productRepository.findAllByOrderByTitleDesc();
+        }
+        else {
+            products = productRepository.findAllByOrderByTitleAsc();
+        }
+
+        List<GenericProductDTO> genericProductDTOS = new ArrayList<>();
+
+        for (Product product : products) {
+            GenericProductDTO genericProduct = convertProductToGenericProductDto(product);
+            genericProductDTOS.add(genericProduct);
+        }
+        return genericProductDTOS;
     }
 
     @Override
@@ -145,6 +182,7 @@ public class DatabaseProductServiceImpl implements ProductService{
     public GenericProductDTO deleteProductById(String id) throws IdNotFoundException {
         return null;
     }
+
 
     public GenericProductDTO convertProductToGenericProductDto (Product product) {
         GenericProductDTO genericProductDTO = new GenericProductDTO();

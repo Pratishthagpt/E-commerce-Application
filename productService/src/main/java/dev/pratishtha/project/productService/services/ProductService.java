@@ -16,7 +16,7 @@ public interface ProductService {
 
     List<GenericProductDTO> getProductsWithLimit(int limit);
 
-    List<GenericProductDTO> getAllProductsWithSort(String sortType);
+    List<GenericProductDTO> getAllProductsWithSortById(String sortType);
 
     List<String> getAllCategories();
 
@@ -29,4 +29,6 @@ public interface ProductService {
     GenericProductDTO updateSubProductById(String id, GenericProductDTO genericProductRequest);
 
     GenericProductDTO deleteProductById(String id) throws IdNotFoundException;
+
+    List<GenericProductDTO> getAllProductsWithSortByTitle(String sortType);
 }

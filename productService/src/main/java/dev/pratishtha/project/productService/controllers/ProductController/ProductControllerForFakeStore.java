@@ -37,8 +37,8 @@ public class ProductControllerForFakeStore {
     }
 
     @GetMapping("/sort/{sortType}")
-    public List<GenericProductDTO> getProductByIdWithSort (@PathVariable ("sortType") String sortType) throws IdNotFoundException {
-        return productService.getAllProductsWithSort(sortType);
+    public List<GenericProductDTO> getAllProductsWithSort (@PathVariable ("sortType") String sortType) throws IdNotFoundException {
+        return productService.getAllProductsWithSortById(sortType);
     }
 
     @GetMapping("/categories")

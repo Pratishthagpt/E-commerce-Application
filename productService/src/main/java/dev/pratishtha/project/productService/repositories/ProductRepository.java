@@ -14,4 +14,12 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     @Query(value = SqlQueries.GET_ALL_PRODUCTS_WITH_LIMIT, nativeQuery = true)
     List<Product> findProductsByLimit(int limit);
+
+    List<Product> findAllByOrderByUuidDesc ();
+
+    List<Product> findAllByOrderByTitleDesc ();
+
+    List<Product> findAllByOrderByTitleAsc ();
+
+
 }

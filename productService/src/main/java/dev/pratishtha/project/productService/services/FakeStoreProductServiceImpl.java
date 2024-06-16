@@ -61,7 +61,7 @@ public class FakeStoreProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<GenericProductDTO> getAllProductsWithSort(String sortType) {
+    public List<GenericProductDTO> getAllProductsWithSortById(String sortType) {
         List<FakeStoreProductDTO> fakeStoreProductDTOS =
                 fakeStoreProductClient.getAllProductsWithSortingFromFakeStore(sortType);
 
@@ -154,6 +154,11 @@ public class FakeStoreProductServiceImpl implements ProductService{
                 convertFakeStoreProductDTOToGenericProductDTO(fakeStoreProductDTO);
 
         return deletedGenericProduct;
+    }
+
+    @Override
+    public List<GenericProductDTO> getAllProductsWithSortByTitle(String sortType) {
+        return List.of();
     }
 
     private GenericProductDTO convertFakeStoreProductDTOToGenericProductDTO (FakeStoreProductDTO fakeStoreProductDTO) {

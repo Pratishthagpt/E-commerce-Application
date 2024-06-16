@@ -39,4 +39,13 @@ public class ProductControllerForDatabase {
     public List<GenericProductDTO> getProductsWithLimit (@PathVariable ("limit") int limit){
         return productService.getProductsWithLimit(limit);
     }
+
+    @GetMapping("/sort-by-id/{sortType}")
+    public List<GenericProductDTO> getAllProductsWithSortById(@PathVariable ("sortType") String sortType) throws IdNotFoundException {
+        return productService.getAllProductsWithSortById(sortType);
+    }
+    @GetMapping("/sort-by-title/{sortType}")
+    public List<GenericProductDTO> getAllProductsWithSortByTitle(@PathVariable ("sortType") String sortType) throws IdNotFoundException {
+        return productService.getAllProductsWithSortByTitle(sortType);
+    }
 }
