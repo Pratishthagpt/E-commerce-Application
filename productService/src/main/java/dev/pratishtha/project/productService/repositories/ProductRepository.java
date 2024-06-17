@@ -1,5 +1,6 @@
 package dev.pratishtha.project.productService.repositories;
 
+import dev.pratishtha.project.productService.models.Category;
 import dev.pratishtha.project.productService.models.Product;
 import dev.pratishtha.project.productService.models.SqlQueries;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,5 +22,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     List<Product> findAllByOrderByTitleAsc ();
 
+    List<Product> findAllByCategory(Category category);
 
 }

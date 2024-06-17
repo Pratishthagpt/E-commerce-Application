@@ -1,6 +1,7 @@
 package dev.pratishtha.project.productService.controllers.ProductController;
 
 import dev.pratishtha.project.productService.dtos.GenericProductDTO;
+import dev.pratishtha.project.productService.exceptions.CategoryNotFoundException;
 import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,4 +55,10 @@ public class ProductControllerForDatabase {
     public List<String> getAllCategories () {
         return productService.getAllCategories();
     }
+
+    @GetMapping("/category/{category-name}")
+    public List<GenericProductDTO> getAllProductsByCategory (@PathVariable ("category-name") String category) throws CategoryNotFoundException {
+        return productService.getAllProductsByCategory(category);
+    }
+
 }

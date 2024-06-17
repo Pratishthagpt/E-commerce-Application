@@ -128,8 +128,29 @@ public class DatabaseProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<GenericProductDTO> getAllProductsByCategory(String category) throws CategoryNotFoundException {
-        return List.of();
+    public List<GenericProductDTO> getAllProductsByCategory(String categoryRequest) throws CategoryNotFoundException {
+//        find the category object from category repository
+        Optional<Category> categoryOptional = categoryRepository.findByName(categoryRequest);
+
+//        check if category exists or not
+        if (categoryOptional.isEmpty()) {
+            throw new CategoryNotFoundException("Category with name - " + categoryRequest + " not found.");
+        }
+
+        Category category = categoryOptional.get();
+
+//        find all products by category from product repository
+        List<Product> products = productRepository.findAllByCategory(category);
+
+//        convert the product object into generic product object
+        List<GenericProductDTO> genericProductDTOS = new ArrayList<>();
+
+        for (Product product : products) {
+            GenericProductDTO genericProduct = convertProductToGenericProductDto(product);
+            genericProductDTOS.add(genericProduct);
+        }
+        return genericProductDTOS;
+
     }
 
     @Override
