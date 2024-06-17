@@ -208,7 +208,6 @@ public class DatabaseProductServiceImpl implements ProductService{
 
         Product product = productOptional.get();
 
-
 //        1. setting values for primitive datatypes of product
         product.setTitle(genericProductRequest.getTitle());
         product.setDescription(genericProductRequest.getDescription());
@@ -260,8 +259,65 @@ public class DatabaseProductServiceImpl implements ProductService{
     }
 
     @Override
-    public GenericProductDTO updateSubProductById(String id, GenericProductDTO genericProductRequest) {
-        return null;
+    public GenericProductDTO updateSubProductById(String id, GenericProductDTO genericProductRequest) throws IdNotFoundException {
+
+//        getting product by id from product repository
+        Optional<Product> productOptional = productRepository.findById(UUID.fromString(id));
+
+        if (productOptional.isEmpty()) {
+            throw new IdNotFoundException("Product with id - " + id + " not found.");
+        }
+
+        Product product = productOptional.get();
+
+//        1. setting values for primitive datatypes of product
+        product.setTitle(genericProductRequest.getTitle());
+        product.setDescription(genericProductRequest.getDescription());
+        product.setImage(genericProductRequest.getImage());
+
+//        2. Getting price from product, setting updated product price value and saving into db
+        Price price = product.getPrice();
+        price.setCurrency("INR");
+        price.setValue(genericProductRequest.getPriceVal());
+
+        Price savedPrice = priceRepository.save(price);
+        product.setPrice(savedPrice);
+
+//        getting the category of prev product before updating it
+        Category prevCategory = product.getCategory();
+
+//        3. Finding category by name, if category already present then assigning that category to
+//        product, else creating new category
+//        Adding category name and saving into db
+        Optional<Category> categoryOptional = categoryRepository.findByName(genericProductRequest.getCategory_name());
+        if (categoryOptional.isPresent()) {
+            Category category = categoryOptional.get();
+            product.setCategory(category);
+        }
+        else {
+            Category category = new Category();
+            category.setName(genericProductRequest.getCategory_name());
+
+            Category savedCategory = categoryRepository.save(category);
+            product.setCategory(savedCategory);
+        }
+
+//        4. saving the updated product into db
+        Product savedProduct = productRepository.save(product);
+
+//        check if the no. of products by category name of previous product is 0 or not,
+//        if its zero then, delete that category
+        List<Product> productsByCategory = productRepository.findAllByCategory(prevCategory);
+
+        if (productsByCategory.size() == 0) {
+            categoryRepository.deleteById(prevCategory.getUuid());
+        }
+
+//        5. converting the saved product into generic product dto to give response
+//        from controller to FE
+        GenericProductDTO updatedGenericProductDto = convertProductToGenericProductDto(savedProduct);
+
+        return updatedGenericProductDto;
     }
 
     @Override
