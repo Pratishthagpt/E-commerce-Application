@@ -44,8 +44,14 @@ public class ProductControllerForDatabase {
     public List<GenericProductDTO> getAllProductsWithSortById(@PathVariable ("sortType") String sortType) throws IdNotFoundException {
         return productService.getAllProductsWithSortById(sortType);
     }
+
     @GetMapping("/sort-by-title/{sortType}")
     public List<GenericProductDTO> getAllProductsWithSortByTitle(@PathVariable ("sortType") String sortType) throws IdNotFoundException {
         return productService.getAllProductsWithSortByTitle(sortType);
+    }
+
+    @GetMapping("/categories")
+    public List<String> getAllCategories () {
+        return productService.getAllCategories();
     }
 }

@@ -117,7 +117,14 @@ public class DatabaseProductServiceImpl implements ProductService{
 
     @Override
     public List<String> getAllCategories() {
-        return List.of();
+        List<Category> categories = categoryRepository.findAll();
+
+        List<String> categoryNames = new ArrayList<>();
+
+        for (Category category : categories) {
+            categoryNames.add(category.getName());
+        }
+        return categoryNames;
     }
 
     @Override
