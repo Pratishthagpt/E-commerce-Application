@@ -57,7 +57,7 @@ public class ProductControllerForFakeStore {
     }
 
     @PutMapping("{id}")
-    public GenericProductDTO updateProductById (@PathVariable ("id") String id, @RequestBody GenericProductDTO genericProductRequest) {
+    public GenericProductDTO updateProductById (@PathVariable ("id") String id, @RequestBody GenericProductDTO genericProductRequest) throws IdNotFoundException {
         return productService.updateProductById(id, genericProductRequest);
     }
 

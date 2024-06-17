@@ -61,4 +61,8 @@ public class ProductControllerForDatabase {
         return productService.getAllProductsByCategory(category);
     }
 
+    @PutMapping("{id}")
+    public GenericProductDTO updateProductById (@PathVariable ("id") String id, @RequestBody GenericProductDTO genericProductRequest) throws IdNotFoundException {
+        return productService.updateProductById(id, genericProductRequest);
+    }
 }
