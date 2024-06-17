@@ -322,7 +322,30 @@ public class DatabaseProductServiceImpl implements ProductService{
 
     @Override
     public GenericProductDTO deleteProductById(String id) throws IdNotFoundException {
-        return null;
+        Optional<Product> productOptional = productRepository.findById(UUID.fromString(id));
+
+        if (productOptional.isEmpty()) {
+            throw new IdNotFoundException("Product with id - " + id + " not found.");
+        }
+        Product product = productOptional.get();
+
+//        getting the category of prev product before updating it
+        Category prevCategory = product.getCategory();
+
+        GenericProductDTO genericProductDTO = convertProductToGenericProductDto(product);
+
+//        deleting the product
+        productRepository.deleteById(UUID.fromString(id));
+
+//        check if the no. of products by category name of previous product is 0 or not,
+//        if its zero then, delete that category
+        List<Product> productsByCategory = productRepository.findAllByCategory(prevCategory);
+
+        if (productsByCategory.size() == 0) {
+            categoryRepository.deleteById(prevCategory.getUuid());
+        }
+
+        return genericProductDTO;
     }
 
 

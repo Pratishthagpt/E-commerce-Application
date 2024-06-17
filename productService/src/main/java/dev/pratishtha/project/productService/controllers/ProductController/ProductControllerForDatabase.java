@@ -70,4 +70,9 @@ public class ProductControllerForDatabase {
     public GenericProductDTO updateSubProductById (@PathVariable ("id") String id, @RequestBody GenericProductDTO genericProductRequest) throws IdNotFoundException {
         return productService.updateSubProductById(id, genericProductRequest);
     }
+
+    @DeleteMapping("{id}")
+    public GenericProductDTO deleteProductById(@PathVariable ("id") String id) throws IdNotFoundException {
+        return productService.deleteProductById(id);
+    }
 }

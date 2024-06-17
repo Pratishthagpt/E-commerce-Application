@@ -15,7 +15,7 @@ public class Product extends BaseModel{
     private String description;
     private String image;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "category")
     private Category category;
 
