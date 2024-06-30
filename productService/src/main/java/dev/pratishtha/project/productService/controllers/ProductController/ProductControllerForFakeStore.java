@@ -6,6 +6,8 @@ import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,18 +54,23 @@ public class ProductControllerForFakeStore {
     }
 
     @PostMapping
-    public GenericProductDTO addNewProduct (@RequestBody GenericProductDTO genericProductDTO) {
-        return productService.createNewProduct(genericProductDTO);
+    public ResponseEntity<GenericProductDTO> addNewProduct (@RequestBody GenericProductDTO genericProductDTO) {
+        GenericProductDTO createdProduct = productService.createNewProduct(genericProductDTO);
+        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
-    public GenericProductDTO updateProductById (@PathVariable ("id") String id, @RequestBody GenericProductDTO genericProductRequest) throws IdNotFoundException {
-        return productService.updateProductById(id, genericProductRequest);
+    public ResponseEntity<GenericProductDTO> updateProductById (@PathVariable ("id") String id, @RequestBody GenericProductDTO genericProductRequest) throws IdNotFoundException {
+        GenericProductDTO productDTO = productService.updateProductById(id, genericProductRequest);
+
+        return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }
 
     @PatchMapping("{id}")
-    public GenericProductDTO updateSubProductById (@PathVariable ("id") String id, @RequestBody GenericProductDTO genericProductRequest) throws IdNotFoundException {
-        return productService.updateSubProductById(id, genericProductRequest);
+    public ResponseEntity<GenericProductDTO> updateSubProductById (@PathVariable ("id") String id, @RequestBody GenericProductDTO genericProductRequest) throws IdNotFoundException {
+        GenericProductDTO productDTO = productService.updateSubProductById(id, genericProductRequest);
+
+        return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
