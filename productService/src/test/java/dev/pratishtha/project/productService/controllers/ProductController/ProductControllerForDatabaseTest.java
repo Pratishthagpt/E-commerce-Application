@@ -1,14 +1,11 @@
 package dev.pratishtha.project.productService.controllers.ProductController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.pratishtha.project.productService.dtos.GenericProductDTO;
-import dev.pratishtha.project.productService.exceptions.CategoryNotFoundException;
 import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.services.ProductService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,35 +15,33 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.*;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ProductControllerForFakeStoreTest {
+public class ProductControllerForDatabaseTest {
 
     @Autowired
-    private ProductControllerForFakeStore productControllerForFakeStore;
+    private ProductControllerForDatabase productControllerForDatabase;
 
     @MockBean
-    @Qualifier("fakeStoreProductServiceImpl")
+    @Qualifier("databaseProductServiceImpl")
     private ProductService productServiceMock;
 
     @Autowired
     private MockMvc mockMvc;
 
-//    to convert json body to java object
+    //    to convert json body to java object
     @Autowired
     private ObjectMapper objectMapper;
 
-//  happy response
+    //  happy response
     @Test
     public void testGetAllProducts() throws Exception {
 //        Arrange
@@ -59,7 +54,7 @@ public class ProductControllerForFakeStoreTest {
                 .thenReturn(expectedProducts);
 
 //        Act
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/fakestore/products"))
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/db/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(expectedProducts.size()));
 
@@ -101,7 +96,7 @@ public class ProductControllerForFakeStoreTest {
                 .thenReturn(expectedProduct);
 
 //        Act
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/fakestore/products/1"))
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/db/products/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"));
 
@@ -124,13 +119,17 @@ public class ProductControllerForFakeStoreTest {
     public void testGetProductByIdGivesNullResponse() throws Exception {
 //        Arrange
         when(productServiceMock.getProductsById("1"))
-                .thenReturn(null);
+                .thenThrow(new IdNotFoundException("Product with id - 1 not found."));
 
 //        Act
-        GenericProductDTO responseProduct = productControllerForFakeStore.getProductById("1");
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/db/products/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Product with id - 1 not found."));
+
+        String responseString = resultActions.andReturn().getResponse().getContentAsString();
 
 //        Assert
-        Assertions.assertNull(responseProduct);
+        Assertions.assertTrue(responseString.contains("Product with id - 1 not found."));
     }
 
     @Test
@@ -149,7 +148,7 @@ public class ProductControllerForFakeStoreTest {
                 .thenReturn(expectedProducts);
 
 //        Act
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/fakestore/products/limit/2"))
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/db/products/limit/2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(expectedProducts.size()));
 
@@ -177,7 +176,7 @@ public class ProductControllerForFakeStoreTest {
     }
 
     @Test
-    public void testGetAllProductsWithSort() throws Exception {
+    public void getAllProductsWithSortById() throws Exception {
 //        Arrange
         List<GenericProductDTO> allProducts = Arrays.asList(
                 new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0),
@@ -191,7 +190,54 @@ public class ProductControllerForFakeStoreTest {
                 .thenReturn(expectedProducts);
 
 //        Act
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/fakestore/products/sort/desc"))
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/db/products/sort-by-id/desc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(expectedProducts.size()));
+
+        String responseString = resultActions.andReturn().getResponse().getContentAsString();
+
+        GenericProductDTO[] responseProducts = objectMapper.readValue(responseString, GenericProductDTO[].class);
+
+//        Assert
+        Assertions.assertNotNull(responseProducts);
+        Assertions.assertEquals(expectedProducts.size(), responseProducts.length);
+
+        Assertions.assertEquals(expectedProducts.get(0).getId(), responseProducts[0].getId());
+        Assertions.assertEquals(expectedProducts.get(0).getTitle(), responseProducts[0].getTitle());
+        Assertions.assertEquals(expectedProducts.get(0).getDescription(), responseProducts[0].getDescription());
+        Assertions.assertEquals(expectedProducts.get(0).getImage(), responseProducts[0].getImage());
+        Assertions.assertEquals(expectedProducts.get(0).getCategory_name(), responseProducts[0].getCategory_name());
+        Assertions.assertEquals(expectedProducts.get(0).getPriceVal(), responseProducts[0].getPriceVal());
+
+        Assertions.assertEquals(expectedProducts.get(1).getId(), responseProducts[1].getId());
+        Assertions.assertEquals(expectedProducts.get(1).getTitle(), responseProducts[1].getTitle());
+        Assertions.assertEquals(expectedProducts.get(1).getDescription(), responseProducts[1].getDescription());
+        Assertions.assertEquals(expectedProducts.get(1).getImage(), responseProducts[1].getImage());
+        Assertions.assertEquals(expectedProducts.get(1).getCategory_name(), responseProducts[1].getCategory_name());
+        Assertions.assertEquals(expectedProducts.get(1).getPriceVal(), responseProducts[1].getPriceVal());
+    }
+
+    @Test
+    public void testGetAllProductsWithSortByTitle() throws Exception {
+//        Arrange
+        List<GenericProductDTO> allProducts = Arrays.asList(
+                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0),
+                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0)
+        );
+
+        List<GenericProductDTO> expectedProducts = allProducts;
+        Collections.sort(expectedProducts, new Comparator<GenericProductDTO>() {
+            @Override
+            public int compare(GenericProductDTO a, GenericProductDTO b) {
+                return b.getTitle().compareTo(a.getTitle());
+            }
+        });
+
+        when(productServiceMock.getAllProductsWithSortByTitle("desc"))
+                .thenReturn(expectedProducts);
+
+//        Act
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/db/products/sort-by-title/desc"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(expectedProducts.size()));
 
@@ -231,7 +277,7 @@ public class ProductControllerForFakeStoreTest {
                 .thenReturn(expectedCategories);
 
 //        Act
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/fakestore/products/categories"))
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/db/products/categories"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(expectedCategories.size()));
 
@@ -262,7 +308,7 @@ public class ProductControllerForFakeStoreTest {
                 .thenReturn(expectedProducts);
 
 //        Act
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/fakestore/products/category/Electronics"))
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/db/products/category/Electronics"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(expectedProducts.size()));
 
@@ -289,7 +335,6 @@ public class ProductControllerForFakeStoreTest {
         Assertions.assertEquals(expectedProducts.get(1).getPriceVal(), responseProducts[1].getPriceVal());
     }
 
-
     @Test
     public void testGetAllProductsByCategoryGivesEmptyArray() throws Exception {
 //        Arrange
@@ -304,7 +349,7 @@ public class ProductControllerForFakeStoreTest {
                 .thenReturn(new ArrayList<>());
 
 //        Act
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/fakestore/products/category/Jewelery"))
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/db/products/category/Jewelery"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(0));
 
@@ -327,7 +372,7 @@ public class ProductControllerForFakeStoreTest {
                 .thenReturn(productToAdd);
 
 //        Act
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/fakestore/products")
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/db/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productToAdd)))
                 .andExpect(status().isCreated());
@@ -357,26 +402,51 @@ public class ProductControllerForFakeStoreTest {
 //        Arrange
         GenericProductDTO productToUpdate = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0);
 
-        when(productServiceMock.updateProductById("1", productToUpdate))
+        when(productServiceMock.updateProductById(any(String.class), any(GenericProductDTO.class)))
                 .thenReturn(productToUpdate);
 
 //        Act
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put("/fakestore/products/1")
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put("/db/products/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productToUpdate)))
                 .andExpect(status().isOk());
 
         String responseString = resultActions.andReturn().getResponse().getContentAsString();
 
-//        as we are hitting the third party fakestore api to update product,
-//        but actually the product is not created there, so it returns empty string "",
+        GenericProductDTO responseProduct = objectMapper.readValue(responseString, GenericProductDTO.class);
+
 //        Assert
-        Assertions.assertEquals("", responseString);
+        Assertions.assertNotNull(responseProduct);
+
+        Assertions.assertEquals(productToUpdate.getId(), responseProduct.getId());
+        Assertions.assertEquals(productToUpdate.getTitle(), responseProduct.getTitle());
+        Assertions.assertEquals(productToUpdate.getDescription(), responseProduct.getDescription());
+        Assertions.assertEquals(productToUpdate.getImage(), responseProduct.getImage());
+        Assertions.assertEquals(productToUpdate.getCategory_name(), responseProduct.getCategory_name());
+        Assertions.assertEquals(productToUpdate.getPriceVal(), responseProduct.getPriceVal());
     }
 
-//    Not testing for invalid id case bcoz we are not getting anything back from fakestore api and neither the products are actually getting updated,
-//    It's just for hitting the api. So, we are getting null after hitting api and that will then leads to throw exception,
-//    hence, we are just checking for whether we received 200 status code and an empty json string.
+    @Test
+    public void testUpdateProductByIdGivesErrorForInvalidId() throws Exception {
+//        Arrange
+        GenericProductDTO productToUpdate = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0);
+
+        when(productServiceMock.updateProductById(any(String.class), any(GenericProductDTO.class)))
+                .thenThrow(new IdNotFoundException("Product with id - 2 not found."));
+
+//        Act
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put("/db/products/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(productToUpdate)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Product with id - 2 not found."));
+
+        String responseString = resultActions.andReturn().getResponse().getContentAsString();
+
+//        Assert
+        Assertions.assertTrue(responseString.contains("Product with id - 2 not found."));
+}
+
     @Test
     public void testUpdateSubProductById() throws Exception {
 //        Arrange
@@ -385,23 +455,51 @@ public class ProductControllerForFakeStoreTest {
         productToUpdate.setDescription("Android Phone");
         productToUpdate.setPriceVal(40000.0);
 
-        when(productServiceMock.updateSubProductById("1", productToUpdate))
+        when(productServiceMock.updateSubProductById(any(String.class), any(GenericProductDTO.class)))
                 .thenReturn(productToUpdate);
 
 //        Act
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.patch("/fakestore/products/1")
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.patch("/db/products/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productToUpdate)))
                 .andExpect(status().isOk());
 
         String responseString = resultActions.andReturn().getResponse().getContentAsString();
 
-//        as we are hitting the third party fakestore api to update product,
-//        but actually the product is not created there, so it returns empty string "",
+       GenericProductDTO responseProduct = objectMapper.readValue(responseString, GenericProductDTO.class);
+
 //        Assert
-        Assertions.assertEquals("", responseString);
+        Assertions.assertNotNull(responseProduct);
+
+        Assertions.assertEquals(productToUpdate.getId(), responseProduct.getId());
+        Assertions.assertEquals(productToUpdate.getTitle(), responseProduct.getTitle());
+        Assertions.assertEquals(productToUpdate.getDescription(), responseProduct.getDescription());
+        Assertions.assertEquals(productToUpdate.getImage(), responseProduct.getImage());
+        Assertions.assertEquals(productToUpdate.getCategory_name(), responseProduct.getCategory_name());
+        Assertions.assertEquals(productToUpdate.getPriceVal(), responseProduct.getPriceVal());
+
     }
 
+    @Test
+    public void testUpdateSubProductByIdGivesErrorForInvalidId() throws Exception {
+//        Arrange
+        GenericProductDTO productToUpdate = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0);
+
+        when(productServiceMock.updateSubProductById(any(String.class), any(GenericProductDTO.class)))
+                .thenThrow(new IdNotFoundException("Product with id - 2 not found."));
+
+//        Act
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.patch("/db/products/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productToUpdate)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Product with id - 2 not found."));
+
+        String responseString = resultActions.andReturn().getResponse().getContentAsString();
+
+//        Assert
+        Assertions.assertTrue(responseString.contains("Product with id - 2 not found."));
+    }
 
     @Test
     public void testDeleteProductById() throws Exception {
@@ -412,7 +510,7 @@ public class ProductControllerForFakeStoreTest {
                 .thenReturn(productToDelete);
 
 //        Act
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.delete("/fakestore/products/1")
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.delete("/db/products/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -430,7 +528,7 @@ public class ProductControllerForFakeStoreTest {
                 .thenThrow(new IdNotFoundException("Product Id not found."));
 
 //        Act
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.delete("/fakestore/products/2")
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.delete("/db/products/2")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
@@ -440,4 +538,5 @@ public class ProductControllerForFakeStoreTest {
 //        Assert
         Assertions.assertTrue(responseString.contains("Product Id not found."));
     }
+
 }

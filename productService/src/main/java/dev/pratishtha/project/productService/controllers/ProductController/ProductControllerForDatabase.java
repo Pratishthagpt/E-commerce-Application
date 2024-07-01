@@ -6,6 +6,8 @@ import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,13 +29,16 @@ public class ProductControllerForDatabase {
     }
 
     @PostMapping()
-    public GenericProductDTO addNewProduct (@RequestBody GenericProductDTO genericProductDTO) {
-        return productService.createNewProduct(genericProductDTO);
+    public ResponseEntity<GenericProductDTO> addNewProduct (@RequestBody GenericProductDTO genericProductDTO) {
+        GenericProductDTO createdProduct = productService.createNewProduct(genericProductDTO);
+        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
     @GetMapping("{id}")
-    public GenericProductDTO getProductById (@PathVariable ("id") String id) throws IdNotFoundException {
-        return productService.getProductsById(id);
+    public ResponseEntity<GenericProductDTO> getProductById (@PathVariable ("id") String id) throws IdNotFoundException {
+        GenericProductDTO productDTO = productService.getProductsById(id);
+
+        return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }
 
     @GetMapping("/limit/{limit}")
