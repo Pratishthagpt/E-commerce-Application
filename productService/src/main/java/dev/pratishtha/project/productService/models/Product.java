@@ -1,7 +1,9 @@
 package dev.pratishtha.project.productService.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.engine.internal.Cascade;
@@ -9,6 +11,8 @@ import org.hibernate.engine.internal.Cascade;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Product extends BaseModel{
 
     private String title;
