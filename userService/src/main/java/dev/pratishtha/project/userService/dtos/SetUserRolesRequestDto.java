@@ -1,4 +1,4 @@
-package dev.pratishtha.project.userService.dto;
+package dev.pratishtha.project.userService.dtos;
 
 import lombok.Getter;
 import lombok.Setter;

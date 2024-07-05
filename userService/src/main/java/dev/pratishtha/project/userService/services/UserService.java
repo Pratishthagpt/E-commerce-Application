@@ -1,7 +1,6 @@
 package dev.pratishtha.project.userService.services;
 
-import dev.pratishtha.project.userService.dto.RoleDto;
-import dev.pratishtha.project.userService.dto.UserDto;
+import dev.pratishtha.project.userService.dtos.UserDto;
 import dev.pratishtha.project.userService.exceptions.UserNotFoundException;
 import dev.pratishtha.project.userService.models.Role;
 import dev.pratishtha.project.userService.models.User;

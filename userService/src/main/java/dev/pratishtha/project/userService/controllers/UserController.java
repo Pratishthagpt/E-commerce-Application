@@ -1,9 +1,8 @@
 package dev.pratishtha.project.userService.controllers;
 
 
-import dev.pratishtha.project.userService.dto.RoleDto;
-import dev.pratishtha.project.userService.dto.SetUserRolesRequestDto;
-import dev.pratishtha.project.userService.dto.UserDto;
+import dev.pratishtha.project.userService.dtos.SetUserRolesRequestDto;
+import dev.pratishtha.project.userService.dtos.UserDto;
 import dev.pratishtha.project.userService.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

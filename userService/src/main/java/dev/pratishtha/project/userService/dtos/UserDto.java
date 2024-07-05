@@ -1,4 +1,4 @@
-package dev.pratishtha.project.userService.dto;
+package dev.pratishtha.project.userService.dtos;
 
 import dev.pratishtha.project.userService.models.Role;
 import dev.pratishtha.project.userService.models.User;

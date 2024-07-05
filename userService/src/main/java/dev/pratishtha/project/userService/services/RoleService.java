@@ -1,6 +1,6 @@
 package dev.pratishtha.project.userService.services;
 
-import dev.pratishtha.project.userService.dto.RoleDto;
+import dev.pratishtha.project.userService.dtos.RoleDto;
 import dev.pratishtha.project.userService.exceptions.RoleAlreadyPresentException;
 import dev.pratishtha.project.userService.models.Role;
 import dev.pratishtha.project.userService.repositories.RoleRepository;
