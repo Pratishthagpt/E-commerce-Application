@@ -11,4 +11,5 @@ import java.util.UUID;
 @Repository
 public interface SessionRepository extends JpaRepository<Session, UUID> {
 
+    Session findByTokenAndUser(String token, User user);
 }

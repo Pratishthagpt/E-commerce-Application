@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -69,5 +70,24 @@ public class AuthService {
         session.setExpiryAt(expiryDate);
 
         return sessionRepository.save(session);
+    }
+
+    public void logoutUser(String userId, String token) {
+//        We are designing sessions with soft delete. If the session expire or user logout, then
+//        we just set the session status as ENDED and not delete the session from db. We are
+//        doing this bcoz if in future we will be needing the total session login by user, then
+//        we can easily compute that
+
+//        first get the user by userId
+        Optional<User> userOptional = userRepository.findById(UUID.fromString(userId));
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User with email does not exist.");
+        }
+        User user = userOptional.get();
+
+        Session session = sessionRepository.findByTokenAndUser(token, user);
+        session.setSessionStatus(SessionStatus.ENDED);
+
+        sessionRepository.save(session);
     }
 }

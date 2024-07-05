@@ -1,8 +1,6 @@
 package dev.pratishtha.project.userService.controllers;
 
-import dev.pratishtha.project.userService.dtos.LoginRequestDto;
-import dev.pratishtha.project.userService.dtos.SignUpRequestDto;
-import dev.pratishtha.project.userService.dtos.UserDto;
+import dev.pratishtha.project.userService.dtos.*;
 import dev.pratishtha.project.userService.models.Session;
 import dev.pratishtha.project.userService.models.User;
 import dev.pratishtha.project.userService.services.AuthService;
@@ -59,4 +57,11 @@ public class AuthController {
         return new ResponseEntity<>(userDto, headers, HttpStatus.OK);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<SuccessResponseDto> logoutUser (@RequestBody LogoutRequestDto logoutRequestDto) {
+        authService.logoutUser(logoutRequestDto.getUserId(), logoutRequestDto.getToken());
+
+        SuccessResponseDto successResponseDto = new SuccessResponseDto("User has successfully logout.", HttpStatus.OK);
+        return new ResponseEntity<>(successResponseDto, HttpStatus.OK);
+    }
 }
