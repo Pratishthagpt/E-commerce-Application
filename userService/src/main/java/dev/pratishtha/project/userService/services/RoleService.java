@@ -6,6 +6,9 @@ import dev.pratishtha.project.userService.repositories.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class RoleService {
 
@@ -26,5 +29,18 @@ public class RoleService {
         roleDto.setRole(savedRole);
 
         return roleDto;
+    }
+
+    public List<RoleDto> findAllRoles() {
+        List<Role> roleList = roleRepository.findAll();
+
+        List<RoleDto> roleDtosList = new ArrayList<>();
+
+        for (Role role : roleList) {
+            RoleDto roleDto = new RoleDto();
+            roleDto.setRole(role);
+            roleDtosList.add(roleDto);
+        }
+        return roleDtosList;
     }
 }
