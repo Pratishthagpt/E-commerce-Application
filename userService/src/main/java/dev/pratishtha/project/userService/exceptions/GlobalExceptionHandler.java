@@ -26,4 +26,23 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(new ExceptionDto(message, status), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(RoleAlreadyPresentException.class)
+    public ResponseEntity<ExceptionDto> handlePresentException (Exception e) {
+        String message;
+        HttpStatus status;
+
+        if (e instanceof RoleAlreadyPresentException) {
+            RoleAlreadyPresentException roleAlreadyPresentException = (RoleAlreadyPresentException) e;
+            message = roleAlreadyPresentException.getMessage();
+            status = HttpStatus.ALREADY_REPORTED;
+        }
+        else {
+            message = "An unexpected error occurred.";
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(new ExceptionDto(message, status), HttpStatus.ALREADY_REPORTED);
+
+    }
 }

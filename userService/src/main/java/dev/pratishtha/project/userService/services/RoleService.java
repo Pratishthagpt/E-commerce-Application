@@ -1,6 +1,7 @@
 package dev.pratishtha.project.userService.services;
 
 import dev.pratishtha.project.userService.dto.RoleDto;
+import dev.pratishtha.project.userService.exceptions.RoleAlreadyPresentException;
 import dev.pratishtha.project.userService.models.Role;
 import dev.pratishtha.project.userService.repositories.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RoleService {
@@ -20,6 +22,11 @@ public class RoleService {
     }
 
     public RoleDto createNewRole(String roleName) {
+        Optional<Role> roleOptional = roleRepository.findByRole(roleName);
+        if (roleOptional.isPresent()) {
+            throw new RoleAlreadyPresentException("Role - " + roleName + " already present. Duplicate not allowed.");
+        }
+
         Role role = new Role();
         role.setRole(roleName);
 
