@@ -9,6 +9,7 @@ import dev.pratishtha.project.userService.models.User;
 import dev.pratishtha.project.userService.repositories.SessionRepository;
 import dev.pratishtha.project.userService.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -21,18 +22,21 @@ public class AuthService {
 
     private UserRepository userRepository;
     private SessionRepository sessionRepository;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public AuthService(UserRepository userRepository, SessionRepository sessionRepository) {
+    public AuthService(UserRepository userRepository, SessionRepository sessionRepository,
+                       BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public UserDto signUpUser(String email, String username, String password) {
         User user = new User();
         user.setEmail(email);
         user.setUsername(username);
-        user.setPassword(password);
+        user.setPassword(bCryptPasswordEncoder.encode(password));
 
         User savedUser = userRepository.save(user);
         UserDto userDto = UserDto.fromUser(savedUser);
@@ -48,7 +52,8 @@ public class AuthService {
         }
         User user = userOptional.get();
 
-        if (!user.getPassword().equals(password)) {
+//        checking password using BCryptPasswordEncoder
+        if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new InvalidPasswordException("Password does not matches.");
         }
         return user;
