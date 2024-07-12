@@ -118,7 +118,7 @@ public class AuthService {
         Optional<Session> sessionOptional = sessionRepository.findByTokenAndUser(token, user);
 
         if (sessionOptional.isEmpty()) {
-            return SessionStatus.ENDED;
+            throw new SessionNotFoundException("Session not found, please login again.");
         }
 
         Session session = sessionOptional.get();
@@ -170,8 +170,6 @@ public class AuthService {
                 .claims(jwtData)
                 .signWith(secretKey)
                 .compact();
-
-        System.out.println(secretKey.toString());
 
         return token;
     }
