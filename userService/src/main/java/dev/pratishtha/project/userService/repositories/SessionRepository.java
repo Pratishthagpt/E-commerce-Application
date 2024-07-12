@@ -11,5 +11,7 @@ import java.util.UUID;
 @Repository
 public interface SessionRepository extends JpaRepository<Session, UUID> {
 
-    Session findByTokenAndUser(String token, User user);
+//    putting optional because it can be case that token is tampered and then it would be invalid
+//    and hence, we won;t be able to find session according to it.
+    Optional<Session> findByTokenAndUser(String token, User user);
 }

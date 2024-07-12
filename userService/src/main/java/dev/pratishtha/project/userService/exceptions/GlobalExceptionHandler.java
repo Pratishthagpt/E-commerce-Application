@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler({UserNotFoundException.class, SessionNotFoundException.class})
     public ResponseEntity<ExceptionDto> handleNotFoundException(Exception exception) {
         String message;
         HttpStatus status;
@@ -17,6 +17,11 @@ public class GlobalExceptionHandler {
         if (exception instanceof UserNotFoundException) {
             UserNotFoundException userNotFoundException = (UserNotFoundException) exception;
             message = userNotFoundException.getMessage();
+            status = HttpStatus.NOT_FOUND;
+        }
+        else if (exception instanceof SessionNotFoundException) {
+            SessionNotFoundException sessionNotFoundException = (SessionNotFoundException) exception;
+            message = sessionNotFoundException.getMessage();
             status = HttpStatus.NOT_FOUND;
         }
         else {
@@ -45,7 +50,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ExceptionDto(message, status), HttpStatus.ALREADY_REPORTED);
     }
 
-    @ExceptionHandler(InvalidPasswordException.class)
+    @ExceptionHandler({InvalidPasswordException.class, InvalidTokenException.class})
     public ResponseEntity<ExceptionDto> handleInvalidEntryException (Exception e) {
         String message;
         HttpStatus status;
@@ -55,6 +60,11 @@ public class GlobalExceptionHandler {
             message = invalidPasswordException.getMessage();
             status = HttpStatus.BAD_REQUEST;
         }
+        else if (e instanceof InvalidTokenException) {
+            InvalidTokenException invalidTokenException = (InvalidTokenException) e;
+            message = invalidTokenException.getMessage();
+            status = HttpStatus.BAD_REQUEST;
+        }
         else {
             message = "An unexpected error occurred.";
             status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -62,4 +72,6 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(new ExceptionDto(message, status), HttpStatus.BAD_REQUEST);
     }
+
+
 }

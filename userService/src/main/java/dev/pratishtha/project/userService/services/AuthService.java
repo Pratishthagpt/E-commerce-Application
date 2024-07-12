@@ -2,13 +2,15 @@ package dev.pratishtha.project.userService.services;
 
 import dev.pratishtha.project.userService.dtos.UserDto;
 import dev.pratishtha.project.userService.exceptions.InvalidPasswordException;
+import dev.pratishtha.project.userService.exceptions.InvalidTokenException;
+import dev.pratishtha.project.userService.exceptions.SessionNotFoundException;
 import dev.pratishtha.project.userService.exceptions.UserNotFoundException;
 import dev.pratishtha.project.userService.models.Session;
 import dev.pratishtha.project.userService.models.SessionStatus;
 import dev.pratishtha.project.userService.models.User;
 import dev.pratishtha.project.userService.repositories.SessionRepository;
 import dev.pratishtha.project.userService.repositories.UserRepository;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -94,7 +96,13 @@ public class AuthService {
         }
         User user = userOptional.get();
 
-        Session session = sessionRepository.findByTokenAndUser(token, user);
+        Optional<Session> sessionOptional = sessionRepository.findByTokenAndUser(token, user);
+
+        if (sessionOptional.isEmpty()) {
+            throw new SessionNotFoundException("Session not found, please login again.");
+        }
+
+        Session session = sessionOptional.get();
         session.setSessionStatus(SessionStatus.ENDED);
 
         sessionRepository.save(session);
@@ -107,12 +115,40 @@ public class AuthService {
         }
         User user = userOptional.get();
 
-        Session session = sessionRepository.findByTokenAndUser(token, user);
+        Optional<Session> sessionOptional = sessionRepository.findByTokenAndUser(token, user);
 
+        if (sessionOptional.isEmpty()) {
+            return SessionStatus.ENDED;
+        }
+
+        Session session = sessionOptional.get();
+
+//        If session is ended, don't need to check for token and expiry time
         if (!session.getSessionStatus().equals(SessionStatus.ACTIVE)) {
             return SessionStatus.ENDED;
         }
 
+        try {
+            Jws<Claims> claimsJwt = Jwts
+                    .parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token);
+
+            String email = claimsJwt.getPayload().get("email").toString();
+            String username = claimsJwt.getPayload().get("username").toString();
+
+            Long expiryAt = (Long) claimsJwt.getPayload().get("expiredAt");
+
+            //        checking for the accessing token time (current time) is greater than the expiry date
+            if (new Date().toInstant().toEpochMilli() > expiryAt) {
+//                throw new SessionHasExpiredException("Session has expired, please login again.");
+                return SessionStatus.ENDED;
+            }
+        }
+        catch (JwtException e) {
+            throw new InvalidTokenException("Token is invalid, please login again.");
+        }
         return SessionStatus.ACTIVE;
     }
 
