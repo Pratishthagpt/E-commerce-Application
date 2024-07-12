@@ -164,6 +164,7 @@ public class AuthService {
         jwtData.put("createdAt", new Date());
         jwtData.put("expiredAt", expiryDateUtil);
         jwtData.put("username", user.getUsername());
+//        jwtData.put("roles", user.getRoles());
 
         String token = Jwts
                 .builder()
