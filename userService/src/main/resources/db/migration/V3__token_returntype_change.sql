@@ -1,0 +1,2 @@
+ALTER TABLE session
+    MODIFY token VARCHAR(512) NULL;

@@ -1,13 +1,12 @@
 package dev.pratishtha.project.userService.services;
 
 import dev.pratishtha.project.userService.dtos.UserDto;
-import dev.pratishtha.project.userService.exceptions.InvalidPasswordException;
-import dev.pratishtha.project.userService.exceptions.InvalidTokenException;
-import dev.pratishtha.project.userService.exceptions.SessionNotFoundException;
-import dev.pratishtha.project.userService.exceptions.UserNotFoundException;
+import dev.pratishtha.project.userService.dtos.UserJwtData;
+import dev.pratishtha.project.userService.exceptions.*;
 import dev.pratishtha.project.userService.models.Session;
 import dev.pratishtha.project.userService.models.SessionStatus;
 import dev.pratishtha.project.userService.models.User;
+import dev.pratishtha.project.userService.models.Role;
 import dev.pratishtha.project.userService.repositories.SessionRepository;
 import dev.pratishtha.project.userService.repositories.UserRepository;
 import io.jsonwebtoken.*;
@@ -18,6 +17,8 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
+
 
 @Service
 public class AuthService {
@@ -108,7 +109,7 @@ public class AuthService {
         sessionRepository.save(session);
     }
 
-    public SessionStatus validateUserToken(String userId, String token) {
+    public UserJwtData validateUserToken(String userId, String token) {
         Optional<User> userOptional = userRepository.findById(UUID.fromString(userId));
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException("User with email does not exist.");
@@ -125,9 +126,10 @@ public class AuthService {
 
 //        If session is ended, don't need to check for token and expiry time
         if (!session.getSessionStatus().equals(SessionStatus.ACTIVE)) {
-            return SessionStatus.ENDED;
+            throw new SessionHasExpiredException("Session has expired, please login again.");
         }
 
+        UserJwtData userJwtData = new UserJwtData();
         try {
             Jws<Claims> claimsJwt = Jwts
                     .parser()
@@ -137,19 +139,31 @@ public class AuthService {
 
             String email = claimsJwt.getPayload().get("email").toString();
             String username = claimsJwt.getPayload().get("username").toString();
+            List<String> rolesAsString = (List<String>) claimsJwt.getPayload().get("roles");
+
+            Set<Role> roles = new HashSet<>();
+            for (String userRole : rolesAsString) {
+                Role role = new Role();
+                role.setRole(userRole);
+                roles.add(role);
+            }
 
             Long expiryAt = (Long) claimsJwt.getPayload().get("expiredAt");
 
             //        checking for the accessing token time (current time) is greater than the expiry date
             if (new Date().toInstant().toEpochMilli() > expiryAt) {
-//                throw new SessionHasExpiredException("Session has expired, please login again.");
-                return SessionStatus.ENDED;
+                throw new SessionHasExpiredException("Session has expired, please login again.");
             }
+
+            userJwtData.setEmail(email);
+            userJwtData.setUsername(username);
+            userJwtData.setRoleList(roles);
         }
         catch (JwtException e) {
             throw new InvalidTokenException("Token is invalid, please login again.");
         }
-        return SessionStatus.ACTIVE;
+
+        return userJwtData;
     }
 
     public String generateJwtToken(User user) {
@@ -160,11 +174,16 @@ public class AuthService {
 
         Date expiryDateUtil = java.sql.Date.valueOf(expiryDate);
 
+        List<String> roles = new ArrayList<>();
+        for (Role role : user.getRoles()) {
+            roles.add(role.getRole());
+        }
+
         jwtData.put("email", user.getEmail());
         jwtData.put("createdAt", new Date());
         jwtData.put("expiredAt", expiryDateUtil);
         jwtData.put("username", user.getUsername());
-//        jwtData.put("roles", user.getRoles());
+        jwtData.put("roles", roles);
 
         String token = Jwts
                 .builder()

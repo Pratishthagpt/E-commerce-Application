@@ -70,9 +70,14 @@ public class AuthController {
     }
 
     @PostMapping("/validate")
-    public ResponseEntity<SessionStatus> validateToken (@RequestBody ValidateTokenRequestDto validateTokenRequestDto) {
-        SessionStatus sessionStatus = authService.validateUserToken(validateTokenRequestDto.getUserId(), validateTokenRequestDto.getToken());
+    public ResponseEntity<UserDto> validateToken (@RequestBody ValidateTokenRequestDto validateTokenRequestDto) {
+        UserJwtData userJwtData = authService.validateUserToken(validateTokenRequestDto.getUserId(), validateTokenRequestDto.getToken());
 
-        return new ResponseEntity<>(sessionStatus, HttpStatus.OK);
+        UserDto userDto = new UserDto();
+        userDto.setEmail(userJwtData.getEmail());
+        userDto.setUsername(userJwtData.getUsername());
+        userDto.setRoles(userJwtData.getRoleList());
+
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 }
