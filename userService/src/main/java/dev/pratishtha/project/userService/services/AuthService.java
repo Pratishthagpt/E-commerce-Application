@@ -8,14 +8,14 @@ import dev.pratishtha.project.userService.models.SessionStatus;
 import dev.pratishtha.project.userService.models.User;
 import dev.pratishtha.project.userService.repositories.SessionRepository;
 import dev.pratishtha.project.userService.repositories.UserRepository;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import javax.crypto.SecretKey;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 public class AuthService {
@@ -23,6 +23,7 @@ public class AuthService {
     private UserRepository userRepository;
     private SessionRepository sessionRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private SecretKey secretKey;
 
     @Autowired
     public AuthService(UserRepository userRepository, SessionRepository sessionRepository,
@@ -30,6 +31,8 @@ public class AuthService {
         this.userRepository = userRepository;
         this.sessionRepository = sessionRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+
+        secretKey = Jwts.SIG.HS256.key().build();
     }
 
     public UserDto signUpUser(String email, String username, String password) {
@@ -56,6 +59,7 @@ public class AuthService {
         if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new InvalidPasswordException("Password does not matches.");
         }
+
         return user;
     }
 
@@ -110,5 +114,29 @@ public class AuthService {
         }
 
         return SessionStatus.ACTIVE;
+    }
+
+    public String generateJwtToken(User user) {
+//        we are using map for storing json claims because we want a key-value pair for it, we can go with string also
+//        but it is difficult ot maintain.
+        Map<String, Object> jwtData = new HashMap<>();
+        LocalDate expiryDate = LocalDate.now().plusDays(15);
+
+        Date expiryDateUtil = java.sql.Date.valueOf(expiryDate);
+
+        jwtData.put("email", user.getEmail());
+        jwtData.put("createdAt", new Date());
+        jwtData.put("expiredAt", expiryDateUtil);
+        jwtData.put("username", user.getUsername());
+
+        String token = Jwts
+                .builder()
+                .claims(jwtData)
+                .signWith(secretKey)
+                .compact();
+
+        System.out.println(secretKey.toString());
+
+        return token;
     }
 }

@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users/auth")
@@ -46,7 +49,8 @@ public class AuthController {
         UserDto userDto = UserDto.fromUser(user);
         userDto.setRoles(user.getRoles());
 
-        String token = RandomStringUtils.randomAlphanumeric(30);
+//        creating jwt token instead of putting random alphanumeric string
+        String token = authService.generateJwtToken(user);
 //        creating session
         Session session = authService.createSession(token, user);
 
