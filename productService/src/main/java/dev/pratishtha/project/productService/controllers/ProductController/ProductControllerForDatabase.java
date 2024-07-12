@@ -6,6 +6,7 @@ import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,9 @@ public class ProductControllerForDatabase {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<GenericProductDTO> getProductById (@PathVariable ("id") String id) throws IdNotFoundException {
+    public ResponseEntity<GenericProductDTO> getProductById (
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authToken,
+            @PathVariable ("id") String id) throws IdNotFoundException {
         GenericProductDTO productDTO = productService.getProductsById(id);
 
         return new ResponseEntity<>(productDTO, HttpStatus.OK);
