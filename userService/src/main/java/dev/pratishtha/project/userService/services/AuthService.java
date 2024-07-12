@@ -90,4 +90,20 @@ public class AuthService {
 
         sessionRepository.save(session);
     }
+
+    public SessionStatus validateUserToken(String userId, String token) {
+        Optional<User> userOptional = userRepository.findById(UUID.fromString(userId));
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User with email does not exist.");
+        }
+        User user = userOptional.get();
+
+        Session session = sessionRepository.findByTokenAndUser(token, user);
+
+        if (!session.getSessionStatus().equals(SessionStatus.ACTIVE)) {
+            return SessionStatus.ENDED;
+        }
+
+        return SessionStatus.ACTIVE;
+    }
 }

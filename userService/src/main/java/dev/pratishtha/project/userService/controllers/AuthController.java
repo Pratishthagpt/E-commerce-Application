@@ -2,6 +2,7 @@ package dev.pratishtha.project.userService.controllers;
 
 import dev.pratishtha.project.userService.dtos.*;
 import dev.pratishtha.project.userService.models.Session;
+import dev.pratishtha.project.userService.models.SessionStatus;
 import dev.pratishtha.project.userService.models.User;
 import dev.pratishtha.project.userService.services.AuthService;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
 import java.util.HashMap;
 
 @RestController
@@ -63,5 +63,12 @@ public class AuthController {
 
         SuccessResponseDto successResponseDto = new SuccessResponseDto("User has successfully logout.", HttpStatus.OK);
         return new ResponseEntity<>(successResponseDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<SessionStatus> validateToken (@RequestBody ValidateTokenRequestDto validateTokenRequestDto) {
+        SessionStatus sessionStatus = authService.validateUserToken(validateTokenRequestDto.getUserId(), validateTokenRequestDto.getToken());
+
+        return new ResponseEntity<>(sessionStatus, HttpStatus.OK);
     }
 }
