@@ -33,7 +33,7 @@ public class ProductControllerForFakeStore {
     public GenericProductDTO getProductById (
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authToken,
             @PathVariable ("id") String id) throws IdNotFoundException {
-        return productService.getProductsById(id);
+        return productService.getProductsById(authToken, id);
     }
 
     @GetMapping("/limit/{limit}")

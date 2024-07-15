@@ -6,6 +6,7 @@ import dev.pratishtha.project.productService.dtos.GenericProductDTO;
 import dev.pratishtha.project.productService.exceptions.CategoryNotFoundException;
 import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.services.ProductService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -89,6 +90,7 @@ public class ProductControllerForFakeStoreTest {
     @Test
     public void testGetProductByIdGivesCorrectResponse() throws Exception {
 //        Arrange
+        String token = RandomStringUtils.randomAlphanumeric(30);
         GenericProductDTO expectedProduct = new GenericProductDTO();
         expectedProduct.setId("1");
         expectedProduct.setTitle("Remote Controlled Car");
@@ -97,7 +99,7 @@ public class ProductControllerForFakeStoreTest {
         expectedProduct.setImage("remote-car.jpg");
         expectedProduct.setPriceVal(2000.0);
 
-        when(productServiceMock.getProductsById("1"))
+        when(productServiceMock.getProductsById(token, "1"))
                 .thenReturn(expectedProduct);
 
 //        Act
@@ -123,11 +125,12 @@ public class ProductControllerForFakeStoreTest {
     @Test
     public void testGetProductByIdGivesNullResponse() throws Exception {
 //        Arrange
-        when(productServiceMock.getProductsById("1"))
+        String token = RandomStringUtils.randomAlphanumeric(30);
+        when(productServiceMock.getProductsById(token, "1"))
                 .thenReturn(null);
 
 //        Act
-        GenericProductDTO responseProduct = productControllerForFakeStore.getProductById("1");
+        GenericProductDTO responseProduct = productControllerForFakeStore.getProductById(token, "1");
 
 //        Assert
         Assertions.assertNull(responseProduct);

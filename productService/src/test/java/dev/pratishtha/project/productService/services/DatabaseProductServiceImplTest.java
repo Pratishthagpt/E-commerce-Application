@@ -11,6 +11,7 @@ import dev.pratishtha.project.productService.repositories.PriceRepository;
 import dev.pratishtha.project.productService.repositories.ProductRepository;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.FakeStoreProductClient;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.dtos.FakeStoreProductDTO;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -125,8 +126,9 @@ public class DatabaseProductServiceImplTest {
     public void testGetProductsByIdGivesCorrectResponse() throws IdNotFoundException {
         when(productRepositoryMock.findById(any(UUID.class)))
                 .thenReturn(Optional.of(product1));
+        String token = RandomStringUtils.randomAlphanumeric(30);
 
-        GenericProductDTO toBeReturned = databaseProductService.getProductsById(String.valueOf(product1.getUuid()));
+        GenericProductDTO toBeReturned = databaseProductService.getProductsById(token, String.valueOf(product1.getUuid()));
 
         Assertions.assertNotNull(toBeReturned);
 
@@ -143,9 +145,10 @@ public class DatabaseProductServiceImplTest {
     public void testGetProductsByIdGivesNullForInvalidId() throws IdNotFoundException {
         when(productRepositoryMock.findById(any(UUID.class)))
                 .thenReturn(Optional.empty());
+        String token = RandomStringUtils.randomAlphanumeric(30);
 
         Assertions.assertThrows(IdNotFoundException.class,
-                () -> databaseProductService.getProductsById(String.valueOf(UUID.randomUUID())));
+                () -> databaseProductService.getProductsById(token, String.valueOf(UUID.randomUUID())));
     }
 
     @Test

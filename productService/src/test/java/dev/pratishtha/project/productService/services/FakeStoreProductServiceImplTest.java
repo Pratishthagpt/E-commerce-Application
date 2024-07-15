@@ -5,6 +5,7 @@ import dev.pratishtha.project.productService.exceptions.CategoryNotFoundExceptio
 import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.FakeStoreProductClient;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.dtos.FakeStoreProductDTO;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,8 +73,9 @@ public class FakeStoreProductServiceImplTest {
     public void testGetProductsByIdGivesCorrectResponse() throws IdNotFoundException {
         when(fakeStoreProductClientMock.getProductById("1"))
                 .thenReturn(fakeStoreProduct1);
+        String token = RandomStringUtils.randomAlphanumeric(30);
 
-        GenericProductDTO toBeReturned = fakeStoreProductService.getProductsById("1");
+        GenericProductDTO toBeReturned = fakeStoreProductService.getProductsById(token, "1");
 
         Assertions.assertNotNull(toBeReturned);
 
@@ -89,9 +91,10 @@ public class FakeStoreProductServiceImplTest {
     public void testGetProductsByIdGivesNullForInvalidId() throws IdNotFoundException {
         when(fakeStoreProductClientMock.getProductById(any()))
                 .thenThrow(new IdNotFoundException("Product with id - 2 not found."));
+        String token = RandomStringUtils.randomAlphanumeric(30);
 
         Assertions.assertThrows(IdNotFoundException.class,
-                () -> fakeStoreProductService.getProductsById("2"));
+                () -> fakeStoreProductService.getProductsById(token, "2"));
     }
 
     @Test

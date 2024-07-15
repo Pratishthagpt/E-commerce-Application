@@ -1,9 +1,11 @@
 package dev.pratishtha.project.productService.controllers.ProductController;
 
+import ch.qos.logback.core.testUtil.RandomUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.pratishtha.project.productService.dtos.GenericProductDTO;
 import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.services.ProductService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,15 +86,17 @@ public class ProductControllerForDatabaseTest {
     @Test
     public void testGetProductByIdGivesCorrectResponse() throws Exception {
 //        Arrange
+        String token = RandomStringUtils.randomAlphanumeric(30);
         GenericProductDTO expectedProduct = new GenericProductDTO();
         expectedProduct.setId("1");
+
         expectedProduct.setTitle("Remote Controlled Car");
         expectedProduct.setDescription("Remote Controlled Car for children of age 8-10 yrs.");
         expectedProduct.setCategory_name("Toys");
         expectedProduct.setImage("remote-car.jpg");
         expectedProduct.setPriceVal(2000.0);
 
-        when(productServiceMock.getProductsById("1"))
+        when(productServiceMock.getProductsById(token, "1"))
                 .thenReturn(expectedProduct);
 
 //        Act
@@ -118,7 +122,8 @@ public class ProductControllerForDatabaseTest {
     @Test
     public void testGetProductByIdGivesNullResponse() throws Exception {
 //        Arrange
-        when(productServiceMock.getProductsById("1"))
+        String token = RandomStringUtils.randomAlphanumeric(30);
+        when(productServiceMock.getProductsById(token, "1"))
                 .thenThrow(new IdNotFoundException("Product with id - 1 not found."));
 
 //        Act

@@ -12,7 +12,7 @@ public interface ProductService {
 
     List<GenericProductDTO> getAllProducts();
 
-    GenericProductDTO getProductsById(String id) throws IdNotFoundException;
+    GenericProductDTO getProductsById(String token, String id) throws IdNotFoundException;
 
     List<GenericProductDTO> getProductsWithLimit(int limit);
 

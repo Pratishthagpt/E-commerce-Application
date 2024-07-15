@@ -3,6 +3,7 @@ package dev.pratishtha.project.productService.controllers.ProductController;
 import dev.pratishtha.project.productService.dtos.GenericProductDTO;
 import dev.pratishtha.project.productService.exceptions.CategoryNotFoundException;
 import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
+import dev.pratishtha.project.productService.exceptions.InvalidUserAuthenticationException;
 import dev.pratishtha.project.productService.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,8 +39,9 @@ public class ProductControllerForDatabase {
     @GetMapping("{id}")
     public ResponseEntity<GenericProductDTO> getProductById (
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authToken,
-            @PathVariable ("id") String id) throws IdNotFoundException {
-        GenericProductDTO productDTO = productService.getProductsById(id);
+            @PathVariable ("id") String id) throws IdNotFoundException, InvalidUserAuthenticationException {
+
+        GenericProductDTO productDTO = productService.getProductsById(authToken, id);
 
         return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }

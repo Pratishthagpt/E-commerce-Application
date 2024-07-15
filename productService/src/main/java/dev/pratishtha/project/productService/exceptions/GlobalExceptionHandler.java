@@ -29,4 +29,14 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND
         );
     }
+
+    @ExceptionHandler(InvalidUserAuthenticationException.class)
+    public ResponseEntity<ExceptionDTO> handleInvalidAuthentictionException (
+            InvalidUserAuthenticationException invalidUserAuthenticationException) {
+
+        return new ResponseEntity<>(
+                new ExceptionDTO(HttpStatus.UNAUTHORIZED, invalidUserAuthenticationException.getMessage()),
+                HttpStatus.UNAUTHORIZED
+        );
+    }
 }

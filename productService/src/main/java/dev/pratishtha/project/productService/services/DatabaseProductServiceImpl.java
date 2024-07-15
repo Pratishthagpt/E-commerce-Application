@@ -3,12 +3,15 @@ package dev.pratishtha.project.productService.services;
 import dev.pratishtha.project.productService.dtos.GenericProductDTO;
 import dev.pratishtha.project.productService.exceptions.CategoryNotFoundException;
 import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
+import dev.pratishtha.project.productService.exceptions.InvalidUserAuthenticationException;
 import dev.pratishtha.project.productService.models.Category;
 import dev.pratishtha.project.productService.models.Price;
 import dev.pratishtha.project.productService.models.Product;
 import dev.pratishtha.project.productService.repositories.CategoryRepository;
 import dev.pratishtha.project.productService.repositories.PriceRepository;
 import dev.pratishtha.project.productService.repositories.ProductRepository;
+import dev.pratishtha.project.productService.security.JwtData;
+import dev.pratishtha.project.productService.security.TokenValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +26,17 @@ public class DatabaseProductServiceImpl implements ProductService{
     private ProductRepository productRepository;
     private PriceRepository priceRepository;
     private CategoryRepository categoryRepository;
+    private TokenValidator tokenValidator;
 
     @Autowired
     public DatabaseProductServiceImpl(ProductRepository productRepository,
                                       PriceRepository priceRepository,
-                                      CategoryRepository categoryRepository) {
+                                      CategoryRepository categoryRepository,
+                                      TokenValidator tokenValidator) {
         this.productRepository = productRepository;
         this.priceRepository = priceRepository;
         this.categoryRepository = categoryRepository;
+        this.tokenValidator = tokenValidator;
     }
 
     @Override
@@ -46,7 +52,13 @@ public class DatabaseProductServiceImpl implements ProductService{
     }
 
     @Override
-    public GenericProductDTO getProductsById(String id) throws IdNotFoundException {
+    public GenericProductDTO getProductsById(String token, String id) throws IdNotFoundException, InvalidUserAuthenticationException {
+
+        Optional<JwtData> userJwtData = tokenValidator.validateToken(token);
+        if (userJwtData.isEmpty()) {
+            throw new InvalidUserAuthenticationException("User token is not Authenticated. Please enter the valid authentication token.");
+        }
+
         UUID productId = UUID.fromString(id);
 
         Optional<Product> productOptional = productRepository.findById(productId);
