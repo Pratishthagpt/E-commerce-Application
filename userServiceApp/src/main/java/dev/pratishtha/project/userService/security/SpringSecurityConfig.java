@@ -9,16 +9,16 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SpringSecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
-        http.cors().disable();
-        http.csrf().disable();
-
-        http
-                .authorizeHttpRequests(requests -> requests.anyRequest().permitAll());
-
-        return http.build();
-    }
+//    @Bean
+//    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
+//        http.cors().disable();
+//        http.csrf().disable();
+//
+//        http
+//                .authorizeHttpRequests(requests -> requests.anyRequest().permitAll());
+//
+//        return http.build();
+//    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
