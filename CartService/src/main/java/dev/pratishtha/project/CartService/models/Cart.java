@@ -1,12 +1,11 @@
-package dev.pratishtha.project.CartService.model;
+package dev.pratishtha.project.CartService.models;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -20,4 +19,5 @@ public class Cart extends BaseModel{
 
     @OneToMany(mappedBy = "cart")
     private List<CartItem> cartItems;
+    private Date createdAt;
 }

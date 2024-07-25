@@ -1,4 +1,4 @@
-package dev.pratishtha.project.CartService.model;
+package dev.pratishtha.project.CartService.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
