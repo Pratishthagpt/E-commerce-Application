@@ -1,12 +1,23 @@
 package dev.pratishtha.project.CartService.model;
 
-import java.util.List;
-import java.util.UUID;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.List;
+
+@Entity
+@Getter
+@Setter
 public class Cart extends BaseModel{
 
-    private User user;
+    private String userId;
     private int totalPrice;
     private int totalItems;
+
+    @OneToMany(mappedBy = "cart")
     private List<CartItem> cartItems;
 }
