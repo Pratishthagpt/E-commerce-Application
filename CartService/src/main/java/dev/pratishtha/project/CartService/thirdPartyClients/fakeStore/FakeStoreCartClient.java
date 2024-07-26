@@ -1,5 +1,6 @@
 package dev.pratishtha.project.CartService.thirdPartyClients.fakeStore;
 
+import dev.pratishtha.project.CartService.exceptions.CartIdNotFoundException;
 import dev.pratishtha.project.CartService.thirdPartyClients.fakeStore.dtos.FakeStoreCartDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,9 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Component
 public class FakeStoreCartClient {
@@ -19,15 +18,17 @@ public class FakeStoreCartClient {
 //    private static final Logger LOGGER = Logger.getLogger(FakeStoreCartClient.class.getName());
     private RestTemplateBuilder restTemplateBuilder;
 
-    private String cartRequestUrl;
+    private String fakeStoreCartRequestUrl;
     private RestTemplate restTemplate;
+    private String fakeStoreCartUrl;
 
     @Autowired
     public FakeStoreCartClient(RestTemplateBuilder restTemplateBuilder,
                                @Value("${fakeStore.api.baseurl}") String fakeStoreBaseUrl,
                                @Value("${fakeStore.api.cart}") String fakeStoreCartUrl) {
         this.restTemplateBuilder = restTemplateBuilder;
-        this.cartRequestUrl = fakeStoreBaseUrl + fakeStoreCartUrl;
+        this.fakeStoreCartRequestUrl = fakeStoreBaseUrl + fakeStoreCartUrl;
+        this.fakeStoreCartUrl = fakeStoreBaseUrl + fakeStoreCartUrl + "/{id}";
 
         this.restTemplate = restTemplateBuilder.build();
     }
@@ -38,7 +39,7 @@ public class FakeStoreCartClient {
 //        LOGGER.info("Requesting carts from URL: " + cartRequestUrl);
 
         ResponseEntity<FakeStoreCartDTO[]> responseEntity =
-                restTemplate.getForEntity(cartRequestUrl, FakeStoreCartDTO[].class);
+                restTemplate.getForEntity(fakeStoreCartRequestUrl, FakeStoreCartDTO[].class);
 
         FakeStoreCartDTO[] fakeStoreCartResponse = responseEntity.getBody();
         if (fakeStoreCartResponse == null) {
@@ -63,7 +64,7 @@ public class FakeStoreCartClient {
     public FakeStoreCartDTO addNewCartToFakeStore(FakeStoreCartDTO fakeStoreCartRequest) {
 
         ResponseEntity<FakeStoreCartDTO> responseEntity =
-                restTemplate.postForEntity(cartRequestUrl, fakeStoreCartRequest, FakeStoreCartDTO.class);
+                restTemplate.postForEntity(fakeStoreCartRequestUrl, fakeStoreCartRequest, FakeStoreCartDTO.class);
 
         FakeStoreCartDTO fakeStoreCartDTO = responseEntity.getBody();
 
@@ -73,4 +74,17 @@ public class FakeStoreCartClient {
         return new FakeStoreCartDTO();
     }
 
+    public FakeStoreCartDTO getSingleCartByIdFromFakeStore(String cartId) {
+
+        ResponseEntity<FakeStoreCartDTO> responseEntity =
+                restTemplate.getForEntity(fakeStoreCartUrl, FakeStoreCartDTO.class, cartId);
+
+        FakeStoreCartDTO fakeStoreCartResponse = responseEntity.getBody();
+
+        if (fakeStoreCartResponse == null) {
+            throw new CartIdNotFoundException("Cart with Id - " + cartId + " not found");
+        }
+
+        return fakeStoreCartResponse;
+    }
 }
