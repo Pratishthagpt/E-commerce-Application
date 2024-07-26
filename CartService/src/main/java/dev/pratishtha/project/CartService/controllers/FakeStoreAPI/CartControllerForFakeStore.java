@@ -1,5 +1,6 @@
 package dev.pratishtha.project.CartService.controllers.FakeStoreAPI;
 
+import dev.pratishtha.project.CartService.dtos.DateRangeDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
 import dev.pratishtha.project.CartService.services.CartService;
 import dev.pratishtha.project.CartService.thirdPartyClients.fakeStore.dtos.FakeStoreCartDTO;
@@ -41,19 +42,22 @@ public class CartControllerForFakeStore {
 
     @GetMapping("/limit/{limit}")
     public ResponseEntity<List<GenericCartDTO>> getCartsByLimit (@PathVariable ("limit") int limit) {
-//        LOGGER.info("Received request to get all carts");
         List<GenericCartDTO> cartsList = cartService.getCartsByLimit(limit);
 
-//        LOGGER.info("Returning " + cartsList.size() + " carts");
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
 
     @GetMapping("/sort/{sortType}")
     public ResponseEntity<List<GenericCartDTO>> getCartsBySort (@PathVariable ("sortType") String sortType) {
-//        LOGGER.info("Received request to get all carts");
         List<GenericCartDTO> cartsList = cartService.getCartsBySort(sortType);
 
-//        LOGGER.info("Returning " + cartsList.size() + " carts");
+        return new ResponseEntity<>(cartsList, HttpStatus.OK);
+    }
+
+    @PostMapping("/dateRange")
+    public ResponseEntity<List<GenericCartDTO>> getCartsInDateRange (@RequestBody DateRangeDTO dateRangeDTO) {
+        List<GenericCartDTO> cartsList = cartService.getCartsInDateRange(dateRangeDTO);
+
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
 

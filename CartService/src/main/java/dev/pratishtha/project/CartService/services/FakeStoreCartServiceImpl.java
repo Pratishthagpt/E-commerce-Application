@@ -1,5 +1,6 @@
 package dev.pratishtha.project.CartService.services;
 
+import dev.pratishtha.project.CartService.dtos.DateRangeDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartItemDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
 import dev.pratishtha.project.CartService.thirdPartyClients.fakeStore.FakeStoreCartClient;
@@ -73,6 +74,18 @@ public class FakeStoreCartServiceImpl implements CartService{
     @Override
     public List<GenericCartDTO> getCartsBySort(String sortType) {
         List<FakeStoreCartDTO> fakeStoreCarts = fakeStoreCartClient.getAllCartsWithSortFromFakeStore(sortType);
+
+        List<GenericCartDTO> genericCartDTOS = new ArrayList<>();
+        for (FakeStoreCartDTO fakeStoreCartDTO : fakeStoreCarts) {
+            genericCartDTOS.add(convertFakeStoreCartDtoToGenericCartDto(fakeStoreCartDTO));
+        }
+
+        return genericCartDTOS;
+    }
+
+    @Override
+    public List<GenericCartDTO> getCartsInDateRange(DateRangeDTO dateRangeDTO) {
+        List<FakeStoreCartDTO> fakeStoreCarts = fakeStoreCartClient.getCartsWithinDateRangeFromFakeStore(dateRangeDTO.getStartDate(), dateRangeDTO.getEndDate());
 
         List<GenericCartDTO> genericCartDTOS = new ArrayList<>();
         for (FakeStoreCartDTO fakeStoreCartDTO : fakeStoreCarts) {

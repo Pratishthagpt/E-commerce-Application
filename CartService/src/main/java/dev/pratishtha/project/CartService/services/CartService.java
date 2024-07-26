@@ -1,5 +1,6 @@
 package dev.pratishtha.project.CartService.services;
 
+import dev.pratishtha.project.CartService.dtos.DateRangeDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
 import org.springframework.stereotype.Service;
 
@@ -17,4 +18,6 @@ public interface CartService {
     List<GenericCartDTO> getCartsByLimit(int limit);
 
     List<GenericCartDTO> getCartsBySort(String sortType);
+
+    List<GenericCartDTO> getCartsInDateRange(DateRangeDTO dateRangeDTO);
 }

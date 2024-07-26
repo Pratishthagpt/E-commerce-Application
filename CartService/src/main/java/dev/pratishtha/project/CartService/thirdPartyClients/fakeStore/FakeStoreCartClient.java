@@ -9,7 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -124,6 +127,40 @@ public class FakeStoreCartClient {
 
         ResponseEntity<FakeStoreCartDTO[]> responseEntity =
                 restTemplate.getForEntity(cartsRequestBySortUrl, FakeStoreCartDTO[].class);
+
+        FakeStoreCartDTO[] fakeStoreCartResponse = responseEntity.getBody();
+        if (fakeStoreCartResponse == null) {
+            return new ArrayList<>();
+        }
+
+        List<FakeStoreCartDTO> fakeStoreCartDTOList = new ArrayList<>();
+        if (fakeStoreCartResponse != null) {
+            for (FakeStoreCartDTO fakeStoreCartDTO : fakeStoreCartResponse) {
+                if (fakeStoreCartDTO != null || fakeStoreCartDTO.getProducts() != null) {
+                    fakeStoreCartDTOList.add(fakeStoreCartDTO);
+                }
+            }
+        }
+
+        return fakeStoreCartDTOList;
+    }
+
+    public List<FakeStoreCartDTO> getCartsWithinDateRangeFromFakeStore(LocalDate startDate, LocalDate endDate) {
+        if (startDate == null) {
+            startDate = LocalDate.of(1970, 01, 01);
+        }
+        if (endDate == null) {
+            endDate = LocalDate.now();
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String startDateInString = startDate.format(formatter);
+        String endDateInString = endDate.format(formatter);
+
+        String cartsRequestByDateRangeUrl = fakeStoreCartRequestUrl + "?startdate=" + startDateInString + "&" + "enddate=" + endDateInString;
+
+        ResponseEntity<FakeStoreCartDTO[]> responseEntity =
+                restTemplate.getForEntity(cartsRequestByDateRangeUrl, FakeStoreCartDTO[].class);
 
         FakeStoreCartDTO[] fakeStoreCartResponse = responseEntity.getBody();
         if (fakeStoreCartResponse == null) {
