@@ -10,9 +10,9 @@ import java.util.List;
 @Setter
 public class FakeStoreCartDTO {
 
-    private String cartId;
+    private String id;
     private String userId;
-    private Date createdAt;
-    private List<FakeStoreCartItemDTO> cartItems;
+    private Date date;
+    private List<FakeStoreCartItemDTO> products;
 
 }

@@ -9,4 +9,6 @@ import java.util.List;
 public interface CartService {
 
     public List<GenericCartDTO> getAllCarts();
+
+    GenericCartDTO addNewCart(GenericCartDTO requestDto);
 }

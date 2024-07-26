@@ -20,6 +20,8 @@ public class GenericCartDTO {
     private int totalPrice;
     private int totalItems;
 
-    private List<GenericCartItemDTO> cartItems;
     private Date createdAt;
+    private List<GenericCartItemDTO> cartItems;
+
+
 }

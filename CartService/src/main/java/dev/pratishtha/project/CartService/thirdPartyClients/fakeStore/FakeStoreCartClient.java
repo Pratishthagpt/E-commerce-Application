@@ -51,7 +51,7 @@ public class FakeStoreCartClient {
         List<FakeStoreCartDTO> fakeStoreCartDTOList = new ArrayList<>();
         if (fakeStoreCartResponse != null) {
             for (FakeStoreCartDTO fakeStoreCartDTO : fakeStoreCartResponse) {
-                if (fakeStoreCartDTO != null && fakeStoreCartDTO.getCartItems() != null) {
+                if (fakeStoreCartDTO != null || fakeStoreCartDTO.getProducts() != null) {
                     fakeStoreCartDTOList.add(fakeStoreCartDTO);
                 }
             }
@@ -59,4 +59,18 @@ public class FakeStoreCartClient {
 
         return fakeStoreCartDTOList;
     }
+
+    public FakeStoreCartDTO addNewCartToFakeStore(FakeStoreCartDTO fakeStoreCartRequest) {
+
+        ResponseEntity<FakeStoreCartDTO> responseEntity =
+                restTemplate.postForEntity(cartRequestUrl, fakeStoreCartRequest, FakeStoreCartDTO.class);
+
+        FakeStoreCartDTO fakeStoreCartDTO = responseEntity.getBody();
+
+        if (fakeStoreCartDTO != null || fakeStoreCartDTO.getProducts() != null) {
+            return fakeStoreCartDTO;
+        }
+        return new FakeStoreCartDTO();
+    }
+
 }

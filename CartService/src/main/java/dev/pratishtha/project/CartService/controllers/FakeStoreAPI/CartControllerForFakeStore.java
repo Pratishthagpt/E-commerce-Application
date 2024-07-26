@@ -6,9 +6,7 @@ import dev.pratishtha.project.CartService.thirdPartyClients.fakeStore.dtos.FakeS
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -32,6 +30,18 @@ public class CartControllerForFakeStore {
 
 //        LOGGER.info("Returning " + cartsList.size() + " carts");
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
+    }
+
+
+//    hitting this api to fakestore api won't make any change in actual api carts.
+//    We are just returning the cart directly that we are creating.
+//     If you send an object like the code above, it will return you an object with a new id.
+//     Remember that nothing in real will insert into the database. so if you want to access the new id you will get a 404 error.
+    @PostMapping
+    public ResponseEntity<GenericCartDTO> addNewCart(@RequestBody GenericCartDTO requestDto){
+        GenericCartDTO genericCartDTO = cartService.addNewCart(requestDto);
+
+        return new ResponseEntity<>(genericCartDTO, HttpStatus.CREATED);
     }
 
 }

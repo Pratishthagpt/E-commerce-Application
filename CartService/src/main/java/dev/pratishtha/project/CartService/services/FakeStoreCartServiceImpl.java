@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Service
 public class FakeStoreCartServiceImpl implements CartService{
@@ -36,18 +35,30 @@ public class FakeStoreCartServiceImpl implements CartService{
         return genericCartDTOS;
     }
 
+    @Override
+    public GenericCartDTO addNewCart(GenericCartDTO requestDto) {
+        FakeStoreCartDTO fakeStoreCartRequest =
+                convertGenericCartDtoToFakeStoreCartDto(requestDto);
+
+        FakeStoreCartDTO fakeStoreCartDTO = fakeStoreCartClient.addNewCartToFakeStore(fakeStoreCartRequest);
+
+        GenericCartDTO genericCartDTO = convertFakeStoreCartDtoToGenericCartDto(fakeStoreCartDTO);
+
+        return genericCartDTO;
+    }
+
     private GenericCartDTO convertFakeStoreCartDtoToGenericCartDto (FakeStoreCartDTO fakeStoreCartDTO) {
         GenericCartDTO genericCartDTO = new GenericCartDTO();
 
         List<GenericCartItemDTO> genericCartItemDTOS = new ArrayList<>();
-        for (FakeStoreCartItemDTO cartItemDTO : fakeStoreCartDTO.getCartItems()) {
+        for (FakeStoreCartItemDTO cartItemDTO : fakeStoreCartDTO.getProducts()) {
             genericCartItemDTOS.add(convertFakeStoreCartItemDtoToGenericGenericCartItemDto(cartItemDTO));
         }
 
         genericCartDTO.setCartItems(genericCartItemDTOS);
         genericCartDTO.setUserId(fakeStoreCartDTO.getUserId());
-        genericCartDTO.setCreatedAt(fakeStoreCartDTO.getCreatedAt());
-        genericCartDTO.setCartId(fakeStoreCartDTO.getCartId());
+        genericCartDTO.setCreatedAt(fakeStoreCartDTO.getDate());
+        genericCartDTO.setCartId(fakeStoreCartDTO.getId());
         genericCartDTO.setTotalItems(genericCartItemDTOS.size());
 
         return genericCartDTO;
@@ -59,5 +70,29 @@ public class FakeStoreCartServiceImpl implements CartService{
         genericCartItemDTO.setQuantity(fakeStoreCartItemDTO.getQuantity());
 
         return genericCartItemDTO;
+    }
+
+    private FakeStoreCartDTO convertGenericCartDtoToFakeStoreCartDto (GenericCartDTO genericCartDTO) {
+        FakeStoreCartDTO fakeStoreCartDTO = new FakeStoreCartDTO();
+
+        List<FakeStoreCartItemDTO> fakeStoreCartItemDTOS = new ArrayList<>();
+        for (GenericCartItemDTO cartItemDTO : genericCartDTO.getCartItems()) {
+            fakeStoreCartItemDTOS.add(convertGenericCartItemDtoToFakeStoreCartItemDto(cartItemDTO));
+        }
+
+        fakeStoreCartDTO.setProducts(fakeStoreCartItemDTOS);
+        fakeStoreCartDTO.setUserId(genericCartDTO.getUserId());
+        fakeStoreCartDTO.setDate(genericCartDTO.getCreatedAt());
+        fakeStoreCartDTO.setId(genericCartDTO.getCartId());
+
+        return fakeStoreCartDTO;
+    }
+
+    private FakeStoreCartItemDTO convertGenericCartItemDtoToFakeStoreCartItemDto (GenericCartItemDTO genericCartItemDTO) {
+        FakeStoreCartItemDTO fakeStoreCartItemDTO = new FakeStoreCartItemDTO();
+        fakeStoreCartItemDTO.setProductId(genericCartItemDTO.getProductId());
+        fakeStoreCartItemDTO.setQuantity(genericCartItemDTO.getQuantity());
+
+        return fakeStoreCartItemDTO;
     }
 }
