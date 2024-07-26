@@ -61,6 +61,17 @@ public class CartControllerForFakeStore {
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
 
+    @PostMapping("/dateRange/sort/{sortType}/limit/{limit}")
+    public ResponseEntity<List<GenericCartDTO>> getSortedCartsInDateRangeWithLimit
+            (@PathVariable ("limit") int limit,
+             @PathVariable ("sortType") String sortType,
+             @RequestBody DateRangeDTO dateRangeDTO) {
+
+        List<GenericCartDTO> cartsList = cartService.getSortedCartsInDateRangeWithLimit(dateRangeDTO, limit, sortType);
+
+        return new ResponseEntity<>(cartsList, HttpStatus.OK);
+    }
+
 
 //    hitting this api to fakestore api won't make any change in actual api carts.
 //    We are just returning the cart directly that we are creating.

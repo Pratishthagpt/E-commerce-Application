@@ -178,4 +178,49 @@ public class FakeStoreCartClient {
 
         return fakeStoreCartDTOList;
     }
+
+    public List<FakeStoreCartDTO> getSortedCartsInDateRangeWithLimitFromFakeStore
+            (LocalDate startDate, LocalDate endDate, int limit, String sortType) {
+
+        if (startDate == null) {
+            startDate = LocalDate.of(1970, 01, 01);
+        }
+        if (endDate == null) {
+            endDate = LocalDate.now();
+        }
+
+        String sort = "asc";
+
+        if (sortType.equalsIgnoreCase("descending") || sortType.equalsIgnoreCase("desc")) {
+            sort = "desc";
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String startDateInString = startDate.format(formatter);
+        String endDateInString = endDate.format(formatter);
+
+        String cartsRequestByDateRangeWithLimitAndSortUrl =
+                fakeStoreCartRequestUrl + "?startdate=" + startDateInString + "&enddate=" + endDateInString + "&sort=" + sort +
+                        "&limit=" + limit;
+
+        ResponseEntity<FakeStoreCartDTO[]> responseEntity =
+                restTemplate.getForEntity(cartsRequestByDateRangeWithLimitAndSortUrl, FakeStoreCartDTO[].class, limit);
+
+        FakeStoreCartDTO[] fakeStoreCartResponse = responseEntity.getBody();
+        if (fakeStoreCartResponse == null) {
+            return new ArrayList<>();
+        }
+
+        List<FakeStoreCartDTO> fakeStoreCartDTOList = new ArrayList<>();
+        if (fakeStoreCartResponse != null) {
+            for (FakeStoreCartDTO fakeStoreCartDTO : fakeStoreCartResponse) {
+                if (fakeStoreCartDTO != null || fakeStoreCartDTO.getProducts() != null) {
+                    fakeStoreCartDTOList.add(fakeStoreCartDTO);
+                }
+            }
+        }
+
+        return fakeStoreCartDTOList;
+
+    }
 }

@@ -95,6 +95,20 @@ public class FakeStoreCartServiceImpl implements CartService{
         return genericCartDTOS;
     }
 
+    @Override
+    public List<GenericCartDTO> getSortedCartsInDateRangeWithLimit(DateRangeDTO dateRangeDTO, int limit, String sortType) {
+        List<FakeStoreCartDTO> fakeStoreCarts = fakeStoreCartClient.
+                getSortedCartsInDateRangeWithLimitFromFakeStore(dateRangeDTO.getStartDate(),
+                        dateRangeDTO.getEndDate(), limit, sortType);
+
+        List<GenericCartDTO> genericCartDTOS = new ArrayList<>();
+        for (FakeStoreCartDTO fakeStoreCartDTO : fakeStoreCarts) {
+            genericCartDTOS.add(convertFakeStoreCartDtoToGenericCartDto(fakeStoreCartDTO));
+        }
+
+        return genericCartDTOS;
+    }
+
     private GenericCartDTO convertFakeStoreCartDtoToGenericCartDto (FakeStoreCartDTO fakeStoreCartDTO) {
         GenericCartDTO genericCartDTO = new GenericCartDTO();
 
