@@ -15,4 +15,6 @@ public interface CartService {
     GenericCartDTO getCartById(String cartId);
 
     List<GenericCartDTO> getCartsByLimit(int limit);
+
+    List<GenericCartDTO> getCartsBySort(String sortType);
 }

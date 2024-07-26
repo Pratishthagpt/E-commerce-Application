@@ -112,4 +112,33 @@ public class FakeStoreCartClient {
 
         return fakeStoreCartDTOList;
     }
+
+    public List<FakeStoreCartDTO> getAllCartsWithSortFromFakeStore(String sortType) {
+        String sort = "asc";
+
+        if (sortType.equalsIgnoreCase("descending") || sortType.equalsIgnoreCase("desc")) {
+            sort = "desc";
+        }
+
+        String cartsRequestBySortUrl = fakeStoreCartRequestUrl + "?sort=" + sort;
+
+        ResponseEntity<FakeStoreCartDTO[]> responseEntity =
+                restTemplate.getForEntity(cartsRequestBySortUrl, FakeStoreCartDTO[].class);
+
+        FakeStoreCartDTO[] fakeStoreCartResponse = responseEntity.getBody();
+        if (fakeStoreCartResponse == null) {
+            return new ArrayList<>();
+        }
+
+        List<FakeStoreCartDTO> fakeStoreCartDTOList = new ArrayList<>();
+        if (fakeStoreCartResponse != null) {
+            for (FakeStoreCartDTO fakeStoreCartDTO : fakeStoreCartResponse) {
+                if (fakeStoreCartDTO != null || fakeStoreCartDTO.getProducts() != null) {
+                    fakeStoreCartDTOList.add(fakeStoreCartDTO);
+                }
+            }
+        }
+
+        return fakeStoreCartDTOList;
+    }
 }

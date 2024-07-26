@@ -48,6 +48,15 @@ public class CartControllerForFakeStore {
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
 
+    @GetMapping("/sort/{sortType}")
+    public ResponseEntity<List<GenericCartDTO>> getCartsBySort (@PathVariable ("sortType") String sortType) {
+//        LOGGER.info("Received request to get all carts");
+        List<GenericCartDTO> cartsList = cartService.getCartsBySort(sortType);
+
+//        LOGGER.info("Returning " + cartsList.size() + " carts");
+        return new ResponseEntity<>(cartsList, HttpStatus.OK);
+    }
+
 
 //    hitting this api to fakestore api won't make any change in actual api carts.
 //    We are just returning the cart directly that we are creating.
