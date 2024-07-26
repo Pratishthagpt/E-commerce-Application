@@ -13,4 +13,6 @@ public interface CartService {
     GenericCartDTO addNewCart(GenericCartDTO requestDto);
 
     GenericCartDTO getCartById(String cartId);
+
+    List<GenericCartDTO> getCartsByLimit(int limit);
 }

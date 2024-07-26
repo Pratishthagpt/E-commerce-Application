@@ -57,6 +57,19 @@ public class FakeStoreCartServiceImpl implements CartService{
         return genericCartDTO;
     }
 
+    @Override
+    public List<GenericCartDTO> getCartsByLimit(int limit) {
+
+        List<FakeStoreCartDTO> fakeStoreCarts = fakeStoreCartClient.getCartsByLimitFromFakeStore(limit);
+
+        List<GenericCartDTO> genericCartDTOS = new ArrayList<>();
+        for (FakeStoreCartDTO fakeStoreCartDTO : fakeStoreCarts) {
+            genericCartDTOS.add(convertFakeStoreCartDtoToGenericCartDto(fakeStoreCartDTO));
+        }
+
+        return genericCartDTOS;
+    }
+
     private GenericCartDTO convertFakeStoreCartDtoToGenericCartDto (FakeStoreCartDTO fakeStoreCartDTO) {
         GenericCartDTO genericCartDTO = new GenericCartDTO();
 

@@ -87,4 +87,29 @@ public class FakeStoreCartClient {
 
         return fakeStoreCartResponse;
     }
+
+
+    public List<FakeStoreCartDTO> getCartsByLimitFromFakeStore(int limit) {
+
+        String cartsRequestByLimitUrl = fakeStoreCartRequestUrl + "?limit=" + limit;
+
+        ResponseEntity<FakeStoreCartDTO[]> responseEntity =
+                restTemplate.getForEntity(cartsRequestByLimitUrl, FakeStoreCartDTO[].class, limit);
+
+        FakeStoreCartDTO[] fakeStoreCartResponse = responseEntity.getBody();
+        if (fakeStoreCartResponse == null) {
+            return new ArrayList<>();
+        }
+
+        List<FakeStoreCartDTO> fakeStoreCartDTOList = new ArrayList<>();
+        if (fakeStoreCartResponse != null) {
+            for (FakeStoreCartDTO fakeStoreCartDTO : fakeStoreCartResponse) {
+                if (fakeStoreCartDTO != null || fakeStoreCartDTO.getProducts() != null) {
+                    fakeStoreCartDTOList.add(fakeStoreCartDTO);
+                }
+            }
+        }
+
+        return fakeStoreCartDTOList;
+    }
 }

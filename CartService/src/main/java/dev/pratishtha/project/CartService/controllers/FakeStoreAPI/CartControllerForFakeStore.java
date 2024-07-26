@@ -39,6 +39,15 @@ public class CartControllerForFakeStore {
         return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/limit/{limit}")
+    public ResponseEntity<List<GenericCartDTO>> getCartsByLimit (@PathVariable ("limit") int limit) {
+//        LOGGER.info("Received request to get all carts");
+        List<GenericCartDTO> cartsList = cartService.getCartsByLimit(limit);
+
+//        LOGGER.info("Returning " + cartsList.size() + " carts");
+        return new ResponseEntity<>(cartsList, HttpStatus.OK);
+    }
+
 
 //    hitting this api to fakestore api won't make any change in actual api carts.
 //    We are just returning the cart directly that we are creating.
