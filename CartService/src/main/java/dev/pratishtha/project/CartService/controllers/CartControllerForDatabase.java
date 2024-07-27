@@ -28,7 +28,6 @@ public class CartControllerForDatabase {
     public ResponseEntity<List<GenericCartDTO>> getAllCarts () {
 
         List<GenericCartDTO> cartsList = cartService.getAllCarts();
-
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
 }
