@@ -7,6 +7,9 @@ import dev.pratishtha.project.CartService.thirdPartyClients.fakeStore.dtos.FakeS
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -299,5 +302,24 @@ public class FakeStoreCartClient {
         }
 
         return fakeStoreCartDTOList;
+    }
+
+    public FakeStoreCartDTO updateCartByIdToFakeStore(String id, FakeStoreCartDTO fakeStoreCartRequest) {
+
+        ResponseEntity<FakeStoreCartDTO> responseEntity =
+                restTemplate.exchange(fakeStoreCartUrl,
+                        HttpMethod.PUT,
+                        new HttpEntity<>(fakeStoreCartRequest),
+                        FakeStoreCartDTO.class,
+                        id
+                );
+
+        FakeStoreCartDTO fakeStoreCartDTO = responseEntity.getBody();
+
+        if (fakeStoreCartDTO == null) {
+            throw new CartIdNotFoundException("Cart with id - " + id + " not present.");
+        }
+
+        return fakeStoreCartDTO;
     }
 }

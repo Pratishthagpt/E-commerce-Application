@@ -26,4 +26,6 @@ public interface CartService {
     List<GenericCartDTO> getCartsByUser(String userId);
 
     List<GenericCartDTO> getCartsByUserInDateRange(String userId, DateRangeDTO dateRangeDTO);
+
+    GenericCartDTO updateCartById(String id, GenericCartDTO requestDto);
 }
