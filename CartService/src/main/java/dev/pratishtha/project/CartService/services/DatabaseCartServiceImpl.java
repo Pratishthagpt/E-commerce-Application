@@ -104,7 +104,24 @@ public class DatabaseCartServiceImpl implements CartService {
 
     @Override
     public List<GenericCartDTO> getCartsBySort(String sortType) {
-        return List.of();
+        String sort = "asc";
+
+        if (sortType.equalsIgnoreCase("descending") || sortType.equalsIgnoreCase("desc")) {
+            sort = "desc";
+        }
+
+        List<Cart> carts;
+        if (sort.equals("desc")) {
+            carts = cartRepository.findAllByOrderByUuidDesc();
+        }
+        else {
+            carts = cartRepository.findAll();
+        }
+        List<GenericCartDTO> genericCartDtosList = new ArrayList<>();
+        for (Cart cart : carts) {
+            genericCartDtosList.add(convertCartToGenericCartDto(cart));
+        }
+        return genericCartDtosList;
     }
 
     @Override

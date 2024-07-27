@@ -49,4 +49,11 @@ public class CartControllerForDatabase {
 
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
+
+    @GetMapping("/sort/{sortType}")
+    public ResponseEntity<List<GenericCartDTO>> getCartsBySort (@PathVariable ("sortType") String sortType) {
+        List<GenericCartDTO> cartsList = cartService.getCartsBySort(sortType);
+
+        return new ResponseEntity<>(cartsList, HttpStatus.OK);
+    }
 }
