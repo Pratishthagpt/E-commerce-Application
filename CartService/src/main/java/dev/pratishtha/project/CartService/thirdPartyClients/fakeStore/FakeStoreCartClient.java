@@ -322,4 +322,23 @@ public class FakeStoreCartClient {
 
         return fakeStoreCartDTO;
     }
+
+    public FakeStoreCartDTO updateSubCartByIdToFakeStore(String id, FakeStoreCartDTO fakeStoreCartRequest) {
+        ResponseEntity<FakeStoreCartDTO> responseEntity =
+                restTemplate.exchange(fakeStoreCartUrl,
+                        HttpMethod.PATCH,
+                        new HttpEntity<>(fakeStoreCartRequest),
+                        FakeStoreCartDTO.class,
+                        id
+                );
+
+        FakeStoreCartDTO fakeStoreCartDTO = responseEntity.getBody();
+
+        if (fakeStoreCartDTO == null) {
+            throw new CartIdNotFoundException("Cart with id - " + id + " not present.");
+        }
+
+        return fakeStoreCartDTO;
+
+    }
 }

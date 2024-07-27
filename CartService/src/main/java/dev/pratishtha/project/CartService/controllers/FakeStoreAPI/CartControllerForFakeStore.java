@@ -108,4 +108,11 @@ public class CartControllerForFakeStore {
         return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<GenericCartDTO> updateSubCartById(@PathVariable ("id") String id, @RequestBody GenericCartDTO requestDto){
+        GenericCartDTO genericCartDTO = cartService.updateSubCartById(id, requestDto);
+
+        return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
+    }
+
 }

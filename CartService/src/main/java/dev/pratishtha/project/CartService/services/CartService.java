@@ -28,4 +28,6 @@ public interface CartService {
     List<GenericCartDTO> getCartsByUserInDateRange(String userId, DateRangeDTO dateRangeDTO);
 
     GenericCartDTO updateCartById(String id, GenericCartDTO requestDto);
+
+    GenericCartDTO updateSubCartById(String id, GenericCartDTO requestDto);
 }
