@@ -1,26 +1,25 @@
-package dev.pratishtha.project.CartService.controllers.FakeStoreAPI;
+package dev.pratishtha.project.CartService.controllers;
 
 import dev.pratishtha.project.CartService.dtos.DateRangeDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
 import dev.pratishtha.project.CartService.services.CartService;
-import dev.pratishtha.project.CartService.thirdPartyClients.fakeStore.dtos.FakeStoreCartDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/fakestore/carts")
 public class CartControllerForFakeStore {
 
-    private static final Logger LOGGER = Logger.getLogger(CartControllerForFakeStore.class.getName());
+//    private static final Logger LOGGER = Logger.getLogger(CartControllerForFakeStore.class.getName());
     private CartService cartService;
 
     @Autowired
-    public CartControllerForFakeStore(CartService cartService) {
+    public CartControllerForFakeStore(@Qualifier("fakeStoreCartServiceImpl") CartService cartService) {
         this.cartService = cartService;
     }
 
