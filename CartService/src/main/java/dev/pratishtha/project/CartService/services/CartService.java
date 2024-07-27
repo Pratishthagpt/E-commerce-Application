@@ -30,4 +30,6 @@ public interface CartService {
     GenericCartDTO updateCartById(String id, GenericCartDTO requestDto);
 
     GenericCartDTO updateSubCartById(String id, GenericCartDTO requestDto);
+
+    GenericCartDTO deleteCartById(String id);
 }

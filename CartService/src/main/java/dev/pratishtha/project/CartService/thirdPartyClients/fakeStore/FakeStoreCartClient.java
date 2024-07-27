@@ -341,4 +341,18 @@ public class FakeStoreCartClient {
         return fakeStoreCartDTO;
 
     }
+
+    public FakeStoreCartDTO deleteCartByIdFromFakeStore(String id) {
+        ResponseEntity<FakeStoreCartDTO> responseEntity =
+                restTemplate.exchange(fakeStoreCartUrl,
+                        HttpMethod.DELETE,
+                        null,
+                        FakeStoreCartDTO.class,
+                        id
+                );
+
+        FakeStoreCartDTO deletedFakeStoreCartDTO = responseEntity.getBody();
+
+        return deletedFakeStoreCartDTO;
+    }
 }

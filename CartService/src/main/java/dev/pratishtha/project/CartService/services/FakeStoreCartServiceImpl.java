@@ -160,6 +160,14 @@ public class FakeStoreCartServiceImpl implements CartService{
         return genericCartResponseDTO;
     }
 
+    @Override
+    public GenericCartDTO deleteCartById(String id) {
+        FakeStoreCartDTO deletedFakeStoreCartResponse = fakeStoreCartClient.deleteCartByIdFromFakeStore(id);
+        GenericCartDTO deletedGenericCartResponseDTO = convertFakeStoreCartDtoToGenericCartDto(deletedFakeStoreCartResponse);
+
+        return deletedGenericCartResponseDTO;
+    }
+
     private GenericCartDTO convertFakeStoreCartDtoToGenericCartDto (FakeStoreCartDTO fakeStoreCartDTO) {
         GenericCartDTO genericCartDTO = new GenericCartDTO();
 
