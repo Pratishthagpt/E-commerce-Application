@@ -42,4 +42,11 @@ public class CartControllerForDatabase {
 
         return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
     }
+
+    @GetMapping("/limit/{limit}")
+    public ResponseEntity<List<GenericCartDTO>> getCartsByLimit (@PathVariable ("limit") int limit) {
+        List<GenericCartDTO> cartsList = cartService.getCartsByLimit(limit);
+
+        return new ResponseEntity<>(cartsList, HttpStatus.OK);
+    }
 }

@@ -92,7 +92,14 @@ public class DatabaseCartServiceImpl implements CartService {
 
     @Override
     public List<GenericCartDTO> getCartsByLimit(int limit) {
-        return List.of();
+        List<GenericCartDTO> allGenericCartDtos = getAllCarts();
+
+        List<GenericCartDTO> cartsInLimit = new ArrayList<>();
+        for (int i = 0; i < limit; i++) {
+            cartsInLimit.add(allGenericCartDtos.get(i));
+        }
+
+        return cartsInLimit;
     }
 
     @Override
