@@ -2,6 +2,7 @@ package dev.pratishtha.project.CartService.thirdPartyClients.fakeStore;
 
 import dev.pratishtha.project.CartService.exceptions.CartIdNotFoundException;
 import dev.pratishtha.project.CartService.exceptions.CartNotPresentException;
+import dev.pratishtha.project.CartService.exceptions.InvalidParameterException;
 import dev.pratishtha.project.CartService.thirdPartyClients.fakeStore.dtos.FakeStoreCartDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -152,6 +153,11 @@ public class FakeStoreCartClient {
             endDate = LocalDate.now();
         }
 
+//        if start date is greater than end date, then it is invalid input
+        if (startDate.compareTo(endDate) > 0) {
+            throw new InvalidParameterException("Invalid input date range.");
+        }
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String startDateInString = startDate.format(formatter);
         String endDateInString = endDate.format(formatter);
@@ -186,6 +192,11 @@ public class FakeStoreCartClient {
         }
         if (endDate == null) {
             endDate = LocalDate.now();
+        }
+
+//        if start date is greater than end date, then it is invalid input
+        if (startDate.compareTo(endDate) > 0) {
+            throw new InvalidParameterException("Invalid input date range.");
         }
 
         String sort = "asc";
@@ -235,6 +246,47 @@ public class FakeStoreCartClient {
 
         if (fakeStoreCartResponse.length == 0) {
             throw new CartNotPresentException("Cart for user with userId - " + userId + " not present.");
+        }
+
+        List<FakeStoreCartDTO> fakeStoreCartDTOList = new ArrayList<>();
+        if (fakeStoreCartResponse != null) {
+            for (FakeStoreCartDTO fakeStoreCartDTO : fakeStoreCartResponse) {
+                if (fakeStoreCartDTO != null || fakeStoreCartDTO.getProducts() != null) {
+                    fakeStoreCartDTOList.add(fakeStoreCartDTO);
+                }
+            }
+        }
+
+        return fakeStoreCartDTOList;
+    }
+
+    public List<FakeStoreCartDTO> getCartsByUserInDateRangeFromFakeStore(LocalDate startDate, LocalDate endDate, String userId) {
+        if (startDate == null) {
+            startDate = LocalDate.of(1970, 01, 01);
+        }
+        if (endDate == null) {
+            endDate = LocalDate.now();
+        }
+
+//        if start date is greater than end date, then it is invalid input
+        if (startDate.compareTo(endDate) > 0) {
+            throw new InvalidParameterException("Invalid input date range.");
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String startDateInString = startDate.format(formatter);
+        String endDateInString = endDate.format(formatter);
+
+        String cartsRequestByUserInDateRange =
+                fakeStoreCartRequestUrl + "/user/" + userId + "?startdate=" + startDateInString + "&enddate=" + endDateInString;
+                        ;
+
+        ResponseEntity<FakeStoreCartDTO[]> responseEntity =
+                restTemplate.getForEntity(cartsRequestByUserInDateRange, FakeStoreCartDTO[].class, userId);
+
+        FakeStoreCartDTO[] fakeStoreCartResponse = responseEntity.getBody();
+        if (fakeStoreCartResponse.length == 0) {
+            throw new CartNotPresentException("Carts not found.");
         }
 
         List<FakeStoreCartDTO> fakeStoreCartDTOList = new ArrayList<>();

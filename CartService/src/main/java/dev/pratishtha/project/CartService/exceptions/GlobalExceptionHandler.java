@@ -31,4 +31,22 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(new ExceptionDTO(message, status), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler({InvalidParameterException.class})
+    public ResponseEntity<ExceptionDTO> handleInvalidInputException(Exception exception) {
+        String message;
+        HttpStatus status;
+
+        if (exception instanceof InvalidParameterException) {
+            InvalidParameterException invalidParameterException = (InvalidParameterException) exception;
+            message = invalidParameterException.getMessage();
+            status = HttpStatus.BAD_REQUEST;
+        }
+        else {
+            message = "An unexpected error occurred.";
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(new ExceptionDTO(message, status), HttpStatus.BAD_REQUEST);
+    }
 }

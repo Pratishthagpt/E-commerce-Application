@@ -24,4 +24,6 @@ public interface CartService {
     List<GenericCartDTO> getSortedCartsInDateRangeWithLimit(DateRangeDTO dateRangeDTO, int limit, String sortType);
 
     List<GenericCartDTO> getCartsByUser(String userId);
+
+    List<GenericCartDTO> getCartsByUserInDateRange(String userId, DateRangeDTO dateRangeDTO);
 }

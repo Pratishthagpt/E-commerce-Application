@@ -80,6 +80,15 @@ public class CartControllerForFakeStore {
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
 
+    @PostMapping ("/user/{id}/dateRange")
+    public ResponseEntity<List<GenericCartDTO>> getCartsByUserInDateRange(
+            @PathVariable ("id") String userId, @RequestBody DateRangeDTO dateRangeDTO) {
+
+        List<GenericCartDTO> cartsList = cartService.getCartsByUserInDateRange(userId, dateRangeDTO);
+
+        return new ResponseEntity<>(cartsList, HttpStatus.OK);
+    }
+
 
 //    hitting this api to fakestore api won't make any change in actual api carts.
 //    We are just returning the cart directly that we are creating.
