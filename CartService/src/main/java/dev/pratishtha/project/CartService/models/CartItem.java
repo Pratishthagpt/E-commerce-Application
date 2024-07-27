@@ -14,10 +14,6 @@ import java.util.Date;
 @Setter
 public class CartItem extends BaseModel{
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "cart")
-    private Cart cart;
-
     private String productId;
 
     private int quantity;

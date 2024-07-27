@@ -1,6 +1,8 @@
 package dev.pratishtha.project.CartService.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +19,7 @@ public class Cart extends BaseModel{
     private int totalPrice;
     private int totalItems;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(cascade = CascadeType.REMOVE)
     private List<CartItem> cartItems;
     private Date createdAt;
 }

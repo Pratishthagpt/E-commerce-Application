@@ -5,11 +5,13 @@ import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartItemDTO;
 import dev.pratishtha.project.CartService.models.Cart;
 import dev.pratishtha.project.CartService.models.CartItem;
+import dev.pratishtha.project.CartService.repositories.CartItemRepository;
 import dev.pratishtha.project.CartService.repositories.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -17,10 +19,12 @@ import java.util.List;
 public class DatabaseCartServiceImpl implements CartService {
 
     private CartRepository cartRepository;
+    private CartItemRepository cartItemRepository;
 
     @Autowired
-    public DatabaseCartServiceImpl(CartRepository cartRepository) {
+    public DatabaseCartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository) {
         this.cartRepository = cartRepository;
+        this.cartItemRepository = cartItemRepository;
     }
 
 
@@ -38,7 +42,38 @@ public class DatabaseCartServiceImpl implements CartService {
 
     @Override
     public GenericCartDTO addNewCart(GenericCartDTO requestDto) {
-        return null;
+        Cart cart = new Cart();
+
+        List<GenericCartItemDTO> genericCartItemRequest = requestDto.getCartItems();
+        List<CartItem> cartItems = new ArrayList<>();
+
+        int totalPrice = 0;
+
+        for (GenericCartItemDTO genericCartItemDTO : genericCartItemRequest) {
+            CartItem cartItem = new CartItem();
+            cartItem.setProductId(genericCartItemDTO.getProductId());
+            cartItem.setItemAddedAt(genericCartItemDTO.getItemAddedAt());
+            cartItem.setPrice(genericCartItemDTO.getPrice());
+            cartItem.setQuantity(genericCartItemDTO.getQuantity());
+
+            CartItem savedCartItem = cartItemRepository.save(cartItem);
+
+            cartItems.add(savedCartItem);
+
+            totalPrice += (savedCartItem.getPrice() * savedCartItem.getQuantity());
+        }
+
+        cart.setCartItems(cartItems);
+        cart.setUserId(requestDto.getUserId());
+        cart.setCreatedAt(new Date());
+        cart.setTotalItems(cartItems.size());
+        cart.setTotalPrice(totalPrice);
+
+        Cart savedCart = cartRepository.save(cart);
+
+        GenericCartDTO addedCart = convertCartToGenericCartDto(savedCart);
+
+        return addedCart;
     }
 
     @Override
