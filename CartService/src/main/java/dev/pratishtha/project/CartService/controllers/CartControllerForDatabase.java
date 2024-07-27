@@ -35,4 +35,11 @@ public class CartControllerForDatabase {
 
         return new ResponseEntity<>(genericCartDTO, HttpStatus.CREATED);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<GenericCartDTO> getSingleCartById (@PathVariable ("id") String cartId) {
+        GenericCartDTO genericCartDTO = cartService.getCartById(cartId);
+
+        return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
+    }
 }

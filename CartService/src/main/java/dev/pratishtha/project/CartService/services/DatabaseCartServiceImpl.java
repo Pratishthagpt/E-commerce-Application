@@ -3,6 +3,7 @@ package dev.pratishtha.project.CartService.services;
 import dev.pratishtha.project.CartService.dtos.DateRangeDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartItemDTO;
+import dev.pratishtha.project.CartService.exceptions.CartIdNotFoundException;
 import dev.pratishtha.project.CartService.models.Cart;
 import dev.pratishtha.project.CartService.models.CartItem;
 import dev.pratishtha.project.CartService.repositories.CartItemRepository;
@@ -10,9 +11,7 @@ import dev.pratishtha.project.CartService.repositories.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -78,7 +77,17 @@ public class DatabaseCartServiceImpl implements CartService {
 
     @Override
     public GenericCartDTO getCartById(String cartId) {
-        return null;
+        UUID id = UUID.fromString(cartId);
+
+        Optional<Cart> cartOptional = cartRepository.findById(id);
+        if (cartOptional.isEmpty()) {
+            throw new CartIdNotFoundException("Cart with id - " + id + " not found.");
+        }
+
+        Cart cart = cartOptional.get();
+
+        GenericCartDTO genericCartDTO = convertCartToGenericCartDto(cart);
+        return genericCartDTO;
     }
 
     @Override
