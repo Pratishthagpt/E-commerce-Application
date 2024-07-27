@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(CartIdNotFoundException.class)
+    @ExceptionHandler({CartIdNotFoundException.class, CartNotPresentException.class})
     public ResponseEntity<ExceptionDTO> handleIdNotFoundException(Exception exception) {
         String message;
         HttpStatus status;
@@ -17,6 +17,11 @@ public class GlobalExceptionHandler {
         if (exception instanceof CartIdNotFoundException) {
             CartIdNotFoundException cartIdNotFoundException = (CartIdNotFoundException) exception;
             message = cartIdNotFoundException.getMessage();
+            status = HttpStatus.NOT_FOUND;
+        }
+        else if (exception instanceof CartNotPresentException) {
+            CartNotPresentException cartNotPresentException = (CartNotPresentException) exception;
+            message = cartNotPresentException.getMessage();
             status = HttpStatus.NOT_FOUND;
         }
         else {

@@ -1,6 +1,7 @@
 package dev.pratishtha.project.CartService.thirdPartyClients.fakeStore;
 
 import dev.pratishtha.project.CartService.exceptions.CartIdNotFoundException;
+import dev.pratishtha.project.CartService.exceptions.CartNotPresentException;
 import dev.pratishtha.project.CartService.thirdPartyClients.fakeStore.dtos.FakeStoreCartDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Component
@@ -45,9 +45,8 @@ public class FakeStoreCartClient {
                 restTemplate.getForEntity(fakeStoreCartRequestUrl, FakeStoreCartDTO[].class);
 
         FakeStoreCartDTO[] fakeStoreCartResponse = responseEntity.getBody();
-        if (fakeStoreCartResponse == null) {
-//            LOGGER.warning("Received null response from FakeStore API");
-            return new ArrayList<>();
+        if (fakeStoreCartResponse.length == 0) {
+            throw new CartNotPresentException("Carts not found.");
         }
 
 //        LOGGER.info("Received response: " + Arrays.toString(fakeStoreCartResponse));
@@ -100,8 +99,8 @@ public class FakeStoreCartClient {
                 restTemplate.getForEntity(cartsRequestByLimitUrl, FakeStoreCartDTO[].class, limit);
 
         FakeStoreCartDTO[] fakeStoreCartResponse = responseEntity.getBody();
-        if (fakeStoreCartResponse == null) {
-            return new ArrayList<>();
+        if (fakeStoreCartResponse.length == 0) {
+            throw new CartNotPresentException("Carts not found.");
         }
 
         List<FakeStoreCartDTO> fakeStoreCartDTOList = new ArrayList<>();
@@ -129,8 +128,8 @@ public class FakeStoreCartClient {
                 restTemplate.getForEntity(cartsRequestBySortUrl, FakeStoreCartDTO[].class);
 
         FakeStoreCartDTO[] fakeStoreCartResponse = responseEntity.getBody();
-        if (fakeStoreCartResponse == null) {
-            return new ArrayList<>();
+        if (fakeStoreCartResponse.length == 0) {
+            throw new CartNotPresentException("Carts not found.");
         }
 
         List<FakeStoreCartDTO> fakeStoreCartDTOList = new ArrayList<>();
@@ -163,8 +162,8 @@ public class FakeStoreCartClient {
                 restTemplate.getForEntity(cartsRequestByDateRangeUrl, FakeStoreCartDTO[].class);
 
         FakeStoreCartDTO[] fakeStoreCartResponse = responseEntity.getBody();
-        if (fakeStoreCartResponse == null) {
-            return new ArrayList<>();
+        if (fakeStoreCartResponse.length == 0) {
+            throw new CartNotPresentException("Carts not found.");
         }
 
         List<FakeStoreCartDTO> fakeStoreCartDTOList = new ArrayList<>();
@@ -207,8 +206,8 @@ public class FakeStoreCartClient {
                 restTemplate.getForEntity(cartsRequestByDateRangeWithLimitAndSortUrl, FakeStoreCartDTO[].class, limit);
 
         FakeStoreCartDTO[] fakeStoreCartResponse = responseEntity.getBody();
-        if (fakeStoreCartResponse == null) {
-            return new ArrayList<>();
+        if (fakeStoreCartResponse.length == 0) {
+            throw new CartNotPresentException("Carts not found.");
         }
 
         List<FakeStoreCartDTO> fakeStoreCartDTOList = new ArrayList<>();
@@ -222,5 +221,31 @@ public class FakeStoreCartClient {
 
         return fakeStoreCartDTOList;
 
+    }
+
+    public List<FakeStoreCartDTO> getCartsByUserFromFakeStore(String userId) {
+
+        String cartRequestByUserUrl = fakeStoreCartRequestUrl + "/user/" + userId;
+
+        ResponseEntity<FakeStoreCartDTO[]> responseEntity =
+                restTemplate.getForEntity(cartRequestByUserUrl, FakeStoreCartDTO[].class, userId);
+
+        FakeStoreCartDTO[] fakeStoreCartResponse = responseEntity.getBody();
+        System.out.println(fakeStoreCartResponse.length);
+
+        if (fakeStoreCartResponse.length == 0) {
+            throw new CartNotPresentException("Cart for user with userId - " + userId + " not present.");
+        }
+
+        List<FakeStoreCartDTO> fakeStoreCartDTOList = new ArrayList<>();
+        if (fakeStoreCartResponse != null) {
+            for (FakeStoreCartDTO fakeStoreCartDTO : fakeStoreCartResponse) {
+                if (fakeStoreCartDTO != null || fakeStoreCartDTO.getProducts() != null) {
+                    fakeStoreCartDTOList.add(fakeStoreCartDTO);
+                }
+            }
+        }
+
+        return fakeStoreCartDTOList;
     }
 }
