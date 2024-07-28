@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -178,26 +179,68 @@ public class DatabaseCartServiceImpl implements CartService {
 
         List<Cart> carts;
         if (sort.equals("desc")) {
-            carts = cartRepository.findAllByOrderByUuidDesc();
+//            carts = cartRepository.findAllByOrderByUuidDesc();
+            carts = cartRepository.findAllByOrderByUuidDescWithLimit(limit);
         }
         else {
-            carts = cartRepository.findAll();
+//            carts = cartRepository.findAll();
+            carts = cartRepository.findAllByOrderByUuidAscWithLimit(limit);
         }
         List<GenericCartDTO> genericCartDtosList = new ArrayList<>();
         for (Cart cart : carts) {
             genericCartDtosList.add(convertCartToGenericCartDto(cart));
         }
 
-        List<GenericCartDTO> limitedGenericCartsList = new ArrayList<>();
-        for (int i = 0; i < limit; i++) {
-            limitedGenericCartsList.add(genericCartDtosList.get(i));
-        }
-        return limitedGenericCartsList;
+//        List<GenericCartDTO> limitedGenericCartsList = new ArrayList<>();
+//        for (int i = 0; i < limit; i++) {
+//            limitedGenericCartsList.add(genericCartDtosList.get(i));
+//        }
+        return genericCartDtosList;
     }
 
     @Override
     public List<GenericCartDTO> getSortedCartsInDateRangeWithLimit(DateRangeDTO dateRangeDTO, int limit, String sortType) {
-        return List.of();
+
+        LocalDate sDate = dateRangeDTO.getStartDate();
+        LocalDate eDate = dateRangeDTO.getEndDate();
+
+        if (sDate == null) {
+            sDate = LocalDate.of(1970, 01, 01);
+        }
+        if (eDate == null) {
+            eDate = LocalDate.now();
+        }
+
+//        if start date is greater than end date, then it is invalid input
+        if (sDate.compareTo(eDate) > 0) {
+            throw new InvalidParameterException("Invalid input date range.");
+        }
+
+        String sort = "asc";
+
+        if (sortType.equalsIgnoreCase("descending") || sortType.equalsIgnoreCase("desc")) {
+            sort = "desc";
+        }
+
+//        convert start-date and end-date from LocalDate to Date datatype bcoz "createdAt" has a datatype of Date
+        Date startDate = Date.from(sDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date endDate = Date.from(eDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        List<Cart> carts;
+        //        finding the list of carts by using custom query from db
+        if(sort.equals("desc")) {
+            carts = cartRepository.findAllSortedCartsInDateRangeWithinLimitByDescOrder(startDate, endDate, limit);
+        }
+        else {
+            carts = cartRepository.findAllSortedCartsInDateRangeWithinLimitByAscOrder(startDate, endDate, limit);
+        }
+
+        List<GenericCartDTO> genericCartDtosList = new ArrayList<>();
+        for (Cart cart : carts) {
+            genericCartDtosList.add(convertCartToGenericCartDto(cart));
+        }
+
+        return genericCartDtosList;
     }
 
     @Override

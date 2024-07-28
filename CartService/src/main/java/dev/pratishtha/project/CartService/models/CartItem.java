@@ -1,9 +1,6 @@
 package dev.pratishtha.project.CartService.models;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,5 +15,7 @@ public class CartItem extends BaseModel{
 
     private int quantity;
     private int price;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date itemAddedAt;
 }

@@ -68,10 +68,21 @@ public class CartControllerForDatabase {
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
 
-    @GetMapping("/dateRange")
+    @PostMapping("/dateRange")
     public ResponseEntity<List<GenericCartDTO>> getCartsInDateRange (
             @RequestBody DateRangeDTO dateRangeDTO) {
         List<GenericCartDTO> cartsList = cartService.getCartsInDateRange(dateRangeDTO);
+
+        return new ResponseEntity<>(cartsList, HttpStatus.OK);
+    }
+
+    @PostMapping("/dateRange/sort/{sortType}/limit/{limit}")
+    public ResponseEntity<List<GenericCartDTO>> getSortedCartsInDateRangeWithLimit
+            (@PathVariable ("limit") int limit,
+             @PathVariable ("sortType") String sortType,
+             @RequestBody DateRangeDTO dateRangeDTO) {
+
+        List<GenericCartDTO> cartsList = cartService.getSortedCartsInDateRangeWithLimit(dateRangeDTO, limit, sortType);
 
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }

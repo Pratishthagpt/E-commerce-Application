@@ -1,0 +1,5 @@
+ALTER TABLE cart
+    MODIFY COLUMN created_at TIMESTAMP;
+
+ALTER TABLE cart_item
+    MODIFY COLUMN item_added_at TIMESTAMP;
