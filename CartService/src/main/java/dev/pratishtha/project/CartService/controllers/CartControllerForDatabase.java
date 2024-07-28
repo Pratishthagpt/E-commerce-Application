@@ -86,4 +86,12 @@ public class CartControllerForDatabase {
 
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<GenericCartDTO>> getCartsByUser(@PathVariable ("id") String userId) {
+
+        List<GenericCartDTO> cartsList = cartService.getCartsByUser(userId);
+
+        return new ResponseEntity<>(cartsList, HttpStatus.OK);
+    }
 }

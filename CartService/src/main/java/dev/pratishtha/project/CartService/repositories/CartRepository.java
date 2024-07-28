@@ -30,4 +30,6 @@ public interface CartRepository extends JpaRepository<Cart, UUID> {
     List<Cart> findAllSortedCartsInDateRangeWithinLimitByAscOrder(Date startDate, Date endDate, int limit);
 
     List<Cart> findAllByOrderByUuidDesc();
+
+    List<Cart> findAllByUserId(String userId);
 }

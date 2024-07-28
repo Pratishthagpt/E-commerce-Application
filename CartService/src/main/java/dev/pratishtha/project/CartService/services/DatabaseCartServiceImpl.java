@@ -245,7 +245,18 @@ public class DatabaseCartServiceImpl implements CartService {
 
     @Override
     public List<GenericCartDTO> getCartsByUser(String userId) {
-        return List.of();
+        List<Cart> carts = cartRepository.findAllByUserId(userId);
+
+        if (carts.size() == 0) {
+            throw new CartNotPresentException("The user with id - " + userId + " does not have any cart.");
+        }
+
+        List<GenericCartDTO> genericCartDtosList = new ArrayList<>();
+        for (Cart cart : carts) {
+            genericCartDtosList.add(convertCartToGenericCartDto(cart));
+        }
+
+        return genericCartDtosList;
     }
 
     @Override
