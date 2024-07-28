@@ -4,6 +4,7 @@ import dev.pratishtha.project.CartService.dtos.DateRangeDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -34,4 +35,5 @@ public interface CartService {
     GenericCartDTO deleteCartById(String id);
 
     List<GenericCartDTO> getCartsBySortAndLimit(String sortType, int limit);
+
 }

@@ -4,6 +4,8 @@ import dev.pratishtha.project.CartService.dtos.DateRangeDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartItemDTO;
 import dev.pratishtha.project.CartService.exceptions.CartIdNotFoundException;
+import dev.pratishtha.project.CartService.exceptions.CartNotPresentException;
+import dev.pratishtha.project.CartService.exceptions.InvalidParameterException;
 import dev.pratishtha.project.CartService.models.Cart;
 import dev.pratishtha.project.CartService.models.CartItem;
 import dev.pratishtha.project.CartService.repositories.CartItemRepository;
@@ -11,6 +13,8 @@ import dev.pratishtha.project.CartService.repositories.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 
@@ -125,6 +129,46 @@ public class DatabaseCartServiceImpl implements CartService {
     }
 
     @Override
+    public List<GenericCartDTO> getCartsInDateRange(DateRangeDTO dateRangeDTO) {
+
+        LocalDate sDate = dateRangeDTO.getStartDate();
+        LocalDate eDate = dateRangeDTO.getEndDate();
+
+//        check for start-date and end-date, if they are null, then set their value
+        if (sDate == null) {
+            sDate = LocalDate.of(1970, 01, 01);
+        }
+        if (eDate == null) {
+            eDate = LocalDate.now();
+        }
+
+//        if start date is greater than end date, then it is invalid input
+        if (sDate.compareTo(eDate) > 0) {
+            throw new InvalidParameterException("Invalid input date range.");
+        }
+
+//        convert start-date and end-date from LocalDate to Date datatype bcoz "createdAt" has a datatype of Date
+        Date startDate = Date.from(sDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date endDate = Date.from(eDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+//        finding the list of carts by using custom query from db
+        List<Cart> carts = cartRepository.findAllCartsInDateRange(startDate, endDate);
+
+//        System.out.println(carts.size());
+
+        if (carts.size() == 0) {
+            throw new CartNotPresentException("There are no carts in this date range.");
+        }
+
+        List<GenericCartDTO> genericCartDtosList = new ArrayList<>();
+        for (Cart cart : carts) {
+            genericCartDtosList.add(convertCartToGenericCartDto(cart));
+        }
+
+        return genericCartDtosList;
+    }
+
+    @Override
     public List<GenericCartDTO> getCartsBySortAndLimit(String sortType, int limit) {
         String sort = "asc";
 
@@ -149,11 +193,6 @@ public class DatabaseCartServiceImpl implements CartService {
             limitedGenericCartsList.add(genericCartDtosList.get(i));
         }
         return limitedGenericCartsList;
-    }
-
-    @Override
-    public List<GenericCartDTO> getCartsInDateRange(DateRangeDTO dateRangeDTO) {
-        return List.of();
     }
 
     @Override
