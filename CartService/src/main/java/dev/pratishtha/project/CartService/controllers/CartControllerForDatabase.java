@@ -56,4 +56,12 @@ public class CartControllerForDatabase {
 
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
+
+    @GetMapping("/sort/{sortType}/limit/{limit}")
+    public ResponseEntity<List<GenericCartDTO>> getCartsBySortAndLimit (
+            @PathVariable ("sortType") String sortType, @PathVariable ("limit") int limit) {
+        List<GenericCartDTO> cartsList = cartService.getCartsBySortAndLimit(sortType, limit);
+
+        return new ResponseEntity<>(cartsList, HttpStatus.OK);
+    }
 }

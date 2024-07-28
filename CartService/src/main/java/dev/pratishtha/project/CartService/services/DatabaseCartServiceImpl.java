@@ -125,6 +125,33 @@ public class DatabaseCartServiceImpl implements CartService {
     }
 
     @Override
+    public List<GenericCartDTO> getCartsBySortAndLimit(String sortType, int limit) {
+        String sort = "asc";
+
+        if (sortType.equalsIgnoreCase("descending") || sortType.equalsIgnoreCase("desc")) {
+            sort = "desc";
+        }
+
+        List<Cart> carts;
+        if (sort.equals("desc")) {
+            carts = cartRepository.findAllByOrderByUuidDesc();
+        }
+        else {
+            carts = cartRepository.findAll();
+        }
+        List<GenericCartDTO> genericCartDtosList = new ArrayList<>();
+        for (Cart cart : carts) {
+            genericCartDtosList.add(convertCartToGenericCartDto(cart));
+        }
+
+        List<GenericCartDTO> limitedGenericCartsList = new ArrayList<>();
+        for (int i = 0; i < limit; i++) {
+            limitedGenericCartsList.add(genericCartDtosList.get(i));
+        }
+        return limitedGenericCartsList;
+    }
+
+    @Override
     public List<GenericCartDTO> getCartsInDateRange(DateRangeDTO dateRangeDTO) {
         return List.of();
     }
@@ -158,6 +185,7 @@ public class DatabaseCartServiceImpl implements CartService {
     public GenericCartDTO deleteCartById(String id) {
         return null;
     }
+
 
     private GenericCartDTO convertCartToGenericCartDto(Cart cart) {
         GenericCartDTO genericCartDTO = new GenericCartDTO();

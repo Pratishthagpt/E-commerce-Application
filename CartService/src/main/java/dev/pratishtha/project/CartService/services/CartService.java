@@ -32,4 +32,6 @@ public interface CartService {
     GenericCartDTO updateSubCartById(String id, GenericCartDTO requestDto);
 
     GenericCartDTO deleteCartById(String id);
+
+    List<GenericCartDTO> getCartsBySortAndLimit(String sortType, int limit);
 }

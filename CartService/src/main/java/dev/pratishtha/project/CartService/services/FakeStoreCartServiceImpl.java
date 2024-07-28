@@ -168,6 +168,11 @@ public class FakeStoreCartServiceImpl implements CartService{
         return deletedGenericCartResponseDTO;
     }
 
+    @Override
+    public List<GenericCartDTO> getCartsBySortAndLimit(String sortType, int limit) {
+        return List.of();
+    }
+
     private GenericCartDTO convertFakeStoreCartDtoToGenericCartDto (FakeStoreCartDTO fakeStoreCartDTO) {
         GenericCartDTO genericCartDTO = new GenericCartDTO();
 
