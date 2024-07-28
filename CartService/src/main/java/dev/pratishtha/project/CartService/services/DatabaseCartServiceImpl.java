@@ -261,7 +261,40 @@ public class DatabaseCartServiceImpl implements CartService {
 
     @Override
     public List<GenericCartDTO> getCartsByUserInDateRange(String userId, DateRangeDTO dateRangeDTO) {
-        return List.of();
+
+        LocalDate sDate = dateRangeDTO.getStartDate();
+        LocalDate eDate = dateRangeDTO.getEndDate();
+
+//        check for start-date and end-date, if they are null, then set their value
+        if (sDate == null) {
+            sDate = LocalDate.of(1970, 01, 01);
+        }
+        if (eDate == null) {
+            eDate = LocalDate.now();
+        }
+
+//        if start date is greater than end date, then it is invalid input
+        if (sDate.compareTo(eDate) > 0) {
+            throw new InvalidParameterException("Invalid input date range.");
+        }
+
+//        convert start-date and end-date from LocalDate to Date datatype bcoz "createdAt" has a datatype of Date
+        Date startDate = Date.from(sDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date endDate = Date.from(eDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+
+        List<Cart> carts = cartRepository.findAllByUserIdInDateRange(userId, startDate, endDate);
+
+        if (carts.size() == 0) {
+            throw new CartNotPresentException("The user with id - " + userId + " does not have any cart.");
+        }
+
+        List<GenericCartDTO> genericCartDtosList = new ArrayList<>();
+        for (Cart cart : carts) {
+            genericCartDtosList.add(convertCartToGenericCartDto(cart));
+        }
+
+        return genericCartDtosList;
     }
 
     @Override

@@ -32,4 +32,7 @@ public interface CartRepository extends JpaRepository<Cart, UUID> {
     List<Cart> findAllByOrderByUuidDesc();
 
     List<Cart> findAllByUserId(String userId);
+
+    @Query(value = SqlQueries.GET_ALL_CARTS_BY_USER_IN_DATE_RANGE, nativeQuery = true)
+    List<Cart> findAllByUserIdInDateRange(String userId, Date startDate, Date endDate);
 }
