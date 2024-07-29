@@ -117,4 +117,11 @@ public class CartControllerForDatabase {
 
         return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<GenericCartDTO> deleteCartById(@PathVariable ("id") String id){
+        GenericCartDTO genericCartDTO = cartService.deleteCartById(id);
+
+        return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
+    }
 }

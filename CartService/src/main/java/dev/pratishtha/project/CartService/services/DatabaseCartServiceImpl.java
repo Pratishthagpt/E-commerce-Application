@@ -396,8 +396,21 @@ public class DatabaseCartServiceImpl implements CartService {
     }
 
     @Override
-    public GenericCartDTO deleteCartById(String id) {
-        return null;
+    public GenericCartDTO deleteCartById(String cartId) {
+        UUID id = UUID.fromString(cartId);
+
+        Optional<Cart> cartOptional = cartRepository.findById(id);
+        if (cartOptional.isEmpty()) {
+            throw new CartIdNotFoundException("Cart with id - " + id + " not found.");
+        }
+
+        Cart cart = cartOptional.get();
+
+        GenericCartDTO genericCartDTO = convertCartToGenericCartDto(cart);
+
+        cartRepository.deleteById(id);
+
+        return genericCartDTO;
     }
 
 
