@@ -6,10 +6,13 @@ import dev.pratishtha.project.CartService.dtos.GenericCartItemDTO;
 import dev.pratishtha.project.CartService.exceptions.CartIdNotFoundException;
 import dev.pratishtha.project.CartService.exceptions.CartNotPresentException;
 import dev.pratishtha.project.CartService.exceptions.InvalidParameterException;
+import dev.pratishtha.project.CartService.exceptions.InvalidUserAuthenticationException;
 import dev.pratishtha.project.CartService.models.Cart;
 import dev.pratishtha.project.CartService.models.CartItem;
 import dev.pratishtha.project.CartService.repositories.CartItemRepository;
 import dev.pratishtha.project.CartService.repositories.CartRepository;
+import dev.pratishtha.project.CartService.security.JwtData;
+import dev.pratishtha.project.CartService.security.TokenValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,16 +27,19 @@ public class DatabaseCartServiceImpl implements CartService {
 
     private CartRepository cartRepository;
     private CartItemRepository cartItemRepository;
+    private TokenValidator tokenValidator;
 
     @Autowired
-    public DatabaseCartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository) {
+    public DatabaseCartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository,
+                                   TokenValidator tokenValidator) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
+        this.tokenValidator = tokenValidator;
     }
-
 
     @Override
     public List<GenericCartDTO> getAllCarts() {
+
         List<Cart> carts = cartRepository.findAll();
 
         List<GenericCartDTO> genericCartDtosList = new ArrayList<>();
@@ -45,7 +51,13 @@ public class DatabaseCartServiceImpl implements CartService {
 
 
     @Override
-    public GenericCartDTO addNewCart(GenericCartDTO requestDto) {
+    public GenericCartDTO addNewCart(String token, GenericCartDTO requestDto) {
+
+//        1. First, we will authenticate the user using TokenValidator class
+//        2. Enter the user details into cart
+
+        JwtData userJwtData = validateUserByToken(token);
+
         Cart cart = new Cart();
 
         List<GenericCartItemDTO> genericCartItemRequest = requestDto.getCartItems();
@@ -67,7 +79,9 @@ public class DatabaseCartServiceImpl implements CartService {
         }
 
         cart.setCartItems(cartItems);
-        cart.setUserId(requestDto.getUserId());
+
+//        setting user Id from user service
+        cart.setUserId(userJwtData.getUserId());
         cart.setCreatedAt(new Date());
         cart.setTotalItems(cartItems.size());
         cart.setTotalPrice(totalPrice);
@@ -474,5 +488,16 @@ public class DatabaseCartServiceImpl implements CartService {
         cart.setCartItems(cartItems);
 
         return cart;
+    }
+
+    public JwtData validateUserByToken (String token) {
+        Optional<JwtData> userData = tokenValidator.validateToken(token);
+        if (userData.isEmpty()) {
+            throw new InvalidUserAuthenticationException("User token is not Authenticated. Please enter the valid authentication token.");
+        }
+
+        JwtData userJwtData = userData.get();
+
+        return userJwtData;
     }
 }

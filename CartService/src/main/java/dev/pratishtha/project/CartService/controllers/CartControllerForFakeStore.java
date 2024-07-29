@@ -1,8 +1,10 @@
 package dev.pratishtha.project.CartService.controllers;
 
+import ch.qos.logback.core.testUtil.RandomUtil;
 import dev.pratishtha.project.CartService.dtos.DateRangeDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
 import dev.pratishtha.project.CartService.services.CartService;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,9 @@ public class CartControllerForFakeStore {
 
 //    private static final Logger LOGGER = Logger.getLogger(CartControllerForFakeStore.class.getName());
     private CartService cartService;
+
+//    adding token to match with database controller methods
+    private String token = RandomStringUtils.randomAlphabetic(30);
 
     @Autowired
     public CartControllerForFakeStore(@Qualifier("fakeStoreCartServiceImpl") CartService cartService) {
@@ -95,7 +100,8 @@ public class CartControllerForFakeStore {
 //     Remember that nothing in real will insert into the database. so if you want to access the new id you will get a 404 error.
     @PostMapping
     public ResponseEntity<GenericCartDTO> addNewCart(@RequestBody GenericCartDTO requestDto){
-        GenericCartDTO genericCartDTO = cartService.addNewCart(requestDto);
+
+        GenericCartDTO genericCartDTO = cartService.addNewCart(token, requestDto);
 
         return new ResponseEntity<>(genericCartDTO, HttpStatus.CREATED);
     }

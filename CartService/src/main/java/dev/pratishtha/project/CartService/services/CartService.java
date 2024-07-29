@@ -12,7 +12,7 @@ public interface CartService {
 
     public List<GenericCartDTO> getAllCarts();
 
-    GenericCartDTO addNewCart(GenericCartDTO requestDto);
+    GenericCartDTO addNewCart(String token, GenericCartDTO requestDto);
 
     GenericCartDTO getCartById(String cartId);
 

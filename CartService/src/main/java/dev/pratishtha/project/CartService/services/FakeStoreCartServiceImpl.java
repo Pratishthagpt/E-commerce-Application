@@ -38,7 +38,7 @@ public class FakeStoreCartServiceImpl implements CartService{
     }
 
     @Override
-    public GenericCartDTO addNewCart(GenericCartDTO requestDto) {
+    public GenericCartDTO addNewCart( String token, GenericCartDTO requestDto) {
         FakeStoreCartDTO fakeStoreCartRequest =
                 convertGenericCartDtoToFakeStoreCartDto(requestDto);
 

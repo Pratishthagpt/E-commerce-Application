@@ -33,6 +33,7 @@ public class UserService {
 
         User user = userOptional.get();
         UserDto userDto = UserDto.fromUser(user);
+        userDto.setRoles(new HashSet<>(user.getRoles()));
 
         return userDto;
     }

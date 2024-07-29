@@ -88,12 +88,15 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((request) -> request
 //                        .requestMatchers("http://localhost:9101/users/auth/signup").permitAll()
-                        .anyRequest().authenticated()
-//                                .anyRequest().permitAll()
+//                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 )
                 // Form login handles the redirect to the login page from the
                 // authorization server filter chain
                 .formLogin(Customizer.withDefaults());
+
+        http.csrf().disable();
+        http.cors().disable();
 
         return http.build();
     }

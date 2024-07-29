@@ -6,6 +6,7 @@ import dev.pratishtha.project.CartService.services.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +34,10 @@ public class CartControllerForDatabase {
     }
 
     @PostMapping
-    public ResponseEntity<GenericCartDTO> addNewCart(@RequestBody GenericCartDTO requestDto){
-        GenericCartDTO genericCartDTO = cartService.addNewCart(requestDto);
+    public ResponseEntity<GenericCartDTO> addNewCart(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody GenericCartDTO requestDto){
+
+        GenericCartDTO genericCartDTO = cartService.addNewCart(token, requestDto);
 
         return new ResponseEntity<>(genericCartDTO, HttpStatus.CREATED);
     }
