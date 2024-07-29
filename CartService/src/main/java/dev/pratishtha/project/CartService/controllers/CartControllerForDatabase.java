@@ -27,7 +27,8 @@ public class CartControllerForDatabase {
     }
 
     @GetMapping
-    public ResponseEntity<List<GenericCartDTO>> getAllCarts (@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+    public ResponseEntity<List<GenericCartDTO>> getAllCarts (
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
 
         List<GenericCartDTO> cartsList = cartService.getAllCarts(token);
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
@@ -91,40 +92,49 @@ public class CartControllerForDatabase {
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<List<GenericCartDTO>> getCartsByUser(@PathVariable ("id") String userId) {
+    @GetMapping("/user")
+    public ResponseEntity<List<GenericCartDTO>> getCartsByUserByToken(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
 
-        List<GenericCartDTO> cartsList = cartService.getCartsByUser(userId);
+        List<GenericCartDTO> cartsList = cartService.getCartsByUserByToken(token);
 
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
 
-    @PostMapping ("/user/{id}/dateRange")
+    @PostMapping ("/user/dateRange")
     public ResponseEntity<List<GenericCartDTO>> getCartsByUserInDateRange(
-            @PathVariable ("id") String userId, @RequestBody DateRangeDTO dateRangeDTO) {
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @RequestBody DateRangeDTO dateRangeDTO) {
 
-        List<GenericCartDTO> cartsList = cartService.getCartsByUserInDateRange(userId, dateRangeDTO);
+        List<GenericCartDTO> cartsList = cartService.getCartsByUserTokenInDateRange(token, dateRangeDTO);
 
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GenericCartDTO> updateCartById(@PathVariable ("id") String id, @RequestBody GenericCartDTO requestDto){
-        GenericCartDTO genericCartDTO = cartService.updateCartById(id, requestDto);
+    public ResponseEntity<GenericCartDTO> updateCartById(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable ("id") String id, @RequestBody GenericCartDTO requestDto){
+        GenericCartDTO genericCartDTO = cartService.updateCartById(token, id, requestDto);
 
         return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<GenericCartDTO> updateSubCartById(@PathVariable ("id") String id, @RequestBody GenericCartDTO requestDto){
-        GenericCartDTO genericCartDTO = cartService.updateSubCartById(id, requestDto);
+    public ResponseEntity<GenericCartDTO> updateSubCartById(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable ("id") String id, @RequestBody GenericCartDTO requestDto){
+
+        GenericCartDTO genericCartDTO = cartService.updateSubCartById(token, id, requestDto);
 
         return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<GenericCartDTO> deleteCartById(@PathVariable ("id") String id){
-        GenericCartDTO genericCartDTO = cartService.deleteCartById(id);
+    public ResponseEntity<GenericCartDTO> deleteCartById(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable ("id") String id){
+        GenericCartDTO genericCartDTO = cartService.deleteCartById(token, id);
 
         return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
     }

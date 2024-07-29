@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -265,8 +264,13 @@ public class DatabaseCartServiceImpl implements CartService {
         return genericCartDtosList;
     }
 
+
     @Override
-    public List<GenericCartDTO> getCartsByUser(String userId) {
+    public List<GenericCartDTO> getCartsByUserByToken(String token) {
+
+        JwtData userJwtData = validateUserByToken(token);
+        String userId = userJwtData.getUserId();
+
         List<Cart> carts = cartRepository.findAllByUserId(userId);
 
         if (carts.size() == 0) {
@@ -282,7 +286,10 @@ public class DatabaseCartServiceImpl implements CartService {
     }
 
     @Override
-    public List<GenericCartDTO> getCartsByUserInDateRange(String userId, DateRangeDTO dateRangeDTO) {
+    public List<GenericCartDTO> getCartsByUserTokenInDateRange(String token, DateRangeDTO dateRangeDTO) {
+
+        JwtData userJwtData = validateUserByToken(token);
+        String userId = userJwtData.getUserId();
 
         LocalDate sDate = dateRangeDTO.getStartDate();
         LocalDate eDate = dateRangeDTO.getEndDate();
@@ -304,7 +311,7 @@ public class DatabaseCartServiceImpl implements CartService {
         Date startDate = Date.from(sDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date endDate = Date.from(eDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-
+        System.out.println(userId);
         List<Cart> carts = cartRepository.findAllByUserIdInDateRange(userId, startDate, endDate);
 
         if (carts.size() == 0) {
@@ -320,12 +327,29 @@ public class DatabaseCartServiceImpl implements CartService {
     }
 
     @Override
-    public GenericCartDTO updateCartById(String cartId, GenericCartDTO requestDto) {
+    public List<GenericCartDTO> getCartsByUser(String userId) {
+        return List.of();
+    }
+
+    @Override
+    public List<GenericCartDTO> getCartsByUserInDateRange(String userId, DateRangeDTO dateRangeDTO) {
+        return List.of();
+    }
+
+    @Override
+    public GenericCartDTO updateCartById(String token, String cartId, GenericCartDTO requestDto) {
+
+//        1. Check whether the token is valid or not
+        JwtData userJwtData = validateUserByToken(token);
+        String userId = userJwtData.getUserId();
+
+//        2. check whether the cart id belongs to user id
+
         UUID id = UUID.fromString(cartId);
 
-        Optional<Cart> cartOptional = cartRepository.findById(id);
+        Optional<Cart> cartOptional = cartRepository.findByUuidAndUserId(id, userId);
         if (cartOptional.isEmpty()) {
-            throw new CartIdNotFoundException("Cart with id - " + id + " not found.");
+            throw new CartIdNotFoundException("Cart with user - " + userJwtData.getUsername() + " not found.");
         }
 
         Cart cart = cartOptional.get();
@@ -361,7 +385,7 @@ public class DatabaseCartServiceImpl implements CartService {
         }
 
         cart.setCartItems(newCartItems);
-        cart.setUserId(requestDto.getUserId());
+        cart.setUserId(userId);
         cart.setCreatedAt(new Date());
         cart.setTotalItems(newCartItems.size());
         cart.setTotalPrice(totalPrice);
@@ -373,12 +397,19 @@ public class DatabaseCartServiceImpl implements CartService {
     }
 
     @Override
-    public GenericCartDTO updateSubCartById(String cartId, GenericCartDTO requestDto) {
+    public GenericCartDTO updateSubCartById(String token, String cartId, GenericCartDTO requestDto) {
+
+//        1. Check whether the token is valid or not
+        JwtData userJwtData = validateUserByToken(token);
+        String userId = userJwtData.getUserId();
+
+//        2. check whether the cart id belongs to user id
+
         UUID id = UUID.fromString(cartId);
 
         Optional<Cart> cartOptional = cartRepository.findById(id);
         if (cartOptional.isEmpty()) {
-            throw new CartIdNotFoundException("Cart with id - " + id + " not found.");
+            throw new CartIdNotFoundException("Cart with user - " + userJwtData.getUsername() + " not found.");
         }
 
         Cart cart = cartOptional.get();
@@ -407,7 +438,7 @@ public class DatabaseCartServiceImpl implements CartService {
         }
 
         cart.setCartItems(newCartItems);
-        cart.setUserId(requestDto.getUserId());
+        cart.setUserId(userId);
         cart.setCreatedAt(new Date());
         cart.setTotalItems(newCartItems.size());
         cart.setTotalPrice(totalPrice);
@@ -419,12 +450,18 @@ public class DatabaseCartServiceImpl implements CartService {
     }
 
     @Override
-    public GenericCartDTO deleteCartById(String cartId) {
+    public GenericCartDTO deleteCartById(String token, String cartId) {
+
+//        1. Check whether the token is valid or not
+        JwtData userJwtData = validateUserByToken(token);
+        String userId = userJwtData.getUserId();
+
+//        2. check whether the cart id belongs to user id
         UUID id = UUID.fromString(cartId);
 
-        Optional<Cart> cartOptional = cartRepository.findById(id);
+        Optional<Cart> cartOptional = cartRepository.findByUuidAndUserId(id, userId);
         if (cartOptional.isEmpty()) {
-            throw new CartIdNotFoundException("Cart with id - " + id + " not found.");
+            throw new CartIdNotFoundException("Cart with user - " + userJwtData.getUsername() + " not found.");
         }
 
         Cart cart = cartOptional.get();

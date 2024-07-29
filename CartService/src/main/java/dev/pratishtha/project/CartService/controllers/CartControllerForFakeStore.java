@@ -108,21 +108,21 @@ public class CartControllerForFakeStore {
 
     @PutMapping("/{id}")
     public ResponseEntity<GenericCartDTO> updateCartById(@PathVariable ("id") String id, @RequestBody GenericCartDTO requestDto){
-        GenericCartDTO genericCartDTO = cartService.updateCartById(id, requestDto);
+        GenericCartDTO genericCartDTO = cartService.updateCartById(token, id, requestDto);
 
         return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<GenericCartDTO> updateSubCartById(@PathVariable ("id") String id, @RequestBody GenericCartDTO requestDto){
-        GenericCartDTO genericCartDTO = cartService.updateSubCartById(id, requestDto);
+        GenericCartDTO genericCartDTO = cartService.updateSubCartById(token, id, requestDto);
 
         return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<GenericCartDTO> deleteCartById(@PathVariable ("id") String id){
-        GenericCartDTO genericCartDTO = cartService.deleteCartById(id);
+        GenericCartDTO genericCartDTO = cartService.deleteCartById(token, id);
 
         return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
     }

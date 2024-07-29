@@ -138,7 +138,7 @@ public class FakeStoreCartServiceImpl implements CartService{
     }
 
     @Override
-    public GenericCartDTO updateCartById(String id, GenericCartDTO requestDto) {
+    public GenericCartDTO updateCartById(String token, String id, GenericCartDTO requestDto) {
         FakeStoreCartDTO fakeStoreCartRequest =
                 convertGenericCartDtoToFakeStoreCartDto(requestDto);
 
@@ -150,7 +150,7 @@ public class FakeStoreCartServiceImpl implements CartService{
     }
 
     @Override
-    public GenericCartDTO updateSubCartById(String id, GenericCartDTO requestDto) {
+    public GenericCartDTO updateSubCartById(String token, String id, GenericCartDTO requestDto) {
         FakeStoreCartDTO fakeStoreCartRequest =
                 convertGenericCartDtoToFakeStoreCartDto(requestDto);
 
@@ -162,7 +162,7 @@ public class FakeStoreCartServiceImpl implements CartService{
     }
 
     @Override
-    public GenericCartDTO deleteCartById(String id) {
+    public GenericCartDTO deleteCartById(String token, String id) {
         FakeStoreCartDTO deletedFakeStoreCartResponse = fakeStoreCartClient.deleteCartByIdFromFakeStore(id);
         GenericCartDTO deletedGenericCartResponseDTO = convertFakeStoreCartDtoToGenericCartDto(deletedFakeStoreCartResponse);
 
@@ -171,6 +171,16 @@ public class FakeStoreCartServiceImpl implements CartService{
 
     @Override
     public List<GenericCartDTO> getCartsBySortAndLimit(String sortType, int limit) {
+        return List.of();
+    }
+
+    @Override
+    public List<GenericCartDTO> getCartsByUserByToken(String token) {
+        return List.of();
+    }
+
+    @Override
+    public List<GenericCartDTO> getCartsByUserTokenInDateRange(String token, DateRangeDTO dateRangeDTO) {
         return List.of();
     }
 

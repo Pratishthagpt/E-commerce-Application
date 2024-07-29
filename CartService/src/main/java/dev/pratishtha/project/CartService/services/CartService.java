@@ -28,12 +28,15 @@ public interface CartService {
 
     List<GenericCartDTO> getCartsByUserInDateRange(String userId, DateRangeDTO dateRangeDTO);
 
-    GenericCartDTO updateCartById(String id, GenericCartDTO requestDto);
+    GenericCartDTO updateCartById(String token, String id, GenericCartDTO requestDto);
 
-    GenericCartDTO updateSubCartById(String id, GenericCartDTO requestDto);
+    GenericCartDTO updateSubCartById(String token, String id, GenericCartDTO requestDto);
 
-    GenericCartDTO deleteCartById(String id);
+    GenericCartDTO deleteCartById(String token, String id);
 
     List<GenericCartDTO> getCartsBySortAndLimit(String sortType, int limit);
 
+    List<GenericCartDTO> getCartsByUserByToken(String token);
+
+    List<GenericCartDTO> getCartsByUserTokenInDateRange(String token, DateRangeDTO dateRangeDTO);
 }
