@@ -350,8 +350,49 @@ public class DatabaseCartServiceImpl implements CartService {
     }
 
     @Override
-    public GenericCartDTO updateSubCartById(String id, GenericCartDTO requestDto) {
-        return null;
+    public GenericCartDTO updateSubCartById(String cartId, GenericCartDTO requestDto) {
+        UUID id = UUID.fromString(cartId);
+
+        Optional<Cart> cartOptional = cartRepository.findById(id);
+        if (cartOptional.isEmpty()) {
+            throw new CartIdNotFoundException("Cart with id - " + id + " not found.");
+        }
+
+        Cart cart = cartOptional.get();
+
+        // First, explicitly remove CartItem entities from the cart and delete them from the repository
+        // Explicitly remove CartItem entities from the cart and delete them from the repository
+        List<CartItem> cartItems = cart.getCartItems();
+        for (CartItem cartItem : cartItems) {
+            cartItem.setCart(null);  // Detach the cart reference to avoid constraint issues
+        }
+        cartItemRepository.deleteAllInBatch(cartItems);  // Delete all cart items in batch
+        cartItemRepository.flush();  // Ensure the deletions are flushed to the database
+
+        cart.getCartItems().clear(); // Clear the cart's items list
+
+        int totalPrice = 0;
+        List<CartItem> newCartItems = new ArrayList<>();
+
+        for (GenericCartItemDTO cartItemDTO : requestDto.getCartItems()) {
+            CartItem updatedCartItem = convertGenericCartItemDtoToCartItem(cartItemDTO);
+            updatedCartItem.setCart(cart);
+
+            newCartItems.add(updatedCartItem);
+
+            totalPrice += updatedCartItem.getQuantity() * updatedCartItem.getPrice();
+        }
+
+        cart.setCartItems(newCartItems);
+        cart.setUserId(requestDto.getUserId());
+        cart.setCreatedAt(new Date());
+        cart.setTotalItems(newCartItems.size());
+        cart.setTotalPrice(totalPrice);
+
+        Cart savedCart = cartRepository.save(cart);
+
+        GenericCartDTO genericCartDTO = convertCartToGenericCartDto(savedCart);
+        return genericCartDTO;
     }
 
     @Override
