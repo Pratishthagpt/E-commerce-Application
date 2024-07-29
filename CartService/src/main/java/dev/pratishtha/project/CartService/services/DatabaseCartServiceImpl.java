@@ -59,12 +59,11 @@ public class DatabaseCartServiceImpl implements CartService {
             cartItem.setItemAddedAt(genericCartItemDTO.getItemAddedAt());
             cartItem.setPrice(genericCartItemDTO.getPrice());
             cartItem.setQuantity(genericCartItemDTO.getQuantity());
+            cartItem.setCart(cart);
 
-            CartItem savedCartItem = cartItemRepository.save(cartItem);
+            cartItems.add(cartItem);
 
-            cartItems.add(savedCartItem);
-
-            totalPrice += (savedCartItem.getPrice() * savedCartItem.getQuantity());
+            totalPrice += (cartItem.getPrice() * cartItem.getQuantity());
         }
 
         cart.setCartItems(cartItems);
@@ -298,8 +297,56 @@ public class DatabaseCartServiceImpl implements CartService {
     }
 
     @Override
-    public GenericCartDTO updateCartById(String id, GenericCartDTO requestDto) {
-        return null;
+    public GenericCartDTO updateCartById(String cartId, GenericCartDTO requestDto) {
+        UUID id = UUID.fromString(cartId);
+
+        Optional<Cart> cartOptional = cartRepository.findById(id);
+        if (cartOptional.isEmpty()) {
+            throw new CartIdNotFoundException("Cart with id - " + id + " not found.");
+        }
+
+        Cart cart = cartOptional.get();
+
+//      first delete all cart items and removing them from cart item repository as well, bcoz
+//        we are not deleting actual products, but we are deleting cartItem.
+//        Cart Item (which is not product to be specific, cart item is an item which has
+//        its price, product id, quantity etc.) exists only bcoz it is in someone cart.
+//        So, we will delete all the cart item and clear the cart and then add the cartItems
+//        as per the updated request
+
+        // First, explicitly remove CartItem entities from the cart and delete them from the repository
+        // Explicitly remove CartItem entities from the cart and delete them from the repository
+        List<CartItem> cartItems = cart.getCartItems();
+        for (CartItem cartItem : cartItems) {
+            cartItem.setCart(null);  // Detach the cart reference to avoid constraint issues
+        }
+        cartItemRepository.deleteAllInBatch(cartItems);  // Delete all cart items in batch
+        cartItemRepository.flush();  // Ensure the deletions are flushed to the database
+
+        cart.getCartItems().clear(); // Clear the cart's items list
+
+        int totalPrice = 0;
+        List<CartItem> newCartItems = new ArrayList<>();
+
+        for (GenericCartItemDTO cartItemDTO : requestDto.getCartItems()) {
+            CartItem updatedCartItem = convertGenericCartItemDtoToCartItem(cartItemDTO);
+            updatedCartItem.setCart(cart);
+
+            newCartItems.add(updatedCartItem);
+
+            totalPrice += updatedCartItem.getQuantity() * updatedCartItem.getPrice();
+        }
+
+        cart.setCartItems(newCartItems);
+        cart.setUserId(requestDto.getUserId());
+        cart.setCreatedAt(new Date());
+        cart.setTotalItems(newCartItems.size());
+        cart.setTotalPrice(totalPrice);
+
+        Cart savedCart = cartRepository.save(cart);
+
+        GenericCartDTO genericCartDTO = convertCartToGenericCartDto(savedCart);
+        return genericCartDTO;
     }
 
     @Override
@@ -342,5 +389,36 @@ public class DatabaseCartServiceImpl implements CartService {
         genericCartItemDTO.setPrice(cartItem.getPrice());
 
         return genericCartItemDTO;
+    }
+
+    private CartItem convertGenericCartItemDtoToCartItem(GenericCartItemDTO genericCartItemDTO) {
+        CartItem cartItem = new CartItem();
+
+        cartItem.setItemAddedAt(genericCartItemDTO.getItemAddedAt());
+        cartItem.setPrice(genericCartItemDTO.getPrice());
+        cartItem.setQuantity(genericCartItemDTO.getQuantity());
+        cartItem.setProductId(genericCartItemDTO.getProductId());
+
+        return cartItem;
+    }
+
+
+    private Cart convertGenericCartDtoToCart(GenericCartDTO genericCartDTO) {
+        Cart cart = new Cart();
+
+        cart.setUuid(UUID.fromString(genericCartDTO.getCartId()));
+        cart.setUserId(genericCartDTO.getUserId());
+        cart.setTotalItems(genericCartDTO.getTotalItems());
+        cart.setTotalPrice(genericCartDTO.getTotalPrice());
+        cart.setCreatedAt(genericCartDTO.getCreatedAt());
+
+        List<CartItem> cartItems = new ArrayList<>();
+        for (GenericCartItemDTO cartItemDTO : genericCartDTO.getCartItems()) {
+            cartItems.add(convertGenericCartItemDtoToCartItem(cartItemDTO));
+        }
+
+        cart.setCartItems(cartItems);
+
+        return cart;
     }
 }

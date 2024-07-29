@@ -16,7 +16,7 @@ public class Cart extends BaseModel{
     private int totalPrice;
     private int totalItems;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     private List<CartItem> cartItems;
 
     @Temporal(TemporalType.TIMESTAMP)

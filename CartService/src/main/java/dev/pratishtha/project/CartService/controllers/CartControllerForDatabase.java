@@ -103,4 +103,11 @@ public class CartControllerForDatabase {
 
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<GenericCartDTO> updateCartById(@PathVariable ("id") String id, @RequestBody GenericCartDTO requestDto){
+        GenericCartDTO genericCartDTO = cartService.updateCartById(id, requestDto);
+
+        return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
+    }
 }

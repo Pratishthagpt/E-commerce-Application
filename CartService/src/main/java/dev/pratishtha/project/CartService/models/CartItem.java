@@ -18,4 +18,8 @@ public class CartItem extends BaseModel{
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date itemAddedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 }
