@@ -3,16 +3,14 @@ package dev.pratishtha.project.CartService.services;
 import dev.pratishtha.project.CartService.dtos.DateRangeDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartItemDTO;
-import dev.pratishtha.project.CartService.exceptions.CartIdNotFoundException;
-import dev.pratishtha.project.CartService.exceptions.CartNotPresentException;
-import dev.pratishtha.project.CartService.exceptions.InvalidParameterException;
-import dev.pratishtha.project.CartService.exceptions.InvalidUserAuthenticationException;
+import dev.pratishtha.project.CartService.exceptions.*;
 import dev.pratishtha.project.CartService.models.Cart;
 import dev.pratishtha.project.CartService.models.CartItem;
 import dev.pratishtha.project.CartService.repositories.CartItemRepository;
 import dev.pratishtha.project.CartService.repositories.CartRepository;
 import dev.pratishtha.project.CartService.security.JwtData;
 import dev.pratishtha.project.CartService.security.TokenValidator;
+import dev.pratishtha.project.CartService.security.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,15 +36,26 @@ public class DatabaseCartServiceImpl implements CartService {
     }
 
     @Override
-    public List<GenericCartDTO> getAllCarts() {
+    public List<GenericCartDTO> getAllCarts(String token) {
 
-        List<Cart> carts = cartRepository.findAll();
+//        First validating user token and then checking for the user role
+//        If user is ADMIN, then allow user to access all carts details
 
-        List<GenericCartDTO> genericCartDtosList = new ArrayList<>();
-        for (Cart cart : carts) {
-            genericCartDtosList.add(convertCartToGenericCartDto(cart));
+        JwtData userJwtData = validateUserByToken(token);
+
+        for (UserRole role : userJwtData.getRoles()) {
+            if (role.getRole().equalsIgnoreCase("ADMIN")) {
+                List<Cart> carts = cartRepository.findAll();
+
+                List<GenericCartDTO> genericCartDtosList = new ArrayList<>();
+                for (Cart cart : carts) {
+                    genericCartDtosList.add(convertCartToGenericCartDto(cart));
+                }
+                return genericCartDtosList;
+            }
         }
-        return genericCartDtosList;
+//        if user does not have admin role, then throw error
+        throw new UnauthorizedUserAccessException("User is not authorized to access the carts.");
     }
 
 
@@ -109,8 +118,8 @@ public class DatabaseCartServiceImpl implements CartService {
     }
 
     @Override
-    public List<GenericCartDTO> getCartsByLimit(int limit) {
-        List<GenericCartDTO> allGenericCartDtos = getAllCarts();
+    public List<GenericCartDTO> getCartsByLimit(String token, int limit) {
+        List<GenericCartDTO> allGenericCartDtos = getAllCarts(token);
 
         List<GenericCartDTO> cartsInLimit = new ArrayList<>();
         for (int i = 0; i < limit; i++) {

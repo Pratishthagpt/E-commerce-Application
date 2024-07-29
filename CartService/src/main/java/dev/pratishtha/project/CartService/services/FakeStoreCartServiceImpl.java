@@ -23,7 +23,7 @@ public class FakeStoreCartServiceImpl implements CartService{
     }
 
     @Override
-    public List<GenericCartDTO> getAllCarts() {
+    public List<GenericCartDTO> getAllCarts(String token) {
         List<FakeStoreCartDTO> fakeStoreCarts = fakeStoreCartClient.getAllCartsFromFakeStore();
 
 //        LOGGER.info("Converting FakeStoreCartDTO to GenericCartDTO");
@@ -60,7 +60,7 @@ public class FakeStoreCartServiceImpl implements CartService{
     }
 
     @Override
-    public List<GenericCartDTO> getCartsByLimit(int limit) {
+    public List<GenericCartDTO> getCartsByLimit(String token, int limit) {
 
         List<FakeStoreCartDTO> fakeStoreCarts = fakeStoreCartClient.getCartsByLimitFromFakeStore(limit);
 

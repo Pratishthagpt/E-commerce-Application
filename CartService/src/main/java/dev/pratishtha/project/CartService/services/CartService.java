@@ -10,13 +10,13 @@ import java.util.List;
 @Service
 public interface CartService {
 
-    public List<GenericCartDTO> getAllCarts();
+    public List<GenericCartDTO> getAllCarts(String token);
 
     GenericCartDTO addNewCart(String token, GenericCartDTO requestDto);
 
     GenericCartDTO getCartById(String cartId);
 
-    List<GenericCartDTO> getCartsByLimit(int limit);
+    List<GenericCartDTO> getCartsByLimit(String token, int limit);
 
     List<GenericCartDTO> getCartsBySort(String sortType);
 

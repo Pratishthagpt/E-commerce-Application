@@ -31,7 +31,7 @@ public class CartControllerForFakeStore {
     @GetMapping
     public ResponseEntity<List<GenericCartDTO>> getAllCarts () {
 //        LOGGER.info("Received request to get all carts");
-        List<GenericCartDTO> cartsList = cartService.getAllCarts();
+        List<GenericCartDTO> cartsList = cartService.getAllCarts(token);
 
 //        LOGGER.info("Returning " + cartsList.size() + " carts");
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
@@ -46,7 +46,7 @@ public class CartControllerForFakeStore {
 
     @GetMapping("/limit/{limit}")
     public ResponseEntity<List<GenericCartDTO>> getCartsByLimit (@PathVariable ("limit") int limit) {
-        List<GenericCartDTO> cartsList = cartService.getCartsByLimit(limit);
+        List<GenericCartDTO> cartsList = cartService.getCartsByLimit(token, limit);
 
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }

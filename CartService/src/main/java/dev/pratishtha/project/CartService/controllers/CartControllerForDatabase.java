@@ -27,9 +27,9 @@ public class CartControllerForDatabase {
     }
 
     @GetMapping
-    public ResponseEntity<List<GenericCartDTO>> getAllCarts () {
+    public ResponseEntity<List<GenericCartDTO>> getAllCarts (@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
 
-        List<GenericCartDTO> cartsList = cartService.getAllCarts();
+        List<GenericCartDTO> cartsList = cartService.getAllCarts(token);
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }
 
@@ -50,8 +50,9 @@ public class CartControllerForDatabase {
     }
 
     @GetMapping("/limit/{limit}")
-    public ResponseEntity<List<GenericCartDTO>> getCartsByLimit (@PathVariable ("limit") int limit) {
-        List<GenericCartDTO> cartsList = cartService.getCartsByLimit(limit);
+    public ResponseEntity<List<GenericCartDTO>> getCartsByLimit (
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable ("limit") int limit) {
+        List<GenericCartDTO> cartsList = cartService.getCartsByLimit(token, limit);
 
         return new ResponseEntity<>(cartsList, HttpStatus.OK);
     }

@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ExceptionDTO(message, status), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(InvalidUserAuthenticationException.class)
+    @ExceptionHandler({InvalidUserAuthenticationException.class, UnauthorizedUserAccessException.class})
     public ResponseEntity<ExceptionDTO> handleInvalidUserAuthenticationException (Exception exception) {
         String message;
         HttpStatus status;
@@ -58,6 +58,11 @@ public class GlobalExceptionHandler {
         if (exception instanceof InvalidUserAuthenticationException) {
             InvalidUserAuthenticationException invalidUserAuthenticationException = (InvalidUserAuthenticationException) exception;
             message = invalidUserAuthenticationException.getMessage();
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        else if (exception instanceof UnauthorizedUserAccessException) {
+            UnauthorizedUserAccessException unauthorizedUserAccessException = (UnauthorizedUserAccessException) exception;
+            message = unauthorizedUserAccessException.getMessage();
             status = HttpStatus.UNAUTHORIZED;
         }
         else {
