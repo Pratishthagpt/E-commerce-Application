@@ -5,7 +5,7 @@ import dev.pratishtha.project.productService.exceptions.CategoryNotFoundExceptio
 import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.FakeStoreProductClient;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.dtos.FakeStoreProductDTO;
-import org.apache.commons.lang3.RandomStringUtils;
+//import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,9 +45,9 @@ public class FakeStoreProductServiceImplTest {
         fakeStoreProduct2 = new FakeStoreProductDTO(2L, "Nude Nail Paint", 250.0, "Maybellene nude shade nail paint", "Beauty", "image2.jpg");
         fakeStoreProduct3 = new FakeStoreProductDTO(3L, "One Plus 10", 30000.0, "Android Phone of One Plus with 16GB RAM", "Electronics", "image3.jpg");
 
-        genericProduct1 = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0);
-        genericProduct2 = new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0);
-        genericProduct3 = new GenericProductDTO("3", "One Plus 10", "Android Phone of One Plus with 16GB RAM", "image3.jpg", "Electronics", 30000.0);
+        genericProduct1 = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 180);
+        genericProduct2 = new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0, 465);
+        genericProduct3 = new GenericProductDTO("3", "One Plus 10", "Android Phone of One Plus with 16GB RAM", "image3.jpg", "Electronics", 30000.0, 451);
     }
 
     @Test
@@ -73,7 +73,8 @@ public class FakeStoreProductServiceImplTest {
     public void testGetProductsByIdGivesCorrectResponse() throws IdNotFoundException {
         when(fakeStoreProductClientMock.getProductById("1"))
                 .thenReturn(fakeStoreProduct1);
-        String token = RandomStringUtils.randomAlphanumeric(30);
+//        String token = RandomStringUtils.randomAlphanumeric(30);
+        String token = "bfuh89ey239ruihfjsbdbshjvbhjbvs89r";
 
         GenericProductDTO toBeReturned = fakeStoreProductService.getProductsById(token, "1");
 
@@ -91,7 +92,8 @@ public class FakeStoreProductServiceImplTest {
     public void testGetProductsByIdGivesNullForInvalidId() throws IdNotFoundException {
         when(fakeStoreProductClientMock.getProductById(any()))
                 .thenThrow(new IdNotFoundException("Product with id - 2 not found."));
-        String token = RandomStringUtils.randomAlphanumeric(30);
+//        String token = RandomStringUtils.randomAlphanumeric(30);
+        String token = "bfuh89ey239ruihfjsbdbshjvbhjbvs89r";
 
         Assertions.assertThrows(IdNotFoundException.class,
                 () -> fakeStoreProductService.getProductsById(token, "2"));

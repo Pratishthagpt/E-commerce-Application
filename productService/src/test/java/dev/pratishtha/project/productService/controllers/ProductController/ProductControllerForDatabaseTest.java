@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.pratishtha.project.productService.dtos.GenericProductDTO;
 import dev.pratishtha.project.productService.exceptions.IdNotFoundException;
 import dev.pratishtha.project.productService.services.ProductService;
-import org.apache.commons.lang3.RandomStringUtils;
+//import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +48,8 @@ public class ProductControllerForDatabaseTest {
     public void testGetAllProducts() throws Exception {
 //        Arrange
         List<GenericProductDTO> expectedProducts = Arrays.asList(
-                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0),
-                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0)
+                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 5),
+                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0, 10)
         );
 
         when(productServiceMock.getAllProducts())
@@ -86,7 +86,8 @@ public class ProductControllerForDatabaseTest {
     @Test
     public void testGetProductByIdGivesCorrectResponse() throws Exception {
 //        Arrange
-        String token = RandomStringUtils.randomAlphanumeric(30);
+//        String token = RandomStringUtils.randomAlphanumeric(30);
+        String token  = "bbbfjdsbfsdhfoijopor3j2989hddjknsj93";
         GenericProductDTO expectedProduct = new GenericProductDTO();
         expectedProduct.setId("1");
 
@@ -122,7 +123,9 @@ public class ProductControllerForDatabaseTest {
     @Test
     public void testGetProductByIdGivesNullResponse() throws Exception {
 //        Arrange
-        String token = RandomStringUtils.randomAlphanumeric(30);
+//        String token = RandomStringUtils.randomAlphanumeric(30);
+
+        String token  = "bbbfjdsbfsdhfoijopor3j2989hddjknsj93";
         when(productServiceMock.getProductsById(token, "1"))
                 .thenThrow(new IdNotFoundException("Product with id - 1 not found."));
 
@@ -141,10 +144,10 @@ public class ProductControllerForDatabaseTest {
     public void testGetProductsWithLimit() throws Exception {
 //        Arrange
         List<GenericProductDTO> allProducts = Arrays.asList(
-                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0),
-                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0),
-                new GenericProductDTO("3", "One Plus 10", "Android Phone of One Plus with 16GB RAM", "image3.jpg", "Electronics", 30000.0),
-                new GenericProductDTO("4", "Plazo Kurta Set", "BIBA Pink Plazo Kurta Set", "image4.jpg", "Clothing", 2500.0)
+                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 150),
+                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0, 100),
+                new GenericProductDTO("3", "One Plus 10", "Android Phone of One Plus with 16GB RAM", "image3.jpg", "Electronics", 30000.0, 155),
+                new GenericProductDTO("4", "Plazo Kurta Set", "BIBA Pink Plazo Kurta Set", "image4.jpg", "Clothing", 2500.0, 420)
         );
 
         List<GenericProductDTO> expectedProducts = Arrays.asList(allProducts.get(0), allProducts.get(1));
@@ -184,8 +187,8 @@ public class ProductControllerForDatabaseTest {
     public void getAllProductsWithSortById() throws Exception {
 //        Arrange
         List<GenericProductDTO> allProducts = Arrays.asList(
-                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0),
-                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0)
+                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 90),
+                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0, 150)
         );
 
         List<GenericProductDTO> expectedProducts = allProducts;
@@ -226,8 +229,8 @@ public class ProductControllerForDatabaseTest {
     public void testGetAllProductsWithSortByTitle() throws Exception {
 //        Arrange
         List<GenericProductDTO> allProducts = Arrays.asList(
-                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0),
-                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0)
+                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 55),
+                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0, 180)
         );
 
         List<GenericProductDTO> expectedProducts = allProducts;
@@ -273,8 +276,8 @@ public class ProductControllerForDatabaseTest {
     public void testGetAllCategories() throws Exception {
 //        Arrange
         List<GenericProductDTO> allProducts = Arrays.asList(
-                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0),
-                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0)
+                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 150),
+                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0, 200)
         );
         List<String> expectedCategories = Arrays.asList(allProducts.get(0).getCategory_name(), allProducts.get(1).getCategory_name());
 
@@ -301,10 +304,10 @@ public class ProductControllerForDatabaseTest {
     public void testGetAllProductsByCategoryGivesCorrectResponse() throws Exception {
 //        Arrange
         List<GenericProductDTO> allProducts = Arrays.asList(
-                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0),
-                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0),
-                new GenericProductDTO("3", "One Plus 10", "Android Phone of One Plus with 16GB RAM", "image3.jpg", "Electronics", 30000.0),
-                new GenericProductDTO("4", "Plazo Kurta Set", "BIBA Pink Plazo Kurta Set", "image4.jpg", "Clothing", 2500.0)
+                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 150),
+                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0, 48),
+                new GenericProductDTO("3", "One Plus 10", "Android Phone of One Plus with 16GB RAM", "image3.jpg", "Electronics", 30000.0, 150),
+                new GenericProductDTO("4", "Plazo Kurta Set", "BIBA Pink Plazo Kurta Set", "image4.jpg", "Clothing", 2500.0, 180)
         );
 
         List<GenericProductDTO> expectedProducts = Arrays.asList(allProducts.get(0), allProducts.get(2));
@@ -344,10 +347,10 @@ public class ProductControllerForDatabaseTest {
     public void testGetAllProductsByCategoryGivesEmptyArray() throws Exception {
 //        Arrange
         List<GenericProductDTO> allProducts = Arrays.asList(
-                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0),
-                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0),
-                new GenericProductDTO("3", "One Plus 10", "Android Phone of One Plus with 16GB RAM", "image3.jpg", "Electronics", 30000.0),
-                new GenericProductDTO("4", "Plazo Kurta Set", "BIBA Pink Plazo Kurta Set", "image4.jpg", "Clothing", 2500.0)
+                new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 150),
+                new GenericProductDTO("2", "Nude Nail Paint", "Maybellene nude shade nail paint", "image2.jpg", "Beauty", 250.0, 48),
+                new GenericProductDTO("3", "One Plus 10", "Android Phone of One Plus with 16GB RAM", "image3.jpg", "Electronics", 30000.0, 150),
+                new GenericProductDTO("4", "Plazo Kurta Set", "BIBA Pink Plazo Kurta Set", "image4.jpg", "Clothing", 2500.0, 180)
         );
 
         when(productServiceMock.getAllProductsByCategory("Jewelery"))
@@ -370,7 +373,7 @@ public class ProductControllerForDatabaseTest {
     @Test
     public void testAddNewProduct() throws Exception {
 //        Arrange
-        GenericProductDTO productToAdd = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0);
+        GenericProductDTO productToAdd = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 48);
 
 //        used any(GenericProductDTO.class) in when clause to ensure that the mock setup is flexible and accepts any instance of GenericProductDTO passed to the createNewProduct method.
         when(productServiceMock.createNewProduct(any(GenericProductDTO.class)))
@@ -405,7 +408,7 @@ public class ProductControllerForDatabaseTest {
     @Test
     public void testUpdateProductById() throws Exception {
 //        Arrange
-        GenericProductDTO productToUpdate = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0);
+        GenericProductDTO productToUpdate = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 180);
 
         when(productServiceMock.updateProductById(any(String.class), any(GenericProductDTO.class)))
                 .thenReturn(productToUpdate);
@@ -434,7 +437,7 @@ public class ProductControllerForDatabaseTest {
     @Test
     public void testUpdateProductByIdGivesErrorForInvalidId() throws Exception {
 //        Arrange
-        GenericProductDTO productToUpdate = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0);
+        GenericProductDTO productToUpdate = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 150);
 
         when(productServiceMock.updateProductById(any(String.class), any(GenericProductDTO.class)))
                 .thenThrow(new IdNotFoundException("Product with id - 2 not found."));
@@ -455,7 +458,7 @@ public class ProductControllerForDatabaseTest {
     @Test
     public void testUpdateSubProductById() throws Exception {
 //        Arrange
-        GenericProductDTO productToUpdate = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0);
+        GenericProductDTO productToUpdate = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 88);
         productToUpdate.setTitle("One-Plus 10R");
         productToUpdate.setDescription("Android Phone");
         productToUpdate.setPriceVal(40000.0);
@@ -488,7 +491,7 @@ public class ProductControllerForDatabaseTest {
     @Test
     public void testUpdateSubProductByIdGivesErrorForInvalidId() throws Exception {
 //        Arrange
-        GenericProductDTO productToUpdate = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0);
+        GenericProductDTO productToUpdate = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 88);
 
         when(productServiceMock.updateSubProductById(any(String.class), any(GenericProductDTO.class)))
                 .thenThrow(new IdNotFoundException("Product with id - 2 not found."));
@@ -509,7 +512,7 @@ public class ProductControllerForDatabaseTest {
     @Test
     public void testDeleteProductById() throws Exception {
 //        Arrange
-        GenericProductDTO productToDelete = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0);
+        GenericProductDTO productToDelete = new GenericProductDTO("1", "Iphone-15", "Apple Iphone 15", "image1.jpg", "Electronics", 150000.0, 99);
 
         when(productServiceMock.deleteProductById("1"))
                 .thenReturn(productToDelete);

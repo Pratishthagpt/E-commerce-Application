@@ -1,11 +1,11 @@
 package dev.pratishtha.project.CartService.services;
 
-import dev.pratishtha.project.CartService.dtos.DateRangeDTO;
-import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
-import dev.pratishtha.project.CartService.dtos.GenericCartItemDTO;
+import dev.pratishtha.project.CartService.dtos.*;
 import dev.pratishtha.project.CartService.exceptions.*;
 import dev.pratishtha.project.CartService.models.Cart;
 import dev.pratishtha.project.CartService.models.CartItem;
+import dev.pratishtha.project.CartService.products.ProductDetailsService;
+import dev.pratishtha.project.CartService.products.ProductDto;
 import dev.pratishtha.project.CartService.repositories.CartItemRepository;
 import dev.pratishtha.project.CartService.repositories.CartRepository;
 import dev.pratishtha.project.CartService.security.JwtData;
@@ -25,13 +25,15 @@ public class DatabaseCartServiceImpl implements CartService {
     private CartRepository cartRepository;
     private CartItemRepository cartItemRepository;
     private TokenValidator tokenValidator;
+    private ProductDetailsService productDetailsService;
 
     @Autowired
     public DatabaseCartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository,
-                                   TokenValidator tokenValidator) {
+                                   TokenValidator tokenValidator, ProductDetailsService productDetailsService) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.tokenValidator = tokenValidator;
+        this.productDetailsService = productDetailsService;
     }
 
     @Override
@@ -324,6 +326,66 @@ public class DatabaseCartServiceImpl implements CartService {
         }
 
         return genericCartDtosList;
+    }
+
+    @Override
+    public GenericCartDTO addProductsToCart(String token, String cartId, AddProductsRequestDTO addProductsRequestDTO) {
+//        checking user authentication using token
+        JwtData userJwtData = validateUserByToken(token);
+        String userId = userJwtData.getUserId();
+
+//        check whether cart exits for requested cartId
+        UUID id = UUID.fromString(cartId);
+
+        Optional<Cart> cartOptional = cartRepository.findById(id);
+        if (cartOptional.isEmpty()) {
+            throw new CartIdNotFoundException("Cart with id - " + id + " not found.");
+        }
+
+        Cart cart = cartOptional.get();
+
+        List<CartItem> cartItems = cart.getCartItems();
+        int totalPrice = cart.getTotalPrice();
+
+        List<ProductRequestPair> products = addProductsRequestDTO.getProducts();
+        for (ProductRequestPair p : products) {
+
+//            getting all details of product from productService
+            Optional<ProductDto> productOptional = productDetailsService.getProductFromProductService(p.getProductId(), token);
+
+            if (productOptional.isEmpty()) {
+                throw new ProductNotFoundException("Product does not found with id: " + p.getProductId());
+            }
+
+            ProductDto product = productOptional.get();
+
+//            check whether the product has sufficient stock or not
+            if (product.getInventoryCount() < p.getQuantity()) {
+                throw new InsufficientProductQuantityException ("Product is out of stock. Please try again later.");
+            }
+
+//            Setup product in cartItem
+            CartItem cartItem = new CartItem();
+
+            cartItem.setProductId(product.getId());
+            cartItem.setQuantity(p.getQuantity());
+            cartItem.setPrice((int) product.getPriceVal());
+            cartItem.setItemAddedAt(new Date());
+            cartItem.setCart(cart);
+
+            cartItems.add(cartItem);
+            totalPrice += product.getPriceVal() * cartItem.getQuantity();
+        }
+
+//        setting user Id from user service
+        cart.setTotalItems(cartItems.size());
+        cart.setTotalPrice(totalPrice);
+
+        Cart savedCart = cartRepository.save(cart);
+
+        GenericCartDTO addedCart = convertCartToGenericCartDto(savedCart);
+
+        return addedCart;
     }
 
     @Override

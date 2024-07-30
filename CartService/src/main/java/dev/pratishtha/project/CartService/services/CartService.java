@@ -1,5 +1,6 @@
 package dev.pratishtha.project.CartService.services;
 
+import dev.pratishtha.project.CartService.dtos.AddProductsRequestDTO;
 import dev.pratishtha.project.CartService.dtos.DateRangeDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
 import org.springframework.stereotype.Service;
@@ -39,4 +40,6 @@ public interface CartService {
     List<GenericCartDTO> getCartsByUserByToken(String token);
 
     List<GenericCartDTO> getCartsByUserTokenInDateRange(String token, DateRangeDTO dateRangeDTO);
+
+    GenericCartDTO addProductsToCart(String token, String cartId, AddProductsRequestDTO addProductsRequestDTO);
 }

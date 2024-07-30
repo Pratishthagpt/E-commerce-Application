@@ -67,7 +67,24 @@ public class DatabaseProductServiceImpl implements ProductService{
         }
         Product product = productOptional.get();
 
+//        System.out.println(product.getUuid().toString());
+//        System.out.println(product.getImage());
+//        System.out.println(product.getTitle());
+//        System.out.println(product.getDescription());
+//        System.out.println(product.getCategory().getName());
+//        System.out.println(product.getInventoryCount());
+//        System.out.println(product.getPrice());
+
         GenericProductDTO genericProductDTO = convertProductToGenericProductDto(product);
+
+//        System.out.println(genericProductDTO.getId());
+//        System.out.println(genericProductDTO.getImage());
+//        System.out.println(genericProductDTO.getTitle());
+//        System.out.println(genericProductDTO.getDescription());
+//        System.out.println(genericProductDTO.getPriceVal());
+//        System.out.println(genericProductDTO.getCategory_name());
+//        System.out.println(genericProductDTO.getInventoryCount());
+
 
         return genericProductDTO;
     }
@@ -173,6 +190,7 @@ public class DatabaseProductServiceImpl implements ProductService{
         product.setTitle(genericProductDTO.getTitle());
         product.setDescription(genericProductDTO.getDescription());
         product.setImage(genericProductDTO.getImage());
+        product.setInventoryCount(genericProductDTO.getInventoryCount());
 
 //        2. Creating new price, setting product price value into that and saving into db
         Price price = new Price();
@@ -224,6 +242,7 @@ public class DatabaseProductServiceImpl implements ProductService{
         product.setTitle(genericProductRequest.getTitle());
         product.setDescription(genericProductRequest.getDescription());
         product.setImage(genericProductRequest.getImage());
+        product.setInventoryCount(genericProductRequest.getInventoryCount());
 
 //        2. Getting price from product, setting updated product price value and saving into db
         Price price = product.getPrice();
@@ -286,6 +305,7 @@ public class DatabaseProductServiceImpl implements ProductService{
         product.setTitle(genericProductRequest.getTitle());
         product.setDescription(genericProductRequest.getDescription());
         product.setImage(genericProductRequest.getImage());
+        product.setInventoryCount(genericProductRequest.getInventoryCount());
 
 //        2. Getting price from product, setting updated product price value and saving into db
         Price price = product.getPrice();
@@ -370,6 +390,7 @@ public class DatabaseProductServiceImpl implements ProductService{
         genericProductDTO.setPriceVal(product.getPrice().getValue());
         genericProductDTO.setCategory_name(product.getCategory().getName());
         genericProductDTO.setImage(product.getImage());
+        genericProductDTO.setInventoryCount(product.getInventoryCount());
 
         return genericProductDTO;
     }

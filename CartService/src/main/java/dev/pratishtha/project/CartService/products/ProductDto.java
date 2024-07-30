@@ -1,4 +1,4 @@
-package dev.pratishtha.project.CartService.models;
+package dev.pratishtha.project.CartService.products;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,16 +9,18 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class ProductDto {
 
-    private String productId;
+    private String id;
+
     private String title;
     private String description;
     private String image;
 
     private String category;
 
-    private int price;
+    private double priceVal;
 
     private int inventoryCount;
+
 }

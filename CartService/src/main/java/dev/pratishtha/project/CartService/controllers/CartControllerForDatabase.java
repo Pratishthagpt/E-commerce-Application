@@ -1,5 +1,6 @@
 package dev.pratishtha.project.CartService.controllers;
 
+import dev.pratishtha.project.CartService.dtos.AddProductsRequestDTO;
 import dev.pratishtha.project.CartService.dtos.DateRangeDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
 import dev.pratishtha.project.CartService.services.CartService;
@@ -39,6 +40,16 @@ public class CartControllerForDatabase {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody GenericCartDTO requestDto){
 
         GenericCartDTO genericCartDTO = cartService.addNewCart(token, requestDto);
+
+        return new ResponseEntity<>(genericCartDTO, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<GenericCartDTO> addProductsToCart(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable("id") String cartId,
+            @RequestBody AddProductsRequestDTO addProductsRequestDTO){
+
+        GenericCartDTO genericCartDTO = cartService.addProductsToCart(token, cartId, addProductsRequestDTO);
 
         return new ResponseEntity<>(genericCartDTO, HttpStatus.CREATED);
     }
@@ -138,4 +149,5 @@ public class CartControllerForDatabase {
 
         return new ResponseEntity<>(genericCartDTO, HttpStatus.OK);
     }
+
 }

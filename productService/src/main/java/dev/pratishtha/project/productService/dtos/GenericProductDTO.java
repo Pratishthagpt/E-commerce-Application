@@ -23,4 +23,5 @@ public class GenericProductDTO {
     private String image;
     private String category_name;
     private double priceVal;
+    private int inventoryCount;
 }

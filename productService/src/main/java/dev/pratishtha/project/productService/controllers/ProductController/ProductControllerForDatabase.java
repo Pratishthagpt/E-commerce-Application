@@ -39,6 +39,7 @@ public class ProductControllerForDatabase {
     @GetMapping("{id}")
     public ResponseEntity<GenericProductDTO> getProductById (
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authToken,
+//            String authToken,
             @PathVariable ("id") String id) throws IdNotFoundException, InvalidUserAuthenticationException {
 
         GenericProductDTO productDTO = productService.getProductsById(authToken, id);

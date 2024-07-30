@@ -11,7 +11,7 @@ import dev.pratishtha.project.productService.repositories.PriceRepository;
 import dev.pratishtha.project.productService.repositories.ProductRepository;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.FakeStoreProductClient;
 import dev.pratishtha.project.productService.thirdPartyClents.fakeStore.dtos.FakeStoreProductDTO;
-import org.apache.commons.lang3.RandomStringUtils;
+//import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -89,9 +89,9 @@ public class DatabaseProductServiceImplTest {
         product3 = new Product("One Plus 10", "Android Phone of One Plus with 16GB RAM", "image3.jpg", category1, price3, 10);
         product3.setUuid(UUID.randomUUID());
 
-        genericProduct1 = new GenericProductDTO(product1.getUuid().toString(), product1.getTitle(), product1.getDescription(), product1.getImage(), product1.getCategory().getName(), product1.getPrice().getValue());
-        genericProduct2 = new GenericProductDTO(product2.getUuid().toString(), product2.getTitle(), product2.getDescription(), product2.getImage(), product2.getCategory().getName(), product2.getPrice().getValue());
-        genericProduct3 = new GenericProductDTO(product3.getUuid().toString(), product3.getTitle(), product3.getDescription(), product3.getImage(), product3.getCategory().getName(), product3.getPrice().getValue());
+        genericProduct1 = new GenericProductDTO(product1.getUuid().toString(), product1.getTitle(), product1.getDescription(), product1.getImage(), product1.getCategory().getName(), product1.getPrice().getValue(), product1.getInventoryCount());
+        genericProduct2 = new GenericProductDTO(product2.getUuid().toString(), product2.getTitle(), product2.getDescription(), product2.getImage(), product2.getCategory().getName(), product2.getPrice().getValue(), product2.getInventoryCount());
+        genericProduct3 = new GenericProductDTO(product3.getUuid().toString(), product3.getTitle(), product3.getDescription(), product3.getImage(), product3.getCategory().getName(), product3.getPrice().getValue(), product3.getInventoryCount());
     }
 
     @Test
@@ -126,7 +126,8 @@ public class DatabaseProductServiceImplTest {
     public void testGetProductsByIdGivesCorrectResponse() throws IdNotFoundException {
         when(productRepositoryMock.findById(any(UUID.class)))
                 .thenReturn(Optional.of(product1));
-        String token = RandomStringUtils.randomAlphanumeric(30);
+//        String token = RandomStringUtils.randomAlphanumeric(30);
+        String token = "bfuh89ey239ruihfjsbdbshjvbhjbvs89r";
 
         GenericProductDTO toBeReturned = databaseProductService.getProductsById(token, String.valueOf(product1.getUuid()));
 
@@ -145,7 +146,8 @@ public class DatabaseProductServiceImplTest {
     public void testGetProductsByIdGivesNullForInvalidId() throws IdNotFoundException {
         when(productRepositoryMock.findById(any(UUID.class)))
                 .thenReturn(Optional.empty());
-        String token = RandomStringUtils.randomAlphanumeric(30);
+//        String token = RandomStringUtils.randomAlphanumeric(30);
+        String token = "bfuh89ey239ruihfjsbdbshjvbhjbvs89r";
 
         Assertions.assertThrows(IdNotFoundException.class,
                 () -> databaseProductService.getProductsById(token, String.valueOf(UUID.randomUUID())));

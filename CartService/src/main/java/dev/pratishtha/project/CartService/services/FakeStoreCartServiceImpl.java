@@ -1,5 +1,6 @@
 package dev.pratishtha.project.CartService.services;
 
+import dev.pratishtha.project.CartService.dtos.AddProductsRequestDTO;
 import dev.pratishtha.project.CartService.dtos.DateRangeDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartItemDTO;
 import dev.pratishtha.project.CartService.dtos.GenericCartDTO;
@@ -182,6 +183,11 @@ public class FakeStoreCartServiceImpl implements CartService{
     @Override
     public List<GenericCartDTO> getCartsByUserTokenInDateRange(String token, DateRangeDTO dateRangeDTO) {
         return List.of();
+    }
+
+    @Override
+    public GenericCartDTO addProductsToCart(String token, String cartId, AddProductsRequestDTO addProductsRequestDTO) {
+        return null;
     }
 
 
