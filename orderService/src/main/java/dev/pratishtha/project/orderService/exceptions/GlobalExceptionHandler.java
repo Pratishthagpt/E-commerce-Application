@@ -42,6 +42,11 @@ public class GlobalExceptionHandler {
             message = addressIdNotFoundException.getMessage();
             status = HttpStatus.NOT_FOUND;
         }
+        else if (exception instanceof AddressNotFoundException) {
+            AddressNotFoundException addressNotFoundException = (AddressNotFoundException) exception;
+            message = addressNotFoundException.getMessage();
+            status = HttpStatus.NOT_FOUND;
+        }
         else {
             message = "An unexpected error occurred.";
             status = HttpStatus.INTERNAL_SERVER_ERROR;

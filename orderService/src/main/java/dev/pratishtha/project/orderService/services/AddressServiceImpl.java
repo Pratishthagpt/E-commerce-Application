@@ -2,6 +2,7 @@ package dev.pratishtha.project.orderService.services;
 
 import dev.pratishtha.project.orderService.dtos.AddressDTO;
 import dev.pratishtha.project.orderService.exceptions.AddressIdNotFoundException;
+import dev.pratishtha.project.orderService.exceptions.AddressNotFoundException;
 import dev.pratishtha.project.orderService.exceptions.InvalidUserAuthenticationException;
 import dev.pratishtha.project.orderService.exceptions.UnAuthorizedUserAccessException;
 import dev.pratishtha.project.orderService.models.Address;
@@ -97,6 +98,28 @@ public class AddressServiceImpl implements AddressService{
         }
         throw new UnAuthorizedUserAccessException("User is not authorized to access the addresses.");
 
+    }
+
+    @Override
+    public List<AddressDTO> getAddressByUser(String token) {
+
+        JwtData userData =  validateUserByToken(token);
+        String userId = userData.getUserId();
+
+        List<Address> addresses = addressRepository.findAllByUserId(userId);
+
+        if (addresses.size() == 0) {
+            throw new AddressNotFoundException("There are no addresses added for user - " + userData.getUsername());
+        }
+
+        List<AddressDTO> addressDTOS = new ArrayList<>();
+
+        for (Address address : addresses) {
+            AddressDTO addressDTO = convertAddressToAddressDto(address);
+            addressDTOS.add(addressDTO);
+        }
+
+        return addressDTOS;
     }
 
 

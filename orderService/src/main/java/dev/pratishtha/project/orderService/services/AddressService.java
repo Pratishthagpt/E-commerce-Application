@@ -13,4 +13,6 @@ public interface AddressService {
     public AddressDTO addNewAddress(String token, AddressDTO requestDto);
 
     AddressDTO getAddressById(String token, String id);
+
+    List<AddressDTO> getAddressByUser(String token);
 }

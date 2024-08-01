@@ -51,4 +51,13 @@ public class AddressController {
 
         return new ResponseEntity<>(addressDTO, HttpStatus.OK);
     }
+
+    @GetMapping("/user")
+    public ResponseEntity<List<AddressDTO>> getAddressByUser(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+
+        List<AddressDTO> addressDTOS = addressService.getAddressByUser(token);
+
+        return new ResponseEntity<>(addressDTOS, HttpStatus.OK);
+    }
 }
