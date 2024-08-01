@@ -32,7 +32,6 @@ public class AddressController {
         return new ResponseEntity<>(addressDTOs, HttpStatus.OK);
     }
 
-
     @PostMapping
     public ResponseEntity<AddressDTO> addNewAddress(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
@@ -41,5 +40,15 @@ public class AddressController {
         AddressDTO addressDTO = addressService.addNewAddress(token, requestDto);
 
         return new ResponseEntity<>(addressDTO, HttpStatus.CREATED);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<AddressDTO> getAddressById(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable ("id") String id) {
+
+        AddressDTO addressDTO = addressService.getAddressById(token, id);
+
+        return new ResponseEntity<>(addressDTO, HttpStatus.OK);
     }
 }

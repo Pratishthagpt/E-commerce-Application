@@ -31,4 +31,22 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(new ExceptionDTO(message, status), HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler({AddressIdNotFoundException.class})
+    public ResponseEntity<ExceptionDTO> handleNotFoundException (Exception exception) {
+        String message;
+        HttpStatus status;
+
+        if (exception instanceof AddressIdNotFoundException) {
+            AddressIdNotFoundException addressIdNotFoundException = (AddressIdNotFoundException) exception;
+            message = addressIdNotFoundException.getMessage();
+            status = HttpStatus.NOT_FOUND;
+        }
+        else {
+            message = "An unexpected error occurred.";
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(new ExceptionDTO(message, status), HttpStatus.NOT_FOUND);
+    }
 }

@@ -11,4 +11,6 @@ public interface AddressService {
     public List<AddressDTO> getAllAddresses(String token);
 
     public AddressDTO addNewAddress(String token, AddressDTO requestDto);
+
+    AddressDTO getAddressById(String token, String id);
 }
