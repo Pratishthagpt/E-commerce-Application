@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ExceptionDTO(message, status), HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler({AddressIdNotFoundException.class})
+    @ExceptionHandler({AddressIdNotFoundException.class, AddressNotFoundException.class})
     public ResponseEntity<ExceptionDTO> handleNotFoundException (Exception exception) {
         String message;
         HttpStatus status;

@@ -71,4 +71,24 @@ public class AddressController {
         return new ResponseEntity<>(addressDTO, HttpStatus.OK);
     }
 
+    @DeleteMapping("/user/address/{id}")
+    public ResponseEntity<AddressDTO> deleteAddressByUser(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable ("id") String addressId) {
+
+        AddressDTO addressDTO = addressService.deleteAddressByUser(token, addressId);
+
+        return new ResponseEntity<>(addressDTO, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<AddressDTO> deleteAddressById(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable ("id") String addressId) {
+
+        AddressDTO addressDTO = addressService.deleteAddressById(token, addressId);
+
+        return new ResponseEntity<>(addressDTO, HttpStatus.OK);
+    }
+
 }

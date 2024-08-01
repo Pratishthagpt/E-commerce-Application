@@ -9,9 +9,7 @@ import dev.pratishtha.project.orderService.models.Address;
 import dev.pratishtha.project.orderService.repositories.AddressRepository;
 import dev.pratishtha.project.orderService.security.JwtData;
 import dev.pratishtha.project.orderService.security.TokenValidator;
-import dev.pratishtha.project.orderService.security.UserDto;
 import dev.pratishtha.project.orderService.security.UserRole;
-import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -130,10 +128,8 @@ public class AddressServiceImpl implements AddressService{
         List<Address> userAddressList = addressRepository.findAllByUserId(userId);
 
         for (Address address : userAddressList) {
-            System.out.println("Hii");
             if (address.getUuid().toString().equals(requestDto.getAddressId())) {
 
-                System.out.println("Hello");
                 addressRepository.deleteById(UUID.fromString(requestDto.getAddressId()));
                 Address updatedAddress = convertAddressDtoToAddress(requestDto);
                 address.setUserId(userId);
@@ -151,6 +147,61 @@ public class AddressServiceImpl implements AddressService{
         }
 
         throw new AddressNotFoundException("Previous Address is not found for user - " + userData.getUsername());
+    }
+
+    @Override
+    public AddressDTO deleteAddressByUser(String token, String addressId) {
+
+        JwtData userData = validateUserByToken(token);
+        String userId = userData.getUserId();
+
+        List<Address> userAddressList = addressRepository.findAllByUserId(userId);
+
+
+        for (Address address : userAddressList) {
+            if (address.getUuid().toString().equals(addressId)) {
+
+                addressRepository.deleteById(UUID.fromString(addressId));
+
+                userAddressList.remove(address);
+
+                AddressDTO addressResponse = convertAddressToAddressDto(address);
+
+                return addressResponse;
+            }
+        }
+
+        throw new AddressNotFoundException("Address not found with id - " + addressId);
+    }
+
+    @Override
+    public AddressDTO deleteAddressById(String token, String addressId) {
+        JwtData userData = validateUserByToken(token);
+        String userId = userData.getUserId();
+
+        List<UserRole> userRoles = userData.getRoles();
+
+//        Only user with role of "ADMIN" can see all addresses of all users
+        for (UserRole role : userRoles) {
+            if (role.getRole().equalsIgnoreCase("ADMIN")) {
+
+                Optional<Address> addressOptional = addressRepository.findById(UUID.fromString(addressId));
+
+                if (addressOptional.isEmpty()) {
+                    throw new AddressIdNotFoundException("Address with id - " + addressId + " not found.");
+                }
+
+                Address address = addressOptional.get();
+
+                addressRepository.deleteById(UUID.fromString(addressId));
+
+                AddressDTO deletedAddress = convertAddressToAddressDto(address);
+
+                return deletedAddress;
+            }
+        }
+        throw new UnAuthorizedUserAccessException("User is not authorized to access the addresses.");
+
     }
 
 

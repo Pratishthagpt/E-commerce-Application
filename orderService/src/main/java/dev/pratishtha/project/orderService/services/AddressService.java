@@ -17,4 +17,8 @@ public interface AddressService {
     List<AddressDTO> getAddressByUser(String token);
 
     AddressDTO updateAddressByUser(String token, AddressDTO requestDto);
+
+    AddressDTO deleteAddressByUser(String token, String addressId);
+
+    AddressDTO deleteAddressById(String token, String addressId);
 }
