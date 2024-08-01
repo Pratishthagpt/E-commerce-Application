@@ -122,6 +122,37 @@ public class AddressServiceImpl implements AddressService{
         return addressDTOS;
     }
 
+    @Override
+    public AddressDTO updateAddressByUser(String token, AddressDTO requestDto) {
+        JwtData userData = validateUserByToken(token);
+        String userId = userData.getUserId();
+
+        List<Address> userAddressList = addressRepository.findAllByUserId(userId);
+
+        for (Address address : userAddressList) {
+            System.out.println("Hii");
+            if (address.getUuid().toString().equals(requestDto.getAddressId())) {
+
+                System.out.println("Hello");
+                addressRepository.deleteById(UUID.fromString(requestDto.getAddressId()));
+                Address updatedAddress = convertAddressDtoToAddress(requestDto);
+                address.setUserId(userId);
+
+                Address savedAddress = addressRepository.save(updatedAddress);
+
+                userAddressList.add(savedAddress);
+
+                userAddressList.remove(address);
+
+                AddressDTO addressResponse = convertAddressToAddressDto(savedAddress);
+
+                return addressResponse;
+            }
+        }
+
+        throw new AddressNotFoundException("Previous Address is not found for user - " + userData.getUsername());
+    }
+
 
     private Address convertAddressDtoToAddress (AddressDTO addressDTO) {
         Address address = new Address();

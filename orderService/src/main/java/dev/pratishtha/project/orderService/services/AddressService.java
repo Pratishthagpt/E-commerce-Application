@@ -15,4 +15,6 @@ public interface AddressService {
     AddressDTO getAddressById(String token, String id);
 
     List<AddressDTO> getAddressByUser(String token);
+
+    AddressDTO updateAddressByUser(String token, AddressDTO requestDto);
 }

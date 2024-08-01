@@ -60,4 +60,15 @@ public class AddressController {
 
         return new ResponseEntity<>(addressDTOS, HttpStatus.OK);
     }
+
+    @PutMapping("/user/update")
+    public ResponseEntity<AddressDTO> updateAddressByUser(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @RequestBody AddressDTO requestDto) {
+
+        AddressDTO addressDTO = addressService.updateAddressByUser(token, requestDto);
+
+        return new ResponseEntity<>(addressDTO, HttpStatus.OK);
+    }
+
 }
