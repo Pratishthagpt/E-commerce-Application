@@ -24,7 +24,7 @@ public class TokenValidator {
                           @Value("${user-service.api.baseurl}") String userBaseUrl,
                           @Value("${user-service.api.auth}") String userValidateUrl) {
         this.restTemplateBuilder = restTemplateBuilder;
-        this.restTemplate = restTemplate;
+        this.restTemplate = restTemplateBuilder.build();
         this.userBaseUrl = userBaseUrl;
         this.userAuthenticationUrl = userBaseUrl + userValidateUrl;
     }

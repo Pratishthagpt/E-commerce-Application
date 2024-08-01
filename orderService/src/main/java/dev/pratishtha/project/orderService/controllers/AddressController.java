@@ -3,19 +3,17 @@ package dev.pratishtha.project.orderService.controllers;
 
 import dev.pratishtha.project.orderService.dtos.AddressDTO;
 import dev.pratishtha.project.orderService.services.AddressService;
+import dev.pratishtha.project.orderService.services.AddressServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/order/user/address")
+@RequestMapping("/api/orders/addresses")
 public class AddressController {
 
     private AddressService addressService;
@@ -32,5 +30,16 @@ public class AddressController {
         List<AddressDTO> addressDTOs = addressService.getAllAddresses(token);
 
         return new ResponseEntity<>(addressDTOs, HttpStatus.OK);
+    }
+
+
+    @PostMapping
+    public ResponseEntity<AddressDTO> addNewAddress(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @RequestBody AddressDTO requestDto) {
+
+        AddressDTO addressDTO = addressService.addNewAddress(token, requestDto);
+
+        return new ResponseEntity<>(addressDTO, HttpStatus.CREATED);
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({InvalidUserAuthenticationException.class})
+    @ExceptionHandler({InvalidUserAuthenticationException.class, UnAuthorizedUserAccessException.class})
     public ResponseEntity<ExceptionDTO> handleInvalidUserAuthenticationException (Exception exception) {
         String message;
         HttpStatus status;
@@ -17,6 +17,11 @@ public class GlobalExceptionHandler {
         if (exception instanceof InvalidUserAuthenticationException) {
             InvalidUserAuthenticationException invalidUserAuthenticationException = (InvalidUserAuthenticationException) exception;
             message = invalidUserAuthenticationException.getMessage();
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        else if (exception instanceof UnAuthorizedUserAccessException) {
+            UnAuthorizedUserAccessException unAuthorizedUserAccessException = (UnAuthorizedUserAccessException) exception;
+            message = unAuthorizedUserAccessException.getMessage();
             status = HttpStatus.UNAUTHORIZED;
         }
         else {
