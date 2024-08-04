@@ -18,4 +18,6 @@ public interface OrderService {
     List<OrderDTO> getAllOrdersByUser(String token);
 
     OrderDTO getSingleOrderByUser(String token, String orderId);
+
+    OrderDTO updateOrderById(String token, OrderDTO orderRequestDto, String orderId);
 }

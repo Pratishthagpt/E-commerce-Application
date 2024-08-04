@@ -8,6 +8,7 @@ public enum OrderStatus {
     DISPATCHED,
     CANCELLED,
     SHIPPED,
+//    'PENDING' status in case payment failed
     PENDING,
     DELIVERED
 }

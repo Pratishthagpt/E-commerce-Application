@@ -66,4 +66,15 @@ public class OrderController {
 
         return new ResponseEntity<>(orderDTO, HttpStatus.OK);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<OrderDTO> updateOrderById (
+            @RequestHeader (HttpHeaders.AUTHORIZATION) String token,
+            @RequestBody OrderDTO orderRequestDto,
+            @PathVariable("id") String orderId) {
+
+        OrderDTO orderDto = orderService.updateOrderById(token, orderRequestDto, orderId);
+
+        return new ResponseEntity<>(orderDto, HttpStatus.OK);
+    }
 }

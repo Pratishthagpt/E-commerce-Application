@@ -179,6 +179,59 @@ public class OrderServiceImpl implements OrderService{
         throw new OrderNotFoundException("Order with id - " + orderId + " not found.");
     }
 
+    @Override
+    public OrderDTO updateOrderById(String token, OrderDTO orderRequestDto, String orderId) {
+        JwtData userData = validateUserByToken(token);
+
+        Optional<Order> orderOptional = orderRepository.findById(UUID.fromString(orderId));
+
+        if (orderOptional.isEmpty()) {
+            throw new OrderNotFoundException("Order with id - " + orderId + " not found.");
+        }
+
+        Order order = orderOptional.get();
+
+        List<OrderItemDTO> orderItemDTOSRequest = orderRequestDto.getOrderItems();
+
+        List<OrderItem> orderItems = new ArrayList<>();
+        int totalPrice = 0;
+
+        for (OrderItemDTO itemDTO : orderItemDTOSRequest) {
+            OrderItem orderItem = new OrderItem();
+
+            orderItem.setProductId(itemDTO.getProductId());
+            orderItem.setAddedOn(itemDTO.getAddedOn());
+            orderItem.setQuantity(itemDTO.getQuantity());
+            orderItem.setPrice(itemDTO.getPrice());
+            orderItem.setOrder(order);
+
+            orderItems.add(orderItem);
+
+            totalPrice += (orderItem.getQuantity() * orderItem.getPrice());
+        }
+
+        order.setOrderItems(orderItems);
+        order.setDescription(orderRequestDto.getDescription());
+        order.setTotalPrice(totalPrice);
+        order.setOrderStatus(OrderStatus.CREATED);
+        order.setQuantity(orderItems.size());
+        order.setPaymentId(orderRequestDto.getPaymentId());
+
+        Optional<Address> addressOptional = addressRepository.findById(UUID.fromString(orderRequestDto.getAddressId()));
+        if (addressOptional.isEmpty()) {
+            throw new AddressIdNotFoundException("Address with id - " + orderRequestDto.getAddressId() + " not found.");
+        }
+        Address address = addressOptional.get();
+
+        order.setAddress(address);
+
+        Order savedOrder = orderRepository.save(order);
+
+        OrderDTO orderDTO = convertOrderToOrderDTO(savedOrder);
+
+        return orderDTO;
+    }
+
     private OrderDTO convertOrderToOrderDTO(Order order) {
 
         OrderDTO orderDTO = new OrderDTO();
