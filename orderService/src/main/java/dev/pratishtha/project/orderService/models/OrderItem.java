@@ -19,5 +19,6 @@ public class OrderItem extends BaseModel{
     private Order order;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdOn;
+    private Date addedOn;
+    private int price;
 }

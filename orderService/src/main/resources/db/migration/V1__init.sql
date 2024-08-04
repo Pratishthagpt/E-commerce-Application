@@ -10,7 +10,7 @@ CREATE TABLE address
     CONSTRAINT pk_address PRIMARY KEY (id)
 );
 
-CREATE TABLE `order`
+CREATE TABLE orders
 (
     id            BINARY(16)   NOT NULL,
     `description` VARCHAR(255) NULL,
@@ -30,12 +30,13 @@ CREATE TABLE order_item
     product_id VARCHAR(255) NULL,
     quantity   INT NOT NULL,
     order_id   BINARY(16)   NULL,
-    created_on datetime NULL,
+    price      INT NOT NULL,
+    added_on   datetime NULL,
     CONSTRAINT pk_orderitem PRIMARY KEY (id)
 );
 
 ALTER TABLE order_item
-    ADD CONSTRAINT FK_ORDERITEM_ON_ORDER FOREIGN KEY (order_id) REFERENCES `order` (id);
+    ADD CONSTRAINT FK_ORDERITEM_ON_ORDER FOREIGN KEY (order_id) REFERENCES orders (id);
 
-ALTER TABLE `order`
+ALTER TABLE orders
     ADD CONSTRAINT FK_ORDER_ON_ADDRESS FOREIGN KEY (address_id) REFERENCES address (id);

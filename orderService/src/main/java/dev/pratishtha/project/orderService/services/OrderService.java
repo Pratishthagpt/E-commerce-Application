@@ -10,4 +10,10 @@ import java.util.List;
 public interface OrderService {
 
     public List<OrderDTO> getAllOrders(String token);
+
+    OrderDTO createNewOrder(String token, OrderDTO orderRequestDto);
+
+    OrderDTO getOrderById(String token, String orderId);
+
+    List<OrderDTO> getAllOrdersByUser(String token);
 }

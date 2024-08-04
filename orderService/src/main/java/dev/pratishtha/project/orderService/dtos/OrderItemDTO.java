@@ -12,5 +12,6 @@ public class OrderItemDTO {
     private String id;
     private String productId;
     private int quantity;
-    private Date createdOn;
+    private Date addedOn;
+    private int price;
 }
