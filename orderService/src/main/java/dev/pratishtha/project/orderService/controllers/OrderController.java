@@ -99,4 +99,14 @@ public class OrderController {
 
         return new ResponseEntity<>(orderDto, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<OrderDTO> deleteOrderById (
+            @RequestHeader (HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable("id") String orderId) {
+
+        OrderDTO orderDto = orderService.deleteOrderById(token, orderId);
+
+        return new ResponseEntity<>(orderDto, HttpStatus.OK);
+    }
 }

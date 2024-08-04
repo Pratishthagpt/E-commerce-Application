@@ -13,6 +13,7 @@ import dev.pratishtha.project.orderService.models.Order;
 import dev.pratishtha.project.orderService.models.OrderItem;
 import dev.pratishtha.project.orderService.models.OrderStatus;
 import dev.pratishtha.project.orderService.repositories.AddressRepository;
+import dev.pratishtha.project.orderService.repositories.OrderItemRepository;
 import dev.pratishtha.project.orderService.repositories.OrderRepository;
 import dev.pratishtha.project.orderService.security.JwtData;
 import dev.pratishtha.project.orderService.security.TokenValidator;
@@ -28,13 +29,15 @@ public class OrderServiceImpl implements OrderService{
     private OrderRepository orderRepository;
     private TokenValidator tokenValidator;
     private AddressRepository addressRepository;
+    private OrderItemRepository orderItemRepository;
 
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, TokenValidator tokenValidator,
-                            AddressRepository addressRepository) {
+                            AddressRepository addressRepository, OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
         this.tokenValidator = tokenValidator;
         this.addressRepository = addressRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Override
@@ -136,7 +139,7 @@ public class OrderServiceImpl implements OrderService{
                 return orderDTO;
             }
         }
-        throw new UnAuthorizedUserAccessException("User is not authorized to access all the orders.");
+        throw new UnAuthorizedUserAccessException("User is not authorized to access the order.");
     }
 
     @Override
@@ -262,7 +265,7 @@ public class OrderServiceImpl implements OrderService{
                 return orderDTO;
             }
         }
-        throw new UnAuthorizedUserAccessException("User is not authorized to access all the orders.");
+        throw new UnAuthorizedUserAccessException("User is not authorized to change the order status.");
 
     }
 
@@ -286,6 +289,34 @@ public class OrderServiceImpl implements OrderService{
 
         OrderDTO orderDTO = convertOrderToOrderDTO(cancelledOrder);
         return orderDTO;
+    }
+
+    @Override
+    public OrderDTO deleteOrderById(String token, String orderId) {
+
+//        Only ADMIN can delete the order
+        JwtData userData = validateUserByToken(token);
+        String userId = userData.getUserId();
+
+        List<UserRole> userRoles = userData.getRoles();
+
+        for (UserRole role : userRoles) {
+            if (role.getRole().equalsIgnoreCase("ADMIN")) {
+                Optional<Order> orderOptional = orderRepository.findById(UUID.fromString(orderId));
+
+                if (orderOptional.isEmpty()) {
+                    throw new OrderNotFoundException("Order with id - " + orderId + " not found.");
+                }
+
+                Order order = orderOptional.get();
+
+                orderRepository.deleteById(order.getUuid());
+
+                OrderDTO orderDTO = convertOrderToOrderDTO(order);
+                return orderDTO;
+            }
+        }
+        throw new UnAuthorizedUserAccessException("User is not authorized to delete the order.");
     }
 
     private OrderDTO convertOrderToOrderDTO(Order order) {
