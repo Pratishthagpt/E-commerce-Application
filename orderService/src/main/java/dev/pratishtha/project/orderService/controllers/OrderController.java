@@ -1,6 +1,7 @@
 package dev.pratishtha.project.orderService.controllers;
 
 import dev.pratishtha.project.orderService.dtos.OrderDTO;
+import dev.pratishtha.project.orderService.dtos.OrderStatusRequestDTO;
 import dev.pratishtha.project.orderService.services.OrderService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -74,6 +75,17 @@ public class OrderController {
             @PathVariable("id") String orderId) {
 
         OrderDTO orderDto = orderService.updateOrderById(token, orderRequestDto, orderId);
+
+        return new ResponseEntity<>(orderDto, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/order_status")
+    public ResponseEntity<OrderDTO> updateOrderStatusByOrderId (
+            @RequestHeader (HttpHeaders.AUTHORIZATION) String token,
+            @RequestBody OrderStatusRequestDTO requestDTO,
+            @PathVariable("id") String orderId) {
+
+        OrderDTO orderDto = orderService.updateOrderStatusByOrderId(token, requestDTO, orderId);
 
         return new ResponseEntity<>(orderDto, HttpStatus.OK);
     }

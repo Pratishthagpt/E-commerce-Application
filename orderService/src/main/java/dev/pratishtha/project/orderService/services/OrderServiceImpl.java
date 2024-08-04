@@ -3,6 +3,7 @@ package dev.pratishtha.project.orderService.services;
 import dev.pratishtha.project.orderService.dtos.AddressDTO;
 import dev.pratishtha.project.orderService.dtos.OrderDTO;
 import dev.pratishtha.project.orderService.dtos.OrderItemDTO;
+import dev.pratishtha.project.orderService.dtos.OrderStatusRequestDTO;
 import dev.pratishtha.project.orderService.exceptions.AddressIdNotFoundException;
 import dev.pratishtha.project.orderService.exceptions.InvalidUserAuthenticationException;
 import dev.pratishtha.project.orderService.exceptions.OrderNotFoundException;
@@ -230,6 +231,39 @@ public class OrderServiceImpl implements OrderService{
         OrderDTO orderDTO = convertOrderToOrderDTO(savedOrder);
 
         return orderDTO;
+    }
+
+    @Override
+    public OrderDTO updateOrderStatusByOrderId(String token, OrderStatusRequestDTO requestDTO, String orderId) {
+
+//        Only ADMIN can change the order status
+        JwtData userData = validateUserByToken(token);
+        String userId = userData.getUserId();
+
+        List<UserRole> userRoles = userData.getRoles();
+
+//        Only user with role of "ADMIN" can see any order by id
+        for (UserRole role : userRoles) {
+            if (role.getRole().equalsIgnoreCase("ADMIN")) {
+                Optional<Order> orderOptional = orderRepository.findById(UUID.fromString(orderId));
+
+                if (orderOptional.isEmpty()) {
+                    throw new OrderNotFoundException("Order with id - " + orderId + " not found.");
+                }
+
+                Order order = orderOptional.get();
+
+                String orderStatus = requestDTO.getOrderStatus();
+                order.setOrderStatus(OrderStatus.valueOf(orderStatus));
+
+                Order updatedOrder = orderRepository.save(order);
+
+                OrderDTO orderDTO = convertOrderToOrderDTO(updatedOrder);
+                return orderDTO;
+            }
+        }
+        throw new UnAuthorizedUserAccessException("User is not authorized to access all the orders.");
+
     }
 
     private OrderDTO convertOrderToOrderDTO(Order order) {

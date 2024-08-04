@@ -1,6 +1,7 @@
 package dev.pratishtha.project.orderService.services;
 
 import dev.pratishtha.project.orderService.dtos.OrderDTO;
+import dev.pratishtha.project.orderService.dtos.OrderStatusRequestDTO;
 import dev.pratishtha.project.orderService.models.Order;
 import org.springframework.stereotype.Service;
 
@@ -20,4 +21,6 @@ public interface OrderService {
     OrderDTO getSingleOrderByUser(String token, String orderId);
 
     OrderDTO updateOrderById(String token, OrderDTO orderRequestDto, String orderId);
+
+    OrderDTO updateOrderStatusByOrderId(String token, OrderStatusRequestDTO requestDTO, String orderId);
 }
