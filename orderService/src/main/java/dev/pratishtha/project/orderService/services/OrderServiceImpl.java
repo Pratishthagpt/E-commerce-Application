@@ -242,7 +242,7 @@ public class OrderServiceImpl implements OrderService{
 
         List<UserRole> userRoles = userData.getRoles();
 
-//        Only user with role of "ADMIN" can see any order by id
+//        Only user with role of "ADMIN" can change order status of any order
         for (UserRole role : userRoles) {
             if (role.getRole().equalsIgnoreCase("ADMIN")) {
                 Optional<Order> orderOptional = orderRepository.findById(UUID.fromString(orderId));
@@ -264,6 +264,28 @@ public class OrderServiceImpl implements OrderService{
         }
         throw new UnAuthorizedUserAccessException("User is not authorized to access all the orders.");
 
+    }
+
+    @Override
+    public OrderDTO cancelOrderByOrderId(String token, String orderId) {
+
+//        Any user can cancel the order
+        JwtData userData = validateUserByToken(token);
+
+        Optional<Order> orderOptional = orderRepository.findById(UUID.fromString(orderId));
+
+        if (orderOptional.isEmpty()) {
+            throw new OrderNotFoundException("Order with id - " + orderId + " not found.");
+        }
+
+        Order order = orderOptional.get();
+
+        order.setOrderStatus(OrderStatus.CANCELLED);
+
+        Order cancelledOrder = orderRepository.save(order);
+
+        OrderDTO orderDTO = convertOrderToOrderDTO(cancelledOrder);
+        return orderDTO;
     }
 
     private OrderDTO convertOrderToOrderDTO(Order order) {

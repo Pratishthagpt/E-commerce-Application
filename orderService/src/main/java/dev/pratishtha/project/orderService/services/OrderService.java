@@ -23,4 +23,6 @@ public interface OrderService {
     OrderDTO updateOrderById(String token, OrderDTO orderRequestDto, String orderId);
 
     OrderDTO updateOrderStatusByOrderId(String token, OrderStatusRequestDTO requestDTO, String orderId);
+
+    OrderDTO cancelOrderByOrderId(String token, String orderId);
 }

@@ -89,4 +89,14 @@ public class OrderController {
 
         return new ResponseEntity<>(orderDto, HttpStatus.OK);
     }
+
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<OrderDTO> cancelOrderByOrderId (
+            @RequestHeader (HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable("id") String orderId) {
+
+        OrderDTO orderDto = orderService.cancelOrderByOrderId(token, orderId);
+
+        return new ResponseEntity<>(orderDto, HttpStatus.OK);
+    }
 }
