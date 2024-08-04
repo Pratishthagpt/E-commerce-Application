@@ -159,6 +159,26 @@ public class OrderServiceImpl implements OrderService{
         return orderDTOS;
     }
 
+    @Override
+    public OrderDTO getSingleOrderByUser(String token, String orderId) {
+        JwtData userData = validateUserByToken(token);
+        String userId = userData.getUserId();
+
+        List<Order> userOrders = orderRepository.findAllByUserId(userId);
+
+        if (userOrders.size() == 0) {
+            throw new OrderNotFoundException("This user has no orders.");
+        }
+
+        for (Order order : userOrders) {
+            if (order.getUuid().toString().equals(orderId)) {
+                OrderDTO orderDTO = convertOrderToOrderDTO(order);
+                return orderDTO;
+            }
+        }
+        throw new OrderNotFoundException("Order with id - " + orderId + " not found.");
+    }
+
     private OrderDTO convertOrderToOrderDTO(Order order) {
 
         OrderDTO orderDTO = new OrderDTO();

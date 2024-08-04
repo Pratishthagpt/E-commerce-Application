@@ -16,4 +16,6 @@ public interface OrderService {
     OrderDTO getOrderById(String token, String orderId);
 
     List<OrderDTO> getAllOrdersByUser(String token);
+
+    OrderDTO getSingleOrderByUser(String token, String orderId);
 }

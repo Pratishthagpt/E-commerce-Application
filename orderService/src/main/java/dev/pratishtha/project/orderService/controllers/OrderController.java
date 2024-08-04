@@ -56,4 +56,14 @@ public class OrderController {
 
         return new ResponseEntity<>(orderDTOS, HttpStatus.OK);
     }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<OrderDTO> getSingleOrderByUser(
+            @RequestHeader (HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable("id") String orderId) {
+
+        OrderDTO orderDTO = orderService.getSingleOrderByUser(token, orderId);
+
+        return new ResponseEntity<>(orderDTO, HttpStatus.OK);
+    }
 }
