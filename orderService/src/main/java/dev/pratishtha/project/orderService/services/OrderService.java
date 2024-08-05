@@ -2,7 +2,9 @@ package dev.pratishtha.project.orderService.services;
 
 import dev.pratishtha.project.orderService.dtos.OrderDTO;
 import dev.pratishtha.project.orderService.dtos.OrderStatusRequestDTO;
+import dev.pratishtha.project.orderService.dtos.ProductByOrderRequestDTO;
 import dev.pratishtha.project.orderService.models.Order;
+import dev.pratishtha.project.orderService.products.ProductDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,4 +29,6 @@ public interface OrderService {
     OrderDTO cancelOrderByOrderId(String token, String orderId);
 
     OrderDTO deleteOrderById(String token, String orderId);
+
+    ProductDto getProductByOrderForUser(String token, ProductByOrderRequestDTO requestDTO);
 }

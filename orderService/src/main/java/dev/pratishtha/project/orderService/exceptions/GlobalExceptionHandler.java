@@ -32,7 +32,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ExceptionDTO(message, status), HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler({AddressIdNotFoundException.class, AddressNotFoundException.class, OrderNotFoundException.class})
+    @ExceptionHandler({AddressIdNotFoundException.class, AddressNotFoundException.class,
+            OrderNotFoundException.class, ProductNotFoundException.class})
     public ResponseEntity<ExceptionDTO> handleNotFoundException (Exception exception) {
         String message;
         HttpStatus status;
@@ -50,6 +51,11 @@ public class GlobalExceptionHandler {
         else if (exception instanceof OrderNotFoundException) {
             OrderNotFoundException orderNotFoundException = (OrderNotFoundException) exception;
             message = orderNotFoundException.getMessage();
+            status = HttpStatus.NOT_FOUND;
+        }
+        else if (exception instanceof ProductNotFoundException) {
+            ProductNotFoundException productNotFoundException = (ProductNotFoundException) exception;
+            message = productNotFoundException.getMessage();
             status = HttpStatus.NOT_FOUND;
         }
         else {

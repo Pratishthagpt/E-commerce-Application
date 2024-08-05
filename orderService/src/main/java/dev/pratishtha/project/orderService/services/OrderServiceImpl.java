@@ -1,17 +1,13 @@
 package dev.pratishtha.project.orderService.services;
 
-import dev.pratishtha.project.orderService.dtos.AddressDTO;
-import dev.pratishtha.project.orderService.dtos.OrderDTO;
-import dev.pratishtha.project.orderService.dtos.OrderItemDTO;
-import dev.pratishtha.project.orderService.dtos.OrderStatusRequestDTO;
-import dev.pratishtha.project.orderService.exceptions.AddressIdNotFoundException;
-import dev.pratishtha.project.orderService.exceptions.InvalidUserAuthenticationException;
-import dev.pratishtha.project.orderService.exceptions.OrderNotFoundException;
-import dev.pratishtha.project.orderService.exceptions.UnAuthorizedUserAccessException;
+import dev.pratishtha.project.orderService.dtos.*;
+import dev.pratishtha.project.orderService.exceptions.*;
 import dev.pratishtha.project.orderService.models.Address;
 import dev.pratishtha.project.orderService.models.Order;
 import dev.pratishtha.project.orderService.models.OrderItem;
 import dev.pratishtha.project.orderService.models.OrderStatus;
+import dev.pratishtha.project.orderService.products.ProductDetailsService;
+import dev.pratishtha.project.orderService.products.ProductDto;
 import dev.pratishtha.project.orderService.repositories.AddressRepository;
 import dev.pratishtha.project.orderService.repositories.OrderItemRepository;
 import dev.pratishtha.project.orderService.repositories.OrderRepository;
@@ -19,6 +15,7 @@ import dev.pratishtha.project.orderService.security.JwtData;
 import dev.pratishtha.project.orderService.security.TokenValidator;
 import dev.pratishtha.project.orderService.security.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -29,15 +26,15 @@ public class OrderServiceImpl implements OrderService{
     private OrderRepository orderRepository;
     private TokenValidator tokenValidator;
     private AddressRepository addressRepository;
-    private OrderItemRepository orderItemRepository;
+    private ProductDetailsService productDetailsService;
 
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, TokenValidator tokenValidator,
-                            AddressRepository addressRepository, OrderItemRepository orderItemRepository) {
-        this.orderRepository = orderRepository;
+                            AddressRepository addressRepository, ProductDetailsService productDetailsService) {
         this.tokenValidator = tokenValidator;
         this.addressRepository = addressRepository;
         this.orderRepository = orderRepository;
+        this.productDetailsService = productDetailsService;
     }
 
     @Override
@@ -317,6 +314,41 @@ public class OrderServiceImpl implements OrderService{
             }
         }
         throw new UnAuthorizedUserAccessException("User is not authorized to delete the order.");
+    }
+
+    @Override
+    public ProductDto getProductByOrderForUser(String token, ProductByOrderRequestDTO requestDTO) {
+//        validating token from user service
+        JwtData userData = validateUserByToken(token);
+        String userId = userData.getUserId();
+
+        List<Order> userOrders = orderRepository.findAllByUserId(userId);
+
+        String orderId = requestDTO.getOrderId();
+        String productId = requestDTO.getProductId();
+
+        if (userOrders.size() == 0) {
+            throw new OrderNotFoundException("This user has no orders.");
+        }
+
+        for (Order order : userOrders) {
+            if (order.getUuid().toString().equals(orderId)) {
+
+                List<OrderItem> orderItems = order.getOrderItems();
+                for (OrderItem item : orderItems) {
+                    if (item.getProductId().equals(productId)) {
+
+                        Optional<ProductDto> productOptional = productDetailsService.getProductFromProductService(productId, token);
+
+                        ProductDto productDto = productOptional.get();
+
+                        return productDto;
+                    }
+                }
+                throw new ProductNotFoundException("Product with id - " + productId + " not found.");
+            }
+        }
+        throw new OrderNotFoundException("Order with id - " + orderId + " not found.");
     }
 
     private OrderDTO convertOrderToOrderDTO(Order order) {

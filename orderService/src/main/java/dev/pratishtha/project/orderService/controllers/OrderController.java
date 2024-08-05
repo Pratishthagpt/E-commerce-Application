@@ -2,6 +2,8 @@ package dev.pratishtha.project.orderService.controllers;
 
 import dev.pratishtha.project.orderService.dtos.OrderDTO;
 import dev.pratishtha.project.orderService.dtos.OrderStatusRequestDTO;
+import dev.pratishtha.project.orderService.dtos.ProductByOrderRequestDTO;
+import dev.pratishtha.project.orderService.products.ProductDto;
 import dev.pratishtha.project.orderService.services.OrderService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -66,6 +68,16 @@ public class OrderController {
         OrderDTO orderDTO = orderService.getSingleOrderByUser(token, orderId);
 
         return new ResponseEntity<>(orderDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/product")
+    public ResponseEntity<ProductDto> getProductByOrderForUser (
+            @RequestHeader (HttpHeaders.AUTHORIZATION) String token,
+            @RequestBody ProductByOrderRequestDTO requestDTO) {
+
+        ProductDto productDto = orderService.getProductByOrderForUser(token, requestDTO);
+
+        return new ResponseEntity<>(productDto, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
