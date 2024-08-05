@@ -65,4 +65,22 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(new ExceptionDTO(message, status), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler({InsufficientProductQuantityException.class})
+    public ResponseEntity<ExceptionDTO> handleInsufficientQuantityException (Exception exception) {
+        String message;
+        HttpStatus status;
+
+        if (exception instanceof InsufficientProductQuantityException) {
+            InsufficientProductQuantityException insufficientProductQuantityException = (InsufficientProductQuantityException) exception;
+            message = insufficientProductQuantityException.getMessage();
+            status = HttpStatus.CONFLICT;
+        }
+        else {
+            message = "An unexpected error occurred.";
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(new ExceptionDTO(message, status), HttpStatus.CONFLICT);
+    }
 }

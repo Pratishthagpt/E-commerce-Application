@@ -65,10 +65,11 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public OrderDTO createNewOrder(String token, OrderDTO orderRequestDto) {
 
+//       1. validating user
         JwtData userData = validateUserByToken(token);
         String userId = userData.getUserId();
 
-        System.out.println(userId);
+//        2. Create new order
         Order order = new Order();
 
         List<OrderItemDTO> orderItemDTOSRequest = orderRequestDto.getOrderItems();
@@ -76,13 +77,30 @@ public class OrderServiceImpl implements OrderService{
         List<OrderItem> orderItems = new ArrayList<>();
         int totalPrice = 0;
 
+//        3. For each order item, find the product and get the price, also check whether the
+//        order item quantity is > product inventory count
         for (OrderItemDTO itemDTO : orderItemDTOSRequest) {
             OrderItem orderItem = new OrderItem();
 
+//            getting all details of product from productService
+            Optional<ProductDto> productOptional = productDetailsService.getProductFromProductService(itemDTO.getProductId(), token);
+
+            if (productOptional.isEmpty()) {
+                throw new ProductNotFoundException("Product does not found with id: " + itemDTO.getProductId());
+            }
+
+            ProductDto product = productOptional.get();
+
+//            check whether the product has sufficient stock or not
+            if (product.getInventoryCount() < itemDTO.getQuantity()) {
+                throw new InsufficientProductQuantityException ("Product is out of stock. Please try again later.");
+            }
+
+//          4.  setting order item attributes
             orderItem.setProductId(itemDTO.getProductId());
             orderItem.setAddedOn(itemDTO.getAddedOn());
             orderItem.setQuantity(itemDTO.getQuantity());
-            orderItem.setPrice(itemDTO.getPrice());
+            orderItem.setPrice((int) product.getPriceVal());
             orderItem.setOrder(order);
 
             orderItems.add(orderItem);
@@ -90,6 +108,7 @@ public class OrderServiceImpl implements OrderService{
             totalPrice += (orderItem.getQuantity() * orderItem.getPrice());
         }
 
+//        5. Setting order attributes
         order.setUserId(userId);
         order.setOrderItems(orderItems);
         order.setDescription(orderRequestDto.getDescription());
@@ -99,6 +118,7 @@ public class OrderServiceImpl implements OrderService{
         order.setQuantity(orderItems.size());
         order.setPaymentId(orderRequestDto.getPaymentId());
 
+//        6. Check for the address id and get the address from address repository
         Optional<Address> addressOptional = addressRepository.findById(UUID.fromString(orderRequestDto.getAddressId()));
         if (addressOptional.isEmpty()) {
             throw new AddressIdNotFoundException("Address with id - " + orderRequestDto.getAddressId() + " not found.");
@@ -107,6 +127,7 @@ public class OrderServiceImpl implements OrderService{
 
         order.setAddress(address);
 
+//        7. Saving order
         Order savedOrder = orderRepository.save(order);
 
         OrderDTO orderDTO = convertOrderToOrderDTO(savedOrder);
