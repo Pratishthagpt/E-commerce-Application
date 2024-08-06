@@ -12,6 +12,9 @@ import lombok.Setter;
 public class Payment extends BaseModel{
 
     private String orderId;
+
+//    can also be called payment id. This is the unique id that is associated with every payment,
+//    that we will get from payment gateway
     private String referenceId;
 
     @Enumerated(EnumType.ORDINAL)
