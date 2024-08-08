@@ -13,6 +13,8 @@ public class UserJwtData {
     private String id;
     private String email;
     private String username;
+    private String phoneNo;
+
     private Set<Role> roleList;
 
 }

@@ -10,17 +10,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class PaymentGatewayChooserStrategy {
 
-    private PaymentGateway paymentGateway;
+    private RazorpayPaymentGateway razorpayPaymentGateway;
 
     @Autowired
-    public PaymentGatewayChooserStrategy(PaymentGateway paymentGateway) {
-        this.paymentGateway = paymentGateway;
+    public PaymentGatewayChooserStrategy(RazorpayPaymentGateway razorpayPaymentGateway) {
+        this.razorpayPaymentGateway = razorpayPaymentGateway;
     }
 
     public PaymentGateway getBestSuitablePaymentGateway() {
 //        some logic to choose the best payment gateway as per business proposal
 
-        PaymentGateway bestPaymentGateway = new RazorpayPaymentGateway();
-        return bestPaymentGateway;
+        return razorpayPaymentGateway;
     }
 }

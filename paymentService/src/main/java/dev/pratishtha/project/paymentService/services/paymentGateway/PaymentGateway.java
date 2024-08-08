@@ -6,5 +6,5 @@ import org.springframework.stereotype.Component;
 @Component
 public interface PaymentGateway {
 
-    public String createPaymentLink() throws RazorpayException;
+    public PaymentGatewayClientResponseDto createPaymentLink(String token, String orderId);
 }

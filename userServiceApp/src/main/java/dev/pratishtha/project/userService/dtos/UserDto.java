@@ -15,6 +15,7 @@ public class UserDto {
     private String userId;
     private String email;
     private String username;
+    private String phoneNo;
 
     private Set<Role> roles = new HashSet<>();
 
@@ -24,6 +25,7 @@ public class UserDto {
         userDto.setUserId(String.valueOf(user.getUuid()));
         userDto.setEmail(user.getEmail());
         userDto.setUsername(user.getUsername());
+        userDto.setPhoneNo(user.getPhoneNo());
 
         return userDto;
     }

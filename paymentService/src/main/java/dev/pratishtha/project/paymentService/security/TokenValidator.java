@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -13,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.Optional;
 
-@Service
+@Component
 public class TokenValidator {
 
     private RestTemplateBuilder restTemplateBuilder;
@@ -48,6 +49,7 @@ public class TokenValidator {
                 userJwtData.setUserId(userDto.getUserId());
                 userJwtData.setEmail(userDto.getEmail());
                 userJwtData.setUsername(userDto.getUsername());
+                userJwtData.setPhoneNo(userDto.getPhoneNo());
                 userJwtData.setRoles(new ArrayList<>(userDto.getRoles()));
 
                 return Optional.of(userJwtData);

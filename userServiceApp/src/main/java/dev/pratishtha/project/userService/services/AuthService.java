@@ -38,10 +38,11 @@ public class AuthService {
         secretKey = Jwts.SIG.HS256.key().build();
     }
 
-    public UserDto signUpUser(String email, String username, String password) {
+    public UserDto signUpUser(String email, String username, String password, String phoneNo) {
         User user = new User();
         user.setEmail(email);
         user.setUsername(username);
+        user.setPhoneNo(phoneNo);
         user.setPassword(bCryptPasswordEncoder.encode(password));
 
         User savedUser = userRepository.save(user);
@@ -147,6 +148,7 @@ public class AuthService {
 
             String email = claimsJwt.getPayload().get("email").toString();
             String username = claimsJwt.getPayload().get("username").toString();
+            String phoneNum = claimsJwt.getPayload().get("phone_Number").toString();
             List<String> rolesAsString = (List<String>) claimsJwt.getPayload().get("roles");
 
             Set<Role> roles = new HashSet<>();
@@ -167,6 +169,7 @@ public class AuthService {
             userJwtData.setEmail(email);
             userJwtData.setUsername(username);
             userJwtData.setRoleList(roles);
+            userJwtData.setPhoneNo(phoneNum);
         }
         catch (JwtException e) {
             throw new InvalidTokenException("Token is invalid, please login again.");
@@ -193,6 +196,7 @@ public class AuthService {
         jwtData.put("createdAt", new Date());
         jwtData.put("expiredAt", expiryDateUtil);
         jwtData.put("username", user.getUsername());
+        jwtData.put("phone_Number", user.getPhoneNo());
         jwtData.put("roles", roles);
 
         String token = Jwts

@@ -13,5 +13,6 @@ public class UserDto {
     private String userId;
     private String email;
     private String username;
+    private String phoneNo;
     private Set<UserRole> roles = new HashSet<>();
 }

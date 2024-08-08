@@ -12,5 +12,6 @@ public class JwtData {
     private String userId;
     private String email;
     private String username;
+    private String phoneNo;
     private List<UserRole> roles;
 }

@@ -20,6 +20,7 @@ public class User extends BaseModel{
     private String email;
     private String username;
     private String password;
+    private String phoneNo;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnore

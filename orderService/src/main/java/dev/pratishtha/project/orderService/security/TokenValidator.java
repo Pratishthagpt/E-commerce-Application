@@ -46,6 +46,7 @@ public class TokenValidator {
                 userJwtData.setUserId(userDto.getUserId());
                 userJwtData.setEmail(userDto.getEmail());
                 userJwtData.setUsername(userDto.getUsername());
+                userJwtData.setPhoneNo(userDto.getPhoneNo());
                 userJwtData.setRoles(new ArrayList<>(userDto.getRoles()));
 
                 return Optional.of(userJwtData);
