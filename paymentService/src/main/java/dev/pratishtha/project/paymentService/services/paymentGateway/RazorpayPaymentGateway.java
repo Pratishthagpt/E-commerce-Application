@@ -2,20 +2,18 @@ package dev.pratishtha.project.paymentService.services.paymentGateway;
 
 import com.razorpay.PaymentLink;
 import dev.pratishtha.project.paymentService.exceptions.InvalidUserAuthenticationException;
-import dev.pratishtha.project.paymentService.models.Payment;
-import dev.pratishtha.project.paymentService.models.PaymentStatus;
+import dev.pratishtha.project.paymentService.exceptions.PaymentLinkIdNotFoundException;
 import dev.pratishtha.project.paymentService.orderServiceClient.OrderDetailsService;
 import dev.pratishtha.project.paymentService.orderServiceClient.OrderResponseDto;
 import dev.pratishtha.project.paymentService.security.JwtData;
 import dev.pratishtha.project.paymentService.security.TokenValidator;
-import lombok.NoArgsConstructor;
 import org.json.JSONObject;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -37,7 +35,7 @@ public class RazorpayPaymentGateway implements PaymentGateway{
     }
 
     @Override
-    public PaymentGatewayClientResponseDto createPaymentLink(String token, String orderId) {
+    public PaymentGatewayClientDto createPaymentLink(String token, String orderId) {
 
         JwtData userJwtData = validateUserByToken(token);
         int amount = getPriceFromOrder(token, orderId);
@@ -86,16 +84,26 @@ public class RazorpayPaymentGateway implements PaymentGateway{
 
             PaymentLink paymentLink = razorpayClient.paymentLink.create(paymentLinkRequest);
 
-            PaymentGatewayClientResponseDto responseDto = new PaymentGatewayClientResponseDto();
-            responseDto.setPaymentLink(paymentLink.get("short_url"));
-            responseDto.setPaymentLinkId(paymentLink.get("id"));
-            responseDto.setPaymentStatus(paymentLink.get("status"));
-            responseDto.setAmount(paymentLink.get("amount_paid"));
+            PaymentGatewayClientDto responseDto = convertpaymentLinkToPaymentGatewayClientDto(paymentLink);
 
             return responseDto;
         }
         catch (RazorpayException e) {
             throw new RuntimeException("Failed to create payment link.", e);
+        }
+    }
+
+    public PaymentGatewayClientDto getPaymentStatus (String paymentILinkId) {
+
+        try {
+            PaymentLink payment = razorpayClient.paymentLink.fetch(paymentILinkId);
+
+            PaymentGatewayClientDto clientDto = convertpaymentLinkToPaymentGatewayClientDto(payment);
+
+            return clientDto;
+        }
+        catch (RazorpayException e) {
+            throw new PaymentLinkIdNotFoundException("Unable to fetch the payment details of payment Id - " + paymentILinkId);
         }
     }
 
@@ -119,5 +127,42 @@ public class RazorpayPaymentGateway implements PaymentGateway{
         OrderResponseDto order = orderDetailsOptional.get();
 
         return order.getTotalPrice();
+    }
+
+    private PaymentGatewayClientDto convertpaymentLinkToPaymentGatewayClientDto(PaymentLink paymentLink) {
+
+        PaymentGatewayClientDto clientDto = new PaymentGatewayClientDto();
+
+        clientDto.setShort_url(paymentLink.get("short_url"));
+        clientDto.setId(paymentLink.get("id"));
+        clientDto.setStatus(paymentLink.get("status"));
+        clientDto.setAmount_paid(paymentLink.get("amount_paid"));
+        clientDto.setPayments(null);
+        clientDto.setAmount(paymentLink.get("amount"));
+        clientDto.setCancelled_at(paymentLink.get("cancelled_at"));
+        clientDto.setCustomer(null);
+        clientDto.setDescription(paymentLink.get("description"));
+        clientDto.setCurrency(paymentLink.get("currency"));
+
+//        Date expire_by = Date.from(Instant.ofEpochSecond(paymentLink.get("expire_by")));
+        clientDto.setExpire_by(null);
+
+//        Date expired_at = Date.from(Instant.ofEpochSecond( paymentLink.get("expired_at") ));
+        clientDto.setExpired_at(null);
+
+//        Date updated_at = Date.from(Instant.ofEpochSecond( paymentLink.get("updated_at") ));
+        clientDto.setUpdated_at(null);
+
+        clientDto.setNotify(null);
+
+//        Date created_At = Date.from(Instant.ofEpochSecond(paymentLink.get("created_at")));
+        clientDto.setCreated_at(null);
+
+        clientDto.setOrder_id(paymentLink.get("order_id"));
+        clientDto.setReference_id(paymentLink.get("reference_id"));
+        clientDto.setCallbackUrl(paymentLink.get("callback_url"));
+        clientDto.setCallbackMethod(paymentLink.get("callback_method"));
+
+        return clientDto;
     }
 }

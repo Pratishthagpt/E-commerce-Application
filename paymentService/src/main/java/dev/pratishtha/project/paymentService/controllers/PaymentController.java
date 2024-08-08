@@ -2,6 +2,7 @@ package dev.pratishtha.project.paymentService.controllers;
 
 import dev.pratishtha.project.paymentService.dtos.PaymentLinkRequestDTO;
 import dev.pratishtha.project.paymentService.dtos.PaymentLinkResponseDTO;
+import dev.pratishtha.project.paymentService.dtos.PaymentStatusDto;
 import dev.pratishtha.project.paymentService.services.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -29,5 +30,17 @@ public class PaymentController {
         PaymentLinkResponseDTO paymentLinkResponseDTO = paymentService.generatingPaymentLink(token, paymentLinkRequestDTO);
 
         return new ResponseEntity<>(paymentLinkResponseDTO, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+//    first initiating payment, which will return us the payment link
+    public ResponseEntity<PaymentStatusDto> getPaymentStatus (
+            @RequestHeader (HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable("id") String paymentId,
+            @RequestBody PaymentLinkRequestDTO paymentLinkRequestDTO
+    ) {
+        PaymentStatusDto paymentStatusDto = paymentService.getPaymentStatus(token, paymentLinkRequestDTO, paymentId);
+
+        return new ResponseEntity<>(paymentStatusDto, HttpStatus.OK);
     }
 }
