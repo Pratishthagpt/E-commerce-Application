@@ -1,7 +1,7 @@
-package dev.pratishtha.project.orderService.products;
+package dev.pratishtha.project.paymentService.orderServiceClient;
 
-import dev.pratishtha.project.orderService.exceptions.InvalidUserAuthenticationException;
-import dev.pratishtha.project.orderService.exceptions.ProductNotFoundException;
+import dev.pratishtha.project.paymentService.exceptions.InvalidUserAuthenticationException;
+import dev.pratishtha.project.paymentService.exceptions.OrderNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -13,48 +13,49 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Optional;
 
 @Component
-public class ProductDetailsService {
+public class OrderDetailsService {
 
     private RestTemplateBuilder restTemplateBuilder;
     private RestTemplate restTemplate;
-    private String productBaseUrl;
+    private String orderServiceBaseUrl;
 
     @Autowired
-    public ProductDetailsService(RestTemplateBuilder restTemplateBuilder,
-                                 @Value("${product.api.baseurl}") String productBaseUrl) {
+    public OrderDetailsService(RestTemplateBuilder restTemplateBuilder,
+                               @Value("${order-service.api.baseurl}") String orderServiceBaseUrl) {
         this.restTemplateBuilder = restTemplateBuilder;
         this.restTemplate = restTemplateBuilder.build();
-        this.productBaseUrl = productBaseUrl;
+        this.orderServiceBaseUrl = orderServiceBaseUrl;
     }
 
-    public Optional<ProductDto> getProductFromProductService (String productId, String token) {
-        String getProductUrl = productBaseUrl + "/" + productId;
+    public Optional<OrderResponseDto> getOrderDetails (String token, String orderId) {
+        String getOrderDetailsUrl = orderServiceBaseUrl + "/" + orderId;
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", token);
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+        HttpEntity entity = new HttpEntity<>(headers);
 
         try {
-            ResponseEntity<ProductDto> productResponse = restTemplate
+
+            ResponseEntity<OrderResponseDto> responseEntity = restTemplate
                     .exchange(
-                            getProductUrl,
+                            getOrderDetailsUrl,
                             HttpMethod.GET,
                             entity,
-                            ProductDto.class
+                            OrderResponseDto.class
                     );
 
-            if (productResponse.getStatusCode().is2xxSuccessful() && productResponse.getBody() != null) {
-                ProductDto productDto = productResponse.getBody();
+            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
+                OrderResponseDto responseDto = responseEntity.getBody();
 
-                return Optional.ofNullable(productDto);
+                return Optional.ofNullable(responseDto);
             }
             else {
-                throw new ProductNotFoundException("Product with id - " + productId + " not found.");
+                throw new OrderNotFoundException("Product with id - " + orderId + " not found.");
             }
         }
         catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND || e.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
-                throw new ProductNotFoundException("Product with id - " + productId + " not found.");
+                throw new OrderNotFoundException("Product with id - " + orderId + " not found.");
             }
             else if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 throw new InvalidUserAuthenticationException("User token is not authenticated. Please enter a valid authentication token.");

@@ -6,16 +6,14 @@ import dev.pratishtha.project.orderService.models.Address;
 import dev.pratishtha.project.orderService.models.Order;
 import dev.pratishtha.project.orderService.models.OrderItem;
 import dev.pratishtha.project.orderService.models.OrderStatus;
-import dev.pratishtha.project.orderService.products.ProductDetailsService;
-import dev.pratishtha.project.orderService.products.ProductDto;
+import dev.pratishtha.project.orderService.productServiceClient.ProductDetailsService;
+import dev.pratishtha.project.orderService.productServiceClient.ProductDto;
 import dev.pratishtha.project.orderService.repositories.AddressRepository;
-import dev.pratishtha.project.orderService.repositories.OrderItemRepository;
 import dev.pratishtha.project.orderService.repositories.OrderRepository;
 import dev.pratishtha.project.orderService.security.JwtData;
 import dev.pratishtha.project.orderService.security.TokenValidator;
 import dev.pratishtha.project.orderService.security.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

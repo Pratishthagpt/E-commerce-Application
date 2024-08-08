@@ -1,4 +1,4 @@
-package dev.pratishtha.project.orderService.products;
+package dev.pratishtha.project.orderService.productServiceClient;
 
 import lombok.Getter;
 import lombok.Setter;

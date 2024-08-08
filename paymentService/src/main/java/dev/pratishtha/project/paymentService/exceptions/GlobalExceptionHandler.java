@@ -26,5 +26,23 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ExceptionDTO(message, status), HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler({OrderNotFoundException.class})
+    public ResponseEntity<ExceptionDTO> handleNotFoundException (Exception exception) {
+        String message;
+        HttpStatus status;
+
+        if (exception instanceof OrderNotFoundException) {
+            OrderNotFoundException orderNotFoundException = (OrderNotFoundException) exception;
+            message = orderNotFoundException.getMessage();
+            status = HttpStatus.NOT_FOUND;
+        }
+        else {
+            message = "An unexpected error occurred.";
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<>(new ExceptionDTO(message, status), HttpStatus.NOT_FOUND);
+    }
+
 
 }

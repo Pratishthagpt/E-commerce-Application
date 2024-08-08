@@ -3,8 +3,7 @@ package dev.pratishtha.project.orderService.services;
 import dev.pratishtha.project.orderService.dtos.OrderDTO;
 import dev.pratishtha.project.orderService.dtos.OrderStatusRequestDTO;
 import dev.pratishtha.project.orderService.dtos.ProductByOrderRequestDTO;
-import dev.pratishtha.project.orderService.models.Order;
-import dev.pratishtha.project.orderService.products.ProductDto;
+import dev.pratishtha.project.orderService.productServiceClient.ProductDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
