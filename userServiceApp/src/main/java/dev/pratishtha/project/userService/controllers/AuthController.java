@@ -79,6 +79,7 @@ public class AuthController {
         userDto.setEmail(userJwtData.getEmail());
         userDto.setUsername(userJwtData.getUsername());
         userDto.setRoles(userJwtData.getRoleList());
+        userDto.setPhoneNo(userJwtData.getPhoneNo());
 
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
