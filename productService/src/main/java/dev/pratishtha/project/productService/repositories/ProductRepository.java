@@ -30,4 +30,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 //    for getting pageable results
     Page<Product> findAllByTitle(String title, Pageable pageable);
 
+    Page<Product> findAllByTitleContaining(String title, Pageable pageable);
+
 }

@@ -1,6 +1,7 @@
 package dev.pratishtha.project.productService.controllers;
 
 import dev.pratishtha.project.productService.dtos.GenericProductDTO;
+import dev.pratishtha.project.productService.dtos.SearchAndSortProductDTO;
 import dev.pratishtha.project.productService.dtos.SearchProductDTO;
 import dev.pratishtha.project.productService.services.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,17 @@ public class SearchController {
             @RequestBody SearchProductDTO searchProductDTO) {
 
         Page<GenericProductDTO> genericProductDTOS = searchService.getProductsByTitleSearch(authToken, searchProductDTO);
+
+        return new ResponseEntity<>(genericProductDTOS, HttpStatus.OK);
+    }
+
+    @PostMapping("/sort/title")
+    public ResponseEntity<Page<GenericProductDTO>> searchAllSortedProductsByTitleContaining (
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authToken,
+            @RequestBody SearchAndSortProductDTO searchAndSortProductDTO
+            ) {
+
+        Page<GenericProductDTO> genericProductDTOS = searchService.getProductsBySearchingSortedTitle(authToken, searchAndSortProductDTO);
 
         return new ResponseEntity<>(genericProductDTOS, HttpStatus.OK);
     }
