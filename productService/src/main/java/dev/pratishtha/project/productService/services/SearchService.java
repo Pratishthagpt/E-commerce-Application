@@ -6,12 +6,10 @@ import dev.pratishtha.project.productService.dtos.SearchProductDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public interface SearchService {
     Page<GenericProductDTO> getProductsByTitleSearch(String token, SearchProductDTO searchProductDTO);
 
-    Page<GenericProductDTO> getProductsBySearchingSortedTitle(String token, SearchAndSortProductDTO searchAndSortProductDTO);
+    Page<GenericProductDTO> getProductsBySearchingSortedTitleAndInventoryCount(String token, SearchAndSortProductDTO searchAndSortProductDTO);
 
 }

@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/db/products/search")
 public class SearchController {
@@ -35,12 +33,12 @@ public class SearchController {
     }
 
     @PostMapping("/sort/title")
-    public ResponseEntity<Page<GenericProductDTO>> searchAllSortedProductsByTitleContaining (
+    public ResponseEntity<Page<GenericProductDTO>> searchAllSortedProductsByTitleContainingAndInventoryCount (
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authToken,
             @RequestBody SearchAndSortProductDTO searchAndSortProductDTO
             ) {
 
-        Page<GenericProductDTO> genericProductDTOS = searchService.getProductsBySearchingSortedTitle(authToken, searchAndSortProductDTO);
+        Page<GenericProductDTO> genericProductDTOS = searchService.getProductsBySearchingSortedTitleAndInventoryCount(authToken, searchAndSortProductDTO);
 
         return new ResponseEntity<>(genericProductDTOS, HttpStatus.OK);
     }

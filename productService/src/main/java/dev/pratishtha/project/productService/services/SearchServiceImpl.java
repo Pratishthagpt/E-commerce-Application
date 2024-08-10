@@ -64,7 +64,7 @@ public class SearchServiceImpl implements SearchService{
     }
 
     @Override
-    public Page<GenericProductDTO> getProductsBySearchingSortedTitle(String token
+    public Page<GenericProductDTO> getProductsBySearchingSortedTitleAndInventoryCount(String token
             , SearchAndSortProductDTO searchAndSortProductDTO) {
 
 //        checking for user validation
