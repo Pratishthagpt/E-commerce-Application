@@ -85,7 +85,7 @@ public class SearchServiceImpl implements SearchService{
 
         for (SortValue val : sortTypes) {
             if (val.getSortType().equals("desc")) {
-                sort = Sort.by(val.getSortValue()).descending();
+                sort = sort.and(Sort.by(val.getSortValue()).descending());
             }
             else {
                 sort = sort.and(Sort.by(val.getSortValue()));
