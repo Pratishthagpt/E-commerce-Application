@@ -72,10 +72,9 @@ public class AuthController {
 
     @PostMapping("/validate")
     public ResponseEntity<UserDto> validateToken (@RequestBody ValidateTokenRequestDto validateTokenRequestDto) {
-        System.out.println("entered the auth controller");
 
         UserJwtData userJwtData = authService.validateUserToken(validateTokenRequestDto.getToken());
-        System.out.println("exit the auth controller");
+
         UserDto userDto = new UserDto();
         userDto.setUserId(userJwtData.getId());
         userDto.setEmail(userJwtData.getEmail());

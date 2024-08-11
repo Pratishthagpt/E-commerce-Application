@@ -36,7 +36,6 @@ public class TokenValidator {
         userValidateDto.setToken(token);
 
         try {
-            System.out.println("Entered the token validator.");
             ResponseEntity<UserDto> response = restTemplate.postForEntity(
                     userAuthenticationUrl, userValidateDto, UserDto.class);
 

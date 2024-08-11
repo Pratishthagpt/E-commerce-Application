@@ -41,7 +41,6 @@ public class ProductControllerForDatabase {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authToken,
             @PathVariable ("id") String id) throws IdNotFoundException, InvalidUserAuthenticationException {
 
-        System.out.println("Entered the controller.");
         GenericProductDTO productDTO = productService.getProductsById(authToken, id);
 
         return new ResponseEntity<>(productDTO, HttpStatus.OK);
