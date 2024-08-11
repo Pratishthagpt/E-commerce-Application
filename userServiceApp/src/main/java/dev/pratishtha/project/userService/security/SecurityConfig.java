@@ -95,8 +95,8 @@ public class SecurityConfig {
                 // authorization server filter chain
                 .formLogin(Customizer.withDefaults());
 
-        http.csrf().disable();
         http.cors().disable();
+        http.csrf().disable();
 
         return http.build();
     }

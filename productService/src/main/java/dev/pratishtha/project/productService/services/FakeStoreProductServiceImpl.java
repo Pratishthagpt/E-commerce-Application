@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Service("fakeStoreProductServiceImpl")
 public class FakeStoreProductServiceImpl implements ProductService{
 
     private FakeStoreProductClient fakeStoreProductClient;

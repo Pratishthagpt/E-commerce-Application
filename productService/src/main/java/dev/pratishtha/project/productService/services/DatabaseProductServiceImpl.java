@@ -13,6 +13,7 @@ import dev.pratishtha.project.productService.repositories.ProductRepository;
 import dev.pratishtha.project.productService.security.JwtData;
 import dev.pratishtha.project.productService.security.TokenValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,20 +28,32 @@ public class DatabaseProductServiceImpl implements ProductService{
     private PriceRepository priceRepository;
     private CategoryRepository categoryRepository;
     private TokenValidator tokenValidator;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
     public DatabaseProductServiceImpl(ProductRepository productRepository,
                                       PriceRepository priceRepository,
                                       CategoryRepository categoryRepository,
-                                      TokenValidator tokenValidator) {
+                                      TokenValidator tokenValidator,
+                                      RedisTemplate<String, Object> redisTemplate) {
         this.productRepository = productRepository;
         this.priceRepository = priceRepository;
         this.categoryRepository = categoryRepository;
         this.tokenValidator = tokenValidator;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
     public List<GenericProductDTO> getAllProducts() {
+
+//        checking from redis cache, whether data is there or not
+        List<GenericProductDTO> genericProductsFromCache =
+                (List<GenericProductDTO>) redisTemplate.opsForValue().get("products");
+
+        if (genericProductsFromCache != null) {
+            return genericProductsFromCache;
+        }
+
         List<Product> products = productRepository.findAll();
 
         List<GenericProductDTO> genericProductDTOS = new ArrayList<>();
@@ -48,6 +61,9 @@ public class DatabaseProductServiceImpl implements ProductService{
             GenericProductDTO genericProductDTO = convertProductToGenericProductDto(product);
             genericProductDTOS.add(genericProductDTO);
         }
+
+        redisTemplate.opsForValue().set("products", genericProductDTOS);
+
         return genericProductDTOS;
     }
 
@@ -59,6 +75,14 @@ public class DatabaseProductServiceImpl implements ProductService{
             throw new InvalidUserAuthenticationException("User token is not Authenticated. Please enter the valid authentication token.");
         }
 
+//        checking from redis cache, whether data is there or not
+        GenericProductDTO genericProductDTOFromCache =
+                (GenericProductDTO) redisTemplate.opsForValue().get(id);
+
+        if (genericProductDTOFromCache != null) {
+            return genericProductDTOFromCache;
+        }
+
         UUID productId = UUID.fromString(id);
 
         Optional<Product> productOptional = productRepository.findById(productId);
@@ -67,24 +91,9 @@ public class DatabaseProductServiceImpl implements ProductService{
         }
         Product product = productOptional.get();
 
-//        System.out.println(product.getUuid().toString());
-//        System.out.println(product.getImage());
-//        System.out.println(product.getTitle());
-//        System.out.println(product.getDescription());
-//        System.out.println(product.getCategory().getName());
-//        System.out.println(product.getInventoryCount());
-//        System.out.println(product.getPrice());
-
         GenericProductDTO genericProductDTO = convertProductToGenericProductDto(product);
 
-//        System.out.println(genericProductDTO.getId());
-//        System.out.println(genericProductDTO.getImage());
-//        System.out.println(genericProductDTO.getTitle());
-//        System.out.println(genericProductDTO.getDescription());
-//        System.out.println(genericProductDTO.getPriceVal());
-//        System.out.println(genericProductDTO.getCategory_name());
-//        System.out.println(genericProductDTO.getInventoryCount());
-
+        redisTemplate.opsForValue().set(id, genericProductDTO);
 
         return genericProductDTO;
     }

@@ -117,6 +117,8 @@ public class AuthService {
 //        }
 //        User user = userOptional.get();
 
+        System.out.println("Entered the auth service");
+
         Optional<Session> sessionOptional = sessionRepository.findByToken(token);
 
         if (sessionOptional.isEmpty()) {
