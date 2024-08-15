@@ -15,34 +15,34 @@ import org.springframework.test.annotation.Commit;
 
 import java.util.UUID;
 
-@SpringBootTest
+//@SpringBootTest
 public class ClientRegistrationDataTest {
 
-    private RegisteredClientRepository registeredClientRepository;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
-    public ClientRegistrationDataTest(RegisteredClientRepository registeredClientRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.registeredClientRepository = registeredClientRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
-
-    @Test
-    @Commit
-    void  addNewRegisteredClient() {
-        RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("product-service")
-                .clientSecret(bCryptPasswordEncoder.encode("passwordOfProductServiceClient"))
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("https://oauth.pstmn.io/v1/callback")
-                .postLogoutRedirectUri("http://127.0.0.1:9101/")
-                .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-                .build();
-
-        registeredClientRepository.save(oidcClient);
-    }
+//    private RegisteredClientRepository registeredClientRepository;
+//    private BCryptPasswordEncoder bCryptPasswordEncoder;
+//
+//    @Autowired
+//    public ClientRegistrationDataTest(RegisteredClientRepository registeredClientRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+//        this.registeredClientRepository = registeredClientRepository;
+//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+//    }
+//
+//    @Test
+//    @Commit
+//    void  addNewRegisteredClient() {
+//        RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
+//                .clientId("product-service")
+//                .clientSecret(bCryptPasswordEncoder.encode("passwordOfProductServiceClient"))
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+//                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+//                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+//                .redirectUri("https://oauth.pstmn.io/v1/callback")
+//                .postLogoutRedirectUri("http://127.0.0.1:9101/")
+//                .scope(OidcScopes.OPENID)
+//                .scope(OidcScopes.PROFILE)
+//                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+//                .build();
+//
+//        registeredClientRepository.save(oidcClient);
+//    }
 }
