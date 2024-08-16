@@ -7,16 +7,27 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class UserConsumer {
+public class Consumer {
 
     @KafkaListener(
             topics = "${spring.kafka.topic_1.name}",
             groupId = "${spring.kafka.consumer.group-id}"
     )
-    public void consumeOrder (String userId) {
+    public void consumeUser (String userId) {
         System.out.println("Received notification for user - " + userId);
 
 //        send email to user using third party eg. twilio
+
+    }
+
+    @KafkaListener(
+            topics = "${spring.kafka.topic_2.name}",
+            groupId = "${spring.kafka.consumer.group-id}"
+    )
+    public void consumeOrder (String order) {
+        System.out.println("Received notification for user - " + order);
+
+//        send email to user for order status using third party eg. twilio
 
     }
 
