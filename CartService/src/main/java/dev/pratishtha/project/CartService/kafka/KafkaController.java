@@ -33,7 +33,7 @@ public class KafkaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Send notification for cart status to user.",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = GenericCartDTO[].class))
+                            schema = @Schema(implementation = NotificationDto.class))
                     })
     })
     @PostMapping("/status/send")
